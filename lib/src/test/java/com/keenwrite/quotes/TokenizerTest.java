@@ -23,7 +23,7 @@ class TokenizerTest {
     testType( ".123", NUMBER );
     testType( "-123.", PUNCT, NUMBER, PERIOD );
     testType( " 123.123.123", SPACE, NUMBER );
-    testType( "123 123\"", NUMBER, SPACE, NUMBER, QDOUBLE );
+    testType( "123 123\"", NUMBER, SPACE, NUMBER, QUOTE_DOUBLE );
     testType( "-123,123.123", PUNCT, NUMBER );
   }
 
@@ -33,7 +33,7 @@ class TokenizerTest {
     testType( "abc abc", WORD, SPACE, WORD );
     testType( "abc123", WORD );
     testType( "-123abc", PUNCT, NUMBER, WORD );
-    testType( "abc-o'-abc", WORD, PUNCT, WORD, QSINGLE, PUNCT, WORD );
+    testType( "abc-o'-abc", WORD, PUNCT, WORD, QUOTE_SINGLE, PUNCT, WORD );
   }
 
   @Test
@@ -45,9 +45,9 @@ class TokenizerTest {
 
   @Test
   void test_Tokenize_Quotes_EmitQuotes() {
-    testType( "'", QSINGLE );
-    testType( "\"", QDOUBLE );
-    testType( "3 o'clock", NUMBER, SPACE, WORD, QSINGLE, WORD );
+    testType( "'", QUOTE_SINGLE );
+    testType( "\"", QUOTE_DOUBLE );
+    testType( "3 o'clock", NUMBER, SPACE, WORD, QUOTE_SINGLE, WORD );
   }
 
   @Test

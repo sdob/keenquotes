@@ -2,8 +2,8 @@
 package com.keenwrite.quotes;
 
 public enum TokenType {
-  QSINGLE,
-  QDOUBLE,
+  QUOTE_SINGLE,
+  QUOTE_DOUBLE,
   WORD,
   NUMBER,
   NEWLINE,
@@ -12,17 +12,3 @@ public enum TokenType {
   PERIOD,
   INVALID
 }
-
-/*
-  private enum TokenType {
-//    QUOTE_OPENING_SINGLE,
-//    QUOTE_OPENING_DOUBLE,
-//    QUOTE_CLOSING_SINGLE,
-//    QUOTE_CLOSING_DOUBLE,
-//    QUOTE_APOSTROPHE,
-//    QUOTE_PRIME_SINGLE,
-//    QUOTE_PRIME_DOUBLE,
-    TEXT
-  }
-
- */

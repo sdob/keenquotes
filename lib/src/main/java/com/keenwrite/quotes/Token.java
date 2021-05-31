@@ -67,8 +67,27 @@ public class Token {
     return mType == type;
   }
 
+  public boolean anyType( final TokenType... types ) {
+    for( final var type : types ) {
+      if( mType == type ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   TokenType getType() {
     return mType;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{" +
+      "mType=" + mType +
+      ", mBegan=" + mBegan +
+      ", mEnded=" + mEnded +
+      '}';
   }
 
   static Token createToken(

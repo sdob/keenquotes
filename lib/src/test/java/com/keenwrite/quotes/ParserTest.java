@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 class ParserTest {
   @Test
   void test_Conversion_Straight_Curly() {
-    final var parser = new Parser( "Salut tout le monde!\nÇa va?");
-    parser.parse();
-    System.out.println();
+    new Parser( "\"It's the 70's jack-o'-lantern\"").parse();
+    new Parser( "Fish-'n'-chips!").parse();
+    new Parser( "That's a 35' x 10\" yacht!").parse();
+    //new Parser( "'70s are Sams' faves.'").parse();
   }
 }

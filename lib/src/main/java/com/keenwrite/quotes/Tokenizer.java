@@ -21,7 +21,8 @@ public class Tokenizer {
   }
 
   /**
-   * Emits a series of tokens that
+   * Emits a series of tokens that represent information about text that is
+   * needed to convert straight quotes to curly quotes.
    *
    * @param text     The text to split into tokens.
    * @param consumer Receives each token as a separate event.
@@ -35,6 +36,15 @@ public class Tokenizer {
     }
   }
 
+  /**
+   * Tokenizes a sequence of characters. The order of comparisons is optimized
+   * towards probability of the occurrence of a character in regular English
+   * prose: letters, space, quotation marks, numbers, periods, new lines,
+   * then end of text.
+   *
+   * @param i The sequence of characters to tokenize.
+   * @return The next token in the sequence.
+   */
   private Token tokenize( final CharacterIterator i ) {
     int began = i.getIndex();
     boolean isWord = false;
@@ -43,16 +53,21 @@ public class Tokenizer {
     do {
       final var curr = i.current();
 
-      if( curr == DONE ) {
-        return Token.EOT;
-      }
-
       if( isLetter( curr ) ) {
         isWord = true;
 
         if( !isLetterOrDigit( peek( i ) ) ) {
           token = createToken( WORD, began, i.getIndex() );
         }
+      }
+      else if( curr == ' ' ) {
+        token = createToken( SPACE, began, i.getIndex() );
+      }
+      else if( curr == '\'' ) {
+        token = createToken( QUOTE_SINGLE, began, i.getIndex() );
+      }
+      else if( curr == '"' ) {
+        token = createToken( QUOTE_DOUBLE, began, i.getIndex() );
       }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
         // Tokenize all consecutive number characters at prevent the main
@@ -69,6 +84,9 @@ public class Tokenizer {
 
         token = createToken( isWord ? WORD : NUMBER, began, i.getIndex() );
       }
+      else if( curr == '.' ) {
+        token = createToken( PERIOD, began, i.getIndex() );
+      }
       else if( curr == '\r' ) {
         token = createToken( NEWLINE, began, i.getIndex() );
 
@@ -84,17 +102,11 @@ public class Tokenizer {
       else if( isWhitespace( curr ) ) {
         token = createToken( SPACE, began, i.getIndex() );
       }
-      else if( curr == '\'' ) {
-        token = createToken( QSINGLE, began, i.getIndex() );
-      }
-      else if( curr == '"' ) {
-        token = createToken( QDOUBLE, began, i.getIndex() );
-      }
-      else if( curr == '.' ) {
-        token = createToken( PERIOD, began, i.getIndex() );
+      else if( curr != DONE ) {
+        token = createToken( PUNCT, began, i.getIndex() );
       }
       else {
-        token = createToken( PUNCT, began, i.getIndex() );
+        token = Token.EOT;
       }
 
       i.next();
