@@ -5,6 +5,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.function.Consumer;
 
+import static com.keenwrite.quotes.Contractions.beginsUnambiguously;
+import static com.keenwrite.quotes.LexemeType.*;
 import static com.keenwrite.quotes.TokenType.*;
 
 /**
@@ -28,47 +30,57 @@ import static com.keenwrite.quotes.TokenType.*;
  *   <li>Single quotes (' (WORD (SPACE+ WORD)? (PUNCT | PERIOD))+ ')</li>
  * </ol>
  */
-public class Parser implements Consumer<Token> {
+public class Parser implements Consumer<Lexeme> {
   private final String mText;
-  private final CircularFifoQueue<Token> mTokens = new CircularFifoQueue<>( 3 );
+  private final CircularFifoQueue<Lexeme> mTokens =
+    new CircularFifoQueue<>( 3 );
 
-  private final Deque<Token> mStack = new ArrayDeque<>();
+  private final Deque<Lexeme> mStack = new ArrayDeque<>();
+  private final Consumer<Token> mConsumer;
 
-  public Parser( final String text ) {
+  public Parser( final String text, final Consumer<Token> consumer ) {
     mText = text;
-    mTokens.add( Token.EOT );
-    mTokens.add( Token.EOT );
-    mTokens.add( Token.EOT );
+
+    // Allow consuming the very first token without checking the queue size.
+    mTokens.add( Lexeme.EOT );
+    mTokens.add( Lexeme.EOT );
+    mTokens.add( Lexeme.EOT );
+
+    mConsumer = consumer;
   }
 
   public void parse() {
-    final var tokenizer = new Tokenizer();
-    tokenizer.tokenize( mText, this );
+    final var tokenizer = new Lexer();
+    tokenizer.parse( mText, this );
+    System.out.println(" DUH DONE!" );
   }
 
   @Override
-  public void accept( final Token token ) {
+  public void accept( final Lexeme token ) {
     mTokens.add( token );
 
     final var token1 = mTokens.get( 0 );
     final var token2 = mTokens.get( 1 );
     final var token3 = mTokens.get( 2 );
 
-    if( token2.isType( QUOTE_SINGLE ) &&
-      token3.isType( WORD ) &&
+    if( token2.isType( QUOTE_SINGLE ) && token3.isType( WORD ) &&
       token1.anyType( WORD, PERIOD, NUMBER ) ) {
-      System.out.println( "APOSTROPHE: " + token2 );
+      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token2 ) );
     }
-    else if( token1.isType( QUOTE_SINGLE ) &&
-      "n".equalsIgnoreCase( token2.toString( mText ) ) &&
-      token3.isType( QUOTE_SINGLE ) ) {
-      System.out.printf( "APOSTROPHES: %s %s%n", token1, token3 );
+    else if( token1.isType( QUOTE_SINGLE ) && token3.isType( QUOTE_SINGLE ) &&
+      "n".equalsIgnoreCase( token2.toString( mText ) ) ) {
+      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token1 ) );
+      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token3 ) );
     }
     else if( token1.isType( NUMBER ) && token2.isType( QUOTE_SINGLE ) ) {
-      System.out.println( "PRIME: " + token2 );
+      mConsumer.accept( new Token( QUOTE_PRIME_SINGLE, token2 ) );
     }
     else if( token1.isType( NUMBER ) && token2.isType( QUOTE_DOUBLE ) ) {
-      System.out.println( "DOUBLE PRIME: " + token2 );
+      mConsumer.accept( new Token( QUOTE_PRIME_DOUBLE, token2 ) );
+    }
+    else if( token1.isType( QUOTE_SINGLE ) && token2.isType( WORD ) &&
+      beginsUnambiguously( token2.toString( mText ) ) ) {
+      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token1 ) );
     }
     else if( token.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       mStack.push( token );
@@ -79,16 +91,3 @@ public class Parser implements Consumer<Token> {
     }
   }
 }
-
-/*
-  private enum TokenType {
-    QUOTE_OPENING_SINGLE,
-    QUOTE_OPENING_DOUBLE,
-    QUOTE_CLOSING_SINGLE,
-    QUOTE_CLOSING_DOUBLE,
-    QUOTE_APOSTROPHE,
-    QUOTE_PRIME_SINGLE,
-    QUOTE_PRIME_DOUBLE,
-    TEXT
-  }
-*/

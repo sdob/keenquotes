@@ -5,21 +5,21 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.keenwrite.quotes.TokenType.*;
+import static com.keenwrite.quotes.LexemeType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests tokenizing words, numbers, punctuation, spaces, and newlines.
+ * Tests lexing words, numbers, punctuation, spaces, and newlines.
  */
-class TokenizerTest {
+class LexerTest {
   @Test
-  void test_Tokenize_Words_TokenValues() {
+  void test_Lexing_Words_TokenValues() {
     testText( "abc 123", "abc", " ", "123" );
     testText( "-123 abc", "-", "123", " ", "abc" );
   }
 
   @Test
-  void test_Tokenize_Numbers_EmitNumbers() {
+  void test_Lexing_Numbers_EmitNumbers() {
     testType( ".123", NUMBER );
     testType( "-123.", PUNCT, NUMBER, PERIOD );
     testType( " 123.123.123", SPACE, NUMBER );
@@ -28,7 +28,7 @@ class TokenizerTest {
   }
 
   @Test
-  void test_Tokenize_Words_EmitWords() {
+  void test_Lexing_Words_EmitWords() {
     testType( "abc", WORD );
     testType( "abc abc", WORD, SPACE, WORD );
     testType( "abc123", WORD );
@@ -37,21 +37,21 @@ class TokenizerTest {
   }
 
   @Test
-  void test_Tokenize_PunctuationMarks_EmitPunctuationMarks() {
+  void test_Lexing_PunctuationMarks_EmitPunctuationMarks() {
     testType( "!", PUNCT );
     testType( ";", PUNCT );
     testType( ".", PERIOD );
   }
 
   @Test
-  void test_Tokenize_Quotes_EmitQuotes() {
+  void test_Lexing_Quotes_EmitQuotes() {
     testType( "'", QUOTE_SINGLE );
     testType( "\"", QUOTE_DOUBLE );
     testType( "3 o'clock", NUMBER, SPACE, WORD, QUOTE_SINGLE, WORD );
   }
 
   @Test
-  void test_Tokenize_Newlines_EmitNewlines() {
+  void test_Lexing_Newlines_EmitNewlines() {
     testType( "\r", NEWLINE );
     testType( "\n", NEWLINE );
     testType( "\r\n", NEWLINE );
@@ -61,11 +61,11 @@ class TokenizerTest {
   }
 
   private void testType(
-    final String actual, final TokenType... expected ) {
-    final var tokenizer = new Tokenizer();
+    final String actual, final LexemeType... expected ) {
+    final var tokenizer = new Lexer();
     final var counter = new AtomicInteger();
 
-    tokenizer.tokenize( actual, ( token ) -> {
+    tokenizer.parse( actual, ( token ) -> {
       final var expectedType = expected[ counter.getAndIncrement() ];
       final var actualType = token.getType();
       assertEquals( expectedType, actualType );
@@ -76,10 +76,10 @@ class TokenizerTest {
   }
 
   private void testText( final String actual, final String... expected ) {
-    final var tokenizer = new Tokenizer();
+    final var tokenizer = new Lexer();
     final var counter = new AtomicInteger();
 
-    tokenizer.tokenize( actual, ( token ) -> {
+    tokenizer.parse( actual, ( token ) -> {
       final var expectedText = expected[ counter.getAndIncrement() ];
       final var actualText = token.toString( actual );
       assertEquals( expectedText, actualText );

@@ -5,19 +5,19 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.function.Consumer;
 
-import static com.keenwrite.quotes.Token.createToken;
-import static com.keenwrite.quotes.TokenType.*;
+import static com.keenwrite.quotes.Lexeme.createLexeme;
+import static com.keenwrite.quotes.LexemeType.*;
 import static java.lang.Character.*;
 import static java.text.CharacterIterator.DONE;
 
 /**
- * Tokenizes text into words, numbers, punctuation, spaces, and more.
+ * Turns text into words, numbers, punctuation, spaces, and more.
  */
-public class Tokenizer {
+public class Lexer {
   /**
    * Default constructor, no state.
    */
-  public Tokenizer() {
+  public Lexer() {
   }
 
   /**
@@ -27,12 +27,12 @@ public class Tokenizer {
    * @param text     The text to split into tokens.
    * @param consumer Receives each token as a separate event.
    */
-  public void tokenize( final String text, final Consumer<Token> consumer ) {
+  public void parse( final String text, final Consumer<Lexeme> consumer ) {
     final var iterator = new StringCharacterIterator( text );
-    Token token;
+    Lexeme lex;
 
-    while( (token = tokenize( iterator )).hasNext() ) {
-      consumer.accept( token );
+    while( (lex = parse( iterator )).hasNext() ) {
+      consumer.accept( lex );
     }
   }
 
@@ -45,10 +45,10 @@ public class Tokenizer {
    * @param i The sequence of characters to tokenize.
    * @return The next token in the sequence.
    */
-  private Token tokenize( final CharacterIterator i ) {
+  private Lexeme parse( final CharacterIterator i ) {
     int began = i.getIndex();
     boolean isWord = false;
-    Token token = null;
+    Lexeme lexeme = null;
 
     do {
       final var curr = i.current();
@@ -57,17 +57,17 @@ public class Tokenizer {
         isWord = true;
 
         if( !isLetterOrDigit( peek( i ) ) ) {
-          token = createToken( WORD, began, i.getIndex() );
+          lexeme = createLexeme( WORD, began, i.getIndex() );
         }
       }
       else if( curr == ' ' ) {
-        token = createToken( SPACE, began, i.getIndex() );
+        lexeme = createLexeme( SPACE, began, i.getIndex() );
       }
       else if( curr == '\'' ) {
-        token = createToken( QUOTE_SINGLE, began, i.getIndex() );
+        lexeme = createLexeme( QUOTE_SINGLE, began, i.getIndex() );
       }
       else if( curr == '"' ) {
-        token = createToken( QUOTE_DOUBLE, began, i.getIndex() );
+        lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
         // Tokenize all consecutive number characters at prevent the main
@@ -82,13 +82,13 @@ public class Tokenizer {
         // The loop above will overshoot the number by one character.
         i.previous();
 
-        token = createToken( isWord ? WORD : NUMBER, began, i.getIndex() );
+        lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
       }
       else if( curr == '.' ) {
-        token = createToken( PERIOD, began, i.getIndex() );
+        lexeme = createLexeme( PERIOD, began, i.getIndex() );
       }
       else if( curr == '\r' ) {
-        token = createToken( NEWLINE, began, i.getIndex() );
+        lexeme = createLexeme( NEWLINE, began, i.getIndex() );
 
         // Swallow the LF in CRLF; peeking won't work here.
         if( i.next() != '\n' ) {
@@ -97,23 +97,23 @@ public class Tokenizer {
         }
       }
       else if( curr == '\n' ) {
-        token = createToken( NEWLINE, began, i.getIndex() );
+        lexeme = createLexeme( NEWLINE, began, i.getIndex() );
       }
       else if( isWhitespace( curr ) ) {
-        token = createToken( SPACE, began, i.getIndex() );
+        lexeme = createLexeme( SPACE, began, i.getIndex() );
       }
       else if( curr != DONE ) {
-        token = createToken( PUNCT, began, i.getIndex() );
+        lexeme = createLexeme( PUNCT, began, i.getIndex() );
       }
       else {
-        token = Token.EOT;
+        lexeme = Lexeme.EOT;
       }
 
       i.next();
     }
-    while( token == null );
+    while( lexeme == null );
 
-    return token;
+    return lexeme;
   }
 
   private static boolean isNumeric( final char curr ) {
