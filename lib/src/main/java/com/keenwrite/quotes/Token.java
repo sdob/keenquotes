@@ -16,6 +16,14 @@ public class Token {
     mLexeme = lexeme;
   }
 
+  TokenType getType() {
+    return mType;
+  }
+
+  public String toString( final String text ) {
+    return mLexeme.toString( text );
+  }
+
   @Override
   public String toString() {
     return getClass().getSimpleName() + "{" +

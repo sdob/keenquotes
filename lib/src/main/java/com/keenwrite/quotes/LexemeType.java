@@ -10,5 +10,5 @@ public enum LexemeType {
   SPACE,
   PUNCT,
   PERIOD,
-  INVALID
+  FLAG
 }

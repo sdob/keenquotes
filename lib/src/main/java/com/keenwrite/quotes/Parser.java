@@ -1,4 +1,4 @@
-/* Copyright 2020-2021 White Magic Software, Ltd. -- All rights reserved. */
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 import java.util.ArrayDeque;
@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.function.Consumer;
 
 import static com.keenwrite.quotes.Contractions.beginsUnambiguously;
+import static com.keenwrite.quotes.Lexeme.EOT;
 import static com.keenwrite.quotes.LexemeType.*;
 import static com.keenwrite.quotes.TokenType.*;
 
@@ -30,64 +31,95 @@ import static com.keenwrite.quotes.TokenType.*;
  *   <li>Single quotes (' (WORD (SPACE+ WORD)? (PUNCT | PERIOD))+ ')</li>
  * </ol>
  */
-public class Parser implements Consumer<Lexeme> {
+public class Parser {
+  /**
+   * The text to parse. A reference is required as a minor optimization in
+   * memory and speed: the lexer records integer offsets, rather than new
+   * {@link String} instances, to track parsed lexemes.
+   */
   private final String mText;
-  private final CircularFifoQueue<Lexeme> mTokens =
+
+  private final Lexer mLexer;
+
+  private final Deque<Lexeme> mQuotations = new ArrayDeque<>();
+  private final CircularFifoQueue<Lexeme> mLexemes =
     new CircularFifoQueue<>( 3 );
 
-  private final Deque<Lexeme> mStack = new ArrayDeque<>();
-  private final Consumer<Token> mConsumer;
-
-  public Parser( final String text, final Consumer<Token> consumer ) {
+  public Parser( final String text ) {
     mText = text;
+    mLexer = new Lexer( mText );
 
     // Allow consuming the very first token without checking the queue size.
-    mTokens.add( Lexeme.EOT );
-    mTokens.add( Lexeme.EOT );
-    mTokens.add( Lexeme.EOT );
-
-    mConsumer = consumer;
+    flush( mLexemes );
   }
 
-  public void parse() {
-    final var tokenizer = new Lexer();
-    tokenizer.parse( mText, this );
-    System.out.println(" DUH DONE!" );
+  /**
+   * Iterates over the entire text provided at construction, emitting
+   * {@link Token}s that can be used to convert straight quotes to curly
+   * quotes.
+   *
+   * @param consumer Receives emitted {@link Token}s.
+   */
+  public void parse( final Consumer<Token> consumer ) {
+    // Create/convert a list of all unambiguous quote characters.
+    while( mLexer.hasNext() ) {
+      parse( mLexer.next(), consumer );
+    }
+
+    // Create/convert a list of all unambiguous quotations.
+    // Let TERM ::= (, | ; | ! | ? | .)
+    // Find unambiguous quotations by searching for:
+    //   ' WORD ('* SPACE+ WORD)* TERM '
+    // In other words, when a ' WORD is encountered, push the ' onto a stack.
+    // If ' WORD is encountered, pop the stack and push the new ' onto it.
+    // If TERM ' is encountered, push the new ' onto it.
+    // This algorithm may have to push " WORD and " TERM as well, to account
+    // for nested sentences.
+
+    // Convert remaining single quotes to apostrophes.
+
+
   }
 
-  @Override
-  public void accept( final Lexeme token ) {
-    mTokens.add( token );
+  private void parse( final Lexeme lexeme, final Consumer<Token> consumer ) {
+    mLexemes.add( lexeme );
 
-    final var token1 = mTokens.get( 0 );
-    final var token2 = mTokens.get( 1 );
-    final var token3 = mTokens.get( 2 );
+    final var lex1 = mLexemes.get( 0 );
+    final var lex2 = mLexemes.get( 1 );
+    final var lex3 = mLexemes.get( 2 );
 
-    if( token2.isType( QUOTE_SINGLE ) && token3.isType( WORD ) &&
-      token1.anyType( WORD, PERIOD, NUMBER ) ) {
-      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token2 ) );
+    if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( WORD ) &&
+      lex1.anyType( WORD, PERIOD, NUMBER ) ) {
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+      flush( mLexemes );
     }
-    else if( token1.isType( QUOTE_SINGLE ) && token3.isType( QUOTE_SINGLE ) &&
-      "n".equalsIgnoreCase( token2.toString( mText ) ) ) {
-      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token1 ) );
-      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token3 ) );
+    else if( lex1.isType( QUOTE_SINGLE ) && lex3.isType( QUOTE_SINGLE ) &&
+      "n".equalsIgnoreCase( lex2.toString( mText ) ) ) {
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
     }
-    else if( token1.isType( NUMBER ) && token2.isType( QUOTE_SINGLE ) ) {
-      mConsumer.accept( new Token( QUOTE_PRIME_SINGLE, token2 ) );
+    else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_SINGLE ) ) {
+      consumer.accept( new Token( QUOTE_PRIME_SINGLE, lex2 ) );
     }
-    else if( token1.isType( NUMBER ) && token2.isType( QUOTE_DOUBLE ) ) {
-      mConsumer.accept( new Token( QUOTE_PRIME_DOUBLE, token2 ) );
+    else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_DOUBLE ) ) {
+      consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
-    else if( token1.isType( QUOTE_SINGLE ) && token2.isType( WORD ) &&
-      beginsUnambiguously( token2.toString( mText ) ) ) {
-      mConsumer.accept( new Token( QUOTE_APOSTROPHE, token1 ) );
+    else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
+      beginsUnambiguously( lex2.toString( mText ) ) ) {
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
-    else if( token.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
-      mStack.push( token );
+    else if( lex1.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
+      mQuotations.push( lex1 );
+      System.out.println( "FOUND QUOTE: " + lex1 + " " + lex1.toString(mText));
+    }
+    else {
+      System.out.println( lex1 );
+    }
+  }
 
-      if( mStack.isEmpty() ) {
-        System.out.println( "EMPTY STACK?!" );
-      }
-    }
+  private void flush( final CircularFifoQueue<Lexeme> lexemes ) {
+    lexemes.add( Lexeme.SOT );
+    lexemes.add( Lexeme.SOT );
+    lexemes.add( Lexeme.SOT );
   }
 }

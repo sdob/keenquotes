@@ -1,9 +1,11 @@
-/* Copyright 2020-2021 White Magic Software, Ltd. -- All rights reserved. */
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import static com.keenwrite.quotes.LexemeType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,32 +62,31 @@ class LexerTest {
     testType( "abc \r\nabc\n", WORD, SPACE, NEWLINE, WORD, NEWLINE );
   }
 
-  private void testType(
-    final String actual, final LexemeType... expected ) {
-    final var tokenizer = new Lexer();
-    final var counter = new AtomicInteger();
-
-    tokenizer.parse( actual, ( token ) -> {
-      final var expectedType = expected[ counter.getAndIncrement() ];
-      final var actualType = token.getType();
-      assertEquals( expectedType, actualType );
-    } );
-
-    // Ensure all expected tokens are matched (verify end of text reached).
-    assertEquals( expected.length, counter.get() );
+  private void testType( final String actual, final LexemeType... expected ) {
+    testType(
+      actual, ( lexeme, text ) -> lexeme.getType(), Arrays.asList( expected ) );
   }
 
   private void testText( final String actual, final String... expected ) {
-    final var tokenizer = new Lexer();
-    final var counter = new AtomicInteger();
+    testType( actual, Lexeme::toString, Arrays.asList( expected ) );
+  }
 
-    tokenizer.parse( actual, ( token ) -> {
-      final var expectedText = expected[ counter.getAndIncrement() ];
-      final var actualText = token.toString( actual );
-      assertEquals( expectedText, actualText );
-    } );
+  private <A, E> void testType(
+    final String text,
+    final BiFunction<Lexeme, String, A> f,
+    final List<E> elements ) {
+    final var lexer = new Lexer( text );
+    var counter = 0;
 
-    // Ensure all expected tokens are matched (verify end of text reached).
-    assertEquals( expected.length, counter.get() );
+    do {
+      final var lexeme = lexer.next();
+      final var expected = elements.get( counter++ );
+      final var actual = f.apply( lexeme, text );
+      assertEquals( expected, actual );
+    }
+    while( lexer.hasNext() );
+
+    // Ensure all expected values are matched (verify end of text reached).
+    assertEquals( elements.size(), counter );
   }
 }

@@ -1,7 +1,14 @@
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 import java.util.Set;
 
+/**
+ * Placeholder for various types of contractions.
+ * <p>
+ * TODO: Read from an external resource file.
+ * </p>
+ */
 public class Contractions {
   /**
    * Words having a straight apostrophe that cannot be mistaken for an

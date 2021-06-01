@@ -3,7 +3,7 @@ package com.keenwrite.quotes;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.function.Consumer;
+import java.util.Iterator;
 
 import static com.keenwrite.quotes.Lexeme.createLexeme;
 import static com.keenwrite.quotes.LexemeType.*;
@@ -13,27 +13,26 @@ import static java.text.CharacterIterator.DONE;
 /**
  * Turns text into words, numbers, punctuation, spaces, and more.
  */
-public class Lexer {
+public class Lexer implements Iterator<Lexeme> {
+
+  private final CharacterIterator mIterator;
+  private Lexeme mLexeme = Lexeme.SOT;
+
   /**
    * Default constructor, no state.
    */
-  public Lexer() {
+  public Lexer( final String text ) {
+    mIterator = new StringCharacterIterator( text );
   }
 
-  /**
-   * Emits a series of tokens that represent information about text that is
-   * needed to convert straight quotes to curly quotes.
-   *
-   * @param text     The text to split into tokens.
-   * @param consumer Receives each token as a separate event.
-   */
-  public void parse( final String text, final Consumer<Lexeme> consumer ) {
-    final var iterator = new StringCharacterIterator( text );
-    Lexeme lex;
+  @Override
+  public boolean hasNext() {
+    return mLexeme.hasNext();
+  }
 
-    while( (lex = parse( iterator )).hasNext() ) {
-      consumer.accept( lex );
-    }
+  @Override
+  public Lexeme next() {
+    return mLexeme = parse( mIterator );
   }
 
   /**
