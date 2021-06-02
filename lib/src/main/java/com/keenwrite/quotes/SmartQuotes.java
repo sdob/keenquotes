@@ -23,6 +23,7 @@ public class SmartQuotes {
     final var parser = new Parser( text );
     final var tokens = new ArrayList<Token>();
 
+    // Store all parsed quotation marks; the parser may emit them in any order.
     parser.parse( tokens::add );
     sort( tokens );
 

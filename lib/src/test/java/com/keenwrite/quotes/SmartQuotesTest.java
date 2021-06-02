@@ -17,6 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class SmartQuotesTest {
   @Test
+  public void test_parse_SingleLine_Parsed() {
+    final var fixer = new SmartQuotes();
+    final var output = fixer.replace( "Didn' get th' message." );
+    System.out.println( output );
+  }
+
+  @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
     final var fixer = new SmartQuotes();
     testParser( fixer::replace );

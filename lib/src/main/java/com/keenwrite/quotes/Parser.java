@@ -1,14 +1,15 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.keenwrite.quotes.Contractions.beginsUnambiguously;
 import static com.keenwrite.quotes.Lexeme.EOT;
 import static com.keenwrite.quotes.LexemeType.*;
 import static com.keenwrite.quotes.TokenType.*;
+import static java.util.Comparator.comparingInt;
 
 /**
  * Converts straight double/single quotes and apostrophes to curly equivalents.
@@ -43,7 +44,7 @@ public class Parser {
 
   private final Lexer mLexer;
 
-  private final Deque<Lexeme> mQuotations = new ArrayDeque<>();
+  private final List<Lexeme[]> mQuotationMarks = new ArrayList<>();
   private final CircularFifoQueue<Lexeme> mLexemes =
     new CircularFifoQueue<>( 3 );
 
@@ -74,6 +75,12 @@ public class Parser {
     // loop above without having examined the last lexemes.
     for( int i = 0; i < mLexemes.size(); i++ ) {
       parse( mLexemes.get( i ), consumer );
+    }
+
+    mQuotationMarks.sort( comparingInt( lexemes -> lexemes[ 0 ].began() ) );
+
+    for( final var unparsed : mQuotationMarks ) {
+      System.out.println( "unparsed: " + unparsed[ 0 ] + " " + unparsed[ 1 ] + " " + unparsed[ 2 ] );
     }
 
     // Create/convert a list of all unambiguous quotations.
@@ -124,7 +131,7 @@ public class Parser {
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
-      // E.g., 'contraction
+      // E.g., 'twas
       beginsUnambiguously( lex2.toString( mText ) ) ) {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
@@ -136,9 +143,8 @@ public class Parser {
       // E.g., \"
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
     }
-    else if( lex1.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
-      mQuotations.push( lex1 );
-      System.out.println( "FOUND QUOTE: " + lex1 + " " + lex1.toString( mText ) );
+    else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
+      mQuotationMarks.add( new Lexeme[]{lex1, lex2, lex3} );
     }
   }
 
