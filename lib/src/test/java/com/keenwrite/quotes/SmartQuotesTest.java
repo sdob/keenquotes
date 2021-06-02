@@ -1,4 +1,4 @@
-/* Copyright 2020-2021 White Magic Software, Ltd. -- All rights reserved. */
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,7 +19,11 @@ public class SmartQuotesTest {
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
     final var fixer = new SmartQuotes();
+    testParser( fixer::replace );
+  }
 
+  public void testParser( final Function<String, String> parser )
+    throws IOException {
     try( final var reader = openResource( "smartypants.txt" ) ) {
       String line;
       String testLine = "";
@@ -38,8 +43,8 @@ public class SmartQuotesTest {
           expected = line;
         }
 
-        final var actual = fixer.replace( testLine );
-        assertEquals(expected, actual);
+        final var actual = parser.apply( testLine );
+        assertEquals( expected, actual );
 
         testLine = "";
         expected = "";

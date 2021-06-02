@@ -14,6 +14,8 @@ import static com.keenwrite.quotes.TokenType.*;
  * Converts straight double/single quotes and apostrophes to curly equivalents.
  * First, handle single quotes as apostrophes, which include:
  * <ol>
+ *   <li>Escaped single quote (BACKSLASH ' ) -- \'</li>
+ *   <li>Escaped double quote (BACKSLASH " ) -- \"</li>
  *   <li>Inner contractions (WORD ' WORD) -- you'd've</li>
  *   <li>Inner contractions (PERIOD ' WORD) -- Ph.d.'ll</li>
  *   <li>Numeric contractions (NUMBER ' WORD) -- 70's</li>
@@ -62,8 +64,10 @@ public class Parser {
    */
   public void parse( final Consumer<Token> consumer ) {
     // Create/convert a list of all unambiguous quote characters.
-    while( mLexer.hasNext() ) {
-      parse( mLexer.next(), consumer );
+    Lexeme lexeme;
+
+    while( (lexeme = mLexer.next()) != EOT ) {
+      parse( lexeme, consumer );
     }
 
     // Create/convert a list of all unambiguous quotations.
@@ -108,12 +112,15 @@ public class Parser {
       beginsUnambiguously( lex2.toString( mText ) ) ) {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
+    else if( lex1.isType( ESC_SINGLE ) ) {
+      consumer.accept( new Token( QUOTE_STRAIGHT_SINGLE, lex1 ) );
+    }
+    else if( lex1.isType( ESC_DOUBLE ) ) {
+      consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex2 ) );
+    }
     else if( lex1.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       mQuotations.push( lex1 );
-      System.out.println( "FOUND QUOTE: " + lex1 + " " + lex1.toString(mText));
-    }
-    else {
-      System.out.println( lex1 );
+      System.out.println( "FOUND QUOTE: " + lex1 + " " + lex1.toString( mText ) );
     }
   }
 

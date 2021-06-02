@@ -1,4 +1,4 @@
-/* Copyright 2020-2021 White Magic Software, Ltd. -- All rights reserved. */
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 /**
@@ -10,6 +10,8 @@ public enum TokenType {
   QUOTE_CLOSING_SINGLE,
   QUOTE_CLOSING_DOUBLE,
   QUOTE_APOSTROPHE,
+  QUOTE_STRAIGHT_SINGLE,
+  QUOTE_STRAIGHT_DOUBLE,
   QUOTE_PRIME_SINGLE,
   QUOTE_PRIME_DOUBLE,
   TEXT,

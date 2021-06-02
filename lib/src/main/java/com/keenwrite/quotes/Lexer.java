@@ -1,9 +1,8 @@
-/* Copyright 2020-2021 White Magic Software, Ltd. -- All rights reserved. */
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.Iterator;
 
 import static com.keenwrite.quotes.Lexeme.createLexeme;
 import static com.keenwrite.quotes.LexemeType.*;
@@ -13,10 +12,9 @@ import static java.text.CharacterIterator.DONE;
 /**
  * Turns text into words, numbers, punctuation, spaces, and more.
  */
-public class Lexer implements Iterator<Lexeme> {
+public class Lexer  {
 
   private final CharacterIterator mIterator;
-  private Lexeme mLexeme = Lexeme.SOT;
 
   /**
    * Default constructor, no state.
@@ -25,14 +23,8 @@ public class Lexer implements Iterator<Lexeme> {
     mIterator = new StringCharacterIterator( text );
   }
 
-  @Override
-  public boolean hasNext() {
-    return mLexeme.hasNext();
-  }
-
-  @Override
   public Lexeme next() {
-    return mLexeme = parse( mIterator );
+    return parse( mIterator );
   }
 
   /**
@@ -100,6 +92,20 @@ public class Lexer implements Iterator<Lexeme> {
       }
       else if( isWhitespace( curr ) ) {
         lexeme = createLexeme( SPACE, began, i.getIndex() );
+      }
+      else if( curr == '\\' ) {
+        final var next = i.next();
+
+        if( next == '\'' ) {
+          lexeme = createLexeme( ESC_SINGLE, began, i.getIndex() );
+        }
+        else if( next == '\"' ) {
+          lexeme = createLexeme( ESC_DOUBLE, began, i.getIndex() );
+        }
+        else {
+          // Push back the escaped character, which wasn't a straight quote.
+          i.previous();
+        }
       }
       else if( curr != DONE ) {
         lexeme = createLexeme( PUNCT, began, i.getIndex() );

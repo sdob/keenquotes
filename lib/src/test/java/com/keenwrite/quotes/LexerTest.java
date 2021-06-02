@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static com.keenwrite.quotes.Lexeme.EOT;
 import static com.keenwrite.quotes.LexemeType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -53,6 +54,12 @@ class LexerTest {
   }
 
   @Test
+  void test_Lexing_Escapes_EmitEscapedQuotes() {
+    testType( "123\\'456\\\"", NUMBER, ESC_SINGLE, NUMBER, ESC_DOUBLE );
+    testText( "123\\'456\\\"", "123", "\\'", "456", "\\\"" );
+  }
+
+  @Test
   void test_Lexing_Newlines_EmitNewlines() {
     testType( "\r", NEWLINE );
     testType( "\n", NEWLINE );
@@ -63,8 +70,8 @@ class LexerTest {
   }
 
   private void testType( final String actual, final LexemeType... expected ) {
-    testType(
-      actual, ( lexeme, text ) -> lexeme.getType(), Arrays.asList( expected ) );
+    final var list = Arrays.asList( expected );
+    testType( actual, ( lexeme, text ) -> lexeme.getType(), list );
   }
 
   private void testText( final String actual, final String... expected ) {
@@ -78,13 +85,14 @@ class LexerTest {
     final var lexer = new Lexer( text );
     var counter = 0;
 
-    do {
-      final var lexeme = lexer.next();
+    Lexeme lexeme;
+
+    while( (lexeme = lexer.next()) != EOT ) {
       final var expected = elements.get( counter++ );
       final var actual = f.apply( lexeme, text );
+
       assertEquals( expected, actual );
     }
-    while( lexer.hasNext() );
 
     // Ensure all expected values are matched (verify end of text reached).
     assertEquals( elements.size(), counter );
