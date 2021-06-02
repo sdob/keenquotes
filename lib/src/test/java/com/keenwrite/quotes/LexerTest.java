@@ -34,7 +34,7 @@ class LexerTest {
   void test_Lexing_Words_EmitWords() {
     testType( "abc", WORD );
     testType( "abc abc", WORD, SPACE, WORD );
-    testType( "abc123", WORD );
+    testType( "abc123", WORD, NUMBER );
     testType( "-123abc", PUNCT, NUMBER, WORD );
     testType( "abc-o'-abc", WORD, PUNCT, WORD, QUOTE_SINGLE, PUNCT, WORD );
   }

@@ -4,6 +4,9 @@
 She stood 5\'7\".
 She stood 5'7".
 
+\"What?\"
+"What?"
+
 # ########################################################################
 # Primes (single, double)
 # ########################################################################
@@ -26,6 +29,9 @@ What&apos;s this -5.5&Prime; all about?
 
 +7.9'' is weird.
 +7.9&Prime; is weird.
+
+12" record, 5'10" height
+12&Prime; record, 5&prime;10&Prime; height
 
 Use 11.5"x14.25" virtual paper!
 Use 11.5&Prime;x14.25&Prime; virtual paper!
@@ -98,12 +104,6 @@ Took place in &apos;04, yes&apos;m!
 
 '"Trouble's my name."'
 &lsquo;&ldquo;Trouble&apos;s my name.&ldquo;&lsquo;
-
-# ########################################################################
-# Escaped quotes
-# ########################################################################
-\"What?\"
-&ldquo;What?&rdquo;
 
 # ########################################################################
 # Double quotes
@@ -192,9 +192,6 @@ Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 'He's at Sams'
 &lsquo;He&apos; at Sams&rsquo;
 
-\"Hello!\"
-&ldquo;Hello!&rdquo;
-
 ma'am
 ma&apos;am
 
@@ -211,12 +208,12 @@ ma&apos;am
 &lsquo;Oak,&rsquo; &lsquo;elm,&rsquo; and &lsquo;beech&rsquo; are names of trees. So is &lsquo;pine.&rsquo;
 
 'He said, \"I want to go.\"' Were you alive in the 70's?
-&lsquo;He said, &ldquo;I want to go.&rdquo;&rsquo; Were you alive in the 70&apos;s?
+&lsquo;He said, "I want to go."&rsquo; Were you alive in the 70&apos;s?
 
 \"That's a 'magic' sock.\"
-&ldquo;That&apos;s a &lsquo;magic&rsquo; sock.&rdquo;
+"That&apos;s a &lsquo;magic&rsquo; sock."
 
-Website! Company Name, Inc. (\"Company Name\" or \"Company\") recommends reading the following terms and conditions, carefully:
+Website! Company Name, Inc. ("Company Name" or "Company") recommends reading the following terms and conditions, carefully:
 Website! Company Name, Inc. (&ldquo;Company Name&rdquo; or &ldquo;Company&rdquo;) recommends reading the following terms and conditions, carefully:
 
 Website! Company Name, Inc. ('Company Name' or 'Company') recommends reading the following terms and conditions, carefully:
@@ -231,11 +228,8 @@ Workin&apos; hard
 '70s fashion was weird.
 &apos;70s fashion was weird.
 
-12\" record, 5'10\" height
-12&Prime; record, 5&prime;10&Prime; height
-
 Model \"T2000\"
-Model &ldquo;T2000&rdquo;
+Model "T2000"
 
 iPad 3's battery life is not great.
 iPad 3&apos;s battery life is not great.

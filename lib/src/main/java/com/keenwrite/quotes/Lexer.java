@@ -47,7 +47,7 @@ public class Lexer  {
       if( isLetter( curr ) ) {
         isWord = true;
 
-        if( !isLetterOrDigit( peek( i ) ) ) {
+        if( !isLetter( peek( i ) ) ) {
           lexeme = createLexeme( WORD, began, i.getIndex() );
         }
       }

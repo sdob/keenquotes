@@ -70,8 +70,10 @@ public class Parser {
       parse( lexeme, consumer );
     }
 
-    for( final var lex : mLexemes ) {
-      parse( lex, consumer );
+    // Parse the remaining lexemes because the EOT lexeme will terminate the
+    // loop above without having examined the last lexemes.
+    for( int i = 0; i < mLexemes.size(); i++ ) {
+      parse( mLexemes.get( i ), consumer );
     }
 
     // Create/convert a list of all unambiguous quotations.
@@ -85,8 +87,6 @@ public class Parser {
     // for nested sentences.
 
     // Convert remaining single quotes to apostrophes.
-
-
   }
 
   private void parse( final Lexeme lexeme, final Consumer<Token> consumer ) {
