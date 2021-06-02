@@ -70,6 +70,10 @@ public class Parser {
       parse( lexeme, consumer );
     }
 
+    for( final var lex : mLexemes ) {
+      parse( lex, consumer );
+    }
+
     // Create/convert a list of all unambiguous quotations.
     // Let TERM ::= (, | ; | ! | ? | .)
     // Find unambiguous quotations by searching for:
@@ -94,29 +98,43 @@ public class Parser {
 
     if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( WORD ) &&
       lex1.anyType( WORD, PERIOD, NUMBER ) ) {
+      // Examples: y'all, Ph.D.'ll, 20's
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
       flush( mLexemes );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex3.isType( QUOTE_SINGLE ) &&
       "n".equalsIgnoreCase( lex2.toString( mText ) ) ) {
+      // I.e., 'n'
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
     }
     else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_SINGLE ) ) {
-      consumer.accept( new Token( QUOTE_PRIME_SINGLE, lex2 ) );
+      if( lex3.isType( QUOTE_SINGLE ) ) {
+        // E.g., 2''
+        consumer.accept(
+          new Token( QUOTE_PRIME_DOUBLE, lex2.began(), lex3.ended() ) );
+      }
+      else {
+        // E.g., 2'
+        consumer.accept( new Token( QUOTE_PRIME_SINGLE, lex2 ) );
+      }
     }
     else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_DOUBLE ) ) {
+      // E.g., 2"
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
+      // E.g., 'contraction
       beginsUnambiguously( lex2.toString( mText ) ) ) {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
+      // E.g., \'
       consumer.accept( new Token( QUOTE_STRAIGHT_SINGLE, lex1 ) );
     }
     else if( lex1.isType( ESC_DOUBLE ) ) {
-      consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex2 ) );
+      // E.g., \"
+      consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
     }
     else if( lex1.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       mQuotations.push( lex1 );

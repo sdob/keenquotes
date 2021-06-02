@@ -12,7 +12,7 @@ import static com.keenwrite.quotes.LexemeType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests lexing words, numbers, punctuation, spaces, and newlines.
+ * Tests lexing words, numbers, punctuation, spaces, newlines, etc.
  */
 class LexerTest {
   @Test
