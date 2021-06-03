@@ -39,7 +39,7 @@ import java.util.*;
  * @param <E> the type of elements in this collection
  * @since 4.0
  */
-public class CircularFifoQueue<E> extends AbstractCollection<E>
+public final class CircularFifoQueue<E> extends AbstractCollection<E>
   implements Queue<E> {
   /**
    * Underlying storage array.
@@ -73,14 +73,11 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
   /**
    * Constructor that creates a queue with the specified size.
    *
-   * @param size the size of the queue (cannot be changed)
-   * @throws IllegalArgumentException if the size is &lt; 1
+   * @param size Immutable queue size, must be greater than zero.
    */
   @SuppressWarnings( "unchecked" )
   public CircularFifoQueue( final int size ) {
-    if( size <= 0 ) {
-      throw new IllegalArgumentException( "The size must be greater than 0" );
-    }
+    assert size > 0;
 
     elements = (E[]) new Object[ size ];
     maxElements = elements.length;
@@ -181,12 +178,12 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
    */
   public E get( final int index ) {
     final int sz = size();
+
     if( index < 0 || index >= sz ) {
       throw new NoSuchElementException(
         String.format(
-          "The specified index %1$d is outside the available range [0, %2$d)",
-          index,
-          sz ) );
+          "Index %1$d is outside the available range [0, %2$d)",
+          index, sz ) );
     }
 
     final int idx = (start + index) % maxElements;
@@ -209,16 +206,13 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
 
   @Override
   public E poll() {
-    if( isEmpty() ) {
-      return null;
-    }
-    return remove();
+    return isEmpty() ? null : remove();
   }
 
   @Override
   public E element() {
     if( isEmpty() ) {
-      throw new NoSuchElementException( "queue is empty" );
+      throw new NoSuchElementException( "empty queue" );
     }
 
     return peek();
@@ -232,7 +226,7 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
   @Override
   public E remove() {
     if( isEmpty() ) {
-      throw new NoSuchElementException( "queue is empty" );
+      throw new NoSuchElementException( "empty queue" );
     }
 
     final E element = elements[ start ];
@@ -247,8 +241,6 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
     return element;
   }
 
-  //-----------------------------------------------------------------------
-
   /**
    * Increments the internal index.
    *
@@ -256,8 +248,7 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
    * @return the updated index
    */
   private int increment( int index ) {
-    index++;
-    if( index >= maxElements ) {
+    if( ++index >= maxElements ) {
       index = 0;
     }
     return index;
@@ -270,8 +261,7 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
    * @return the updated index
    */
   private int decrement( int index ) {
-    index--;
-    if( index < 0 ) {
+    if( --index < 0 ) {
       index = maxElements - 1;
     }
     return index;
