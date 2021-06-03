@@ -196,7 +196,7 @@ ma&apos;am
 'Twas midnight
 &apos;Twas midnight
 
-\"Hello,\" said the spider. \"'Shelob' is my name.\"
+"Hello," said the spider. "'Shelob' is my name."
 &ldquo;Hello,&rdquo; said the spider. &ldquo;&lsquo;Shelob&rsquo; is my name.&rdquo;
 
 'A', 'B', and 'C' are letters.
@@ -208,8 +208,8 @@ ma&apos;am
 'He said, \"I want to go.\"' Were you alive in the 70's?
 &lsquo;He said, "I want to go."&rsquo; Were you alive in the 70&apos;s?
 
-\"That's a 'magic' sock.\"
-"That&apos;s a &lsquo;magic&rsquo; sock."
+"That's a 'magic' sock."
+&ldquo;That&apos;s a &lsquo;magic&rsquo; sock.&rdquo;
 
 Website! Company Name, Inc. ("Company Name" or "Company") recommends reading the following terms and conditions, carefully:
 Website! Company Name, Inc. (&ldquo;Company Name&rdquo; or &ldquo;Company&rdquo;) recommends reading the following terms and conditions, carefully:
