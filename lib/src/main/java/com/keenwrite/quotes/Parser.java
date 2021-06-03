@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 
 import static com.keenwrite.quotes.Contractions.beginsUnambiguously;
 import static com.keenwrite.quotes.Lexeme.EOT;
+import static com.keenwrite.quotes.Lexeme.SOT;
 import static com.keenwrite.quotes.LexemeType.*;
 import static com.keenwrite.quotes.TokenType.*;
-import static java.util.Comparator.comparingInt;
 
 /**
  * Converts straight double/single quotes and apostrophes to curly equivalents.
@@ -68,16 +68,21 @@ public class Parser {
     Lexeme lexeme;
 
     while( (lexeme = mLexer.next()) != EOT ) {
-      parse( lexeme, consumer );
+      tokenize( lexeme, consumer );
     }
 
-    // Parse the remaining lexemes because the EOT lexeme will terminate the
-    // loop above without having examined the last lexemes.
-    for( int i = 0; i < mLexemes.size(); i++ ) {
-      parse( mLexemes.get( i ), consumer );
-    }
+    // By loop's end, the lexemes list contains tokens for all except the
+    // final two elements (from tokenizing in triplets). Try emitting the last
+    // two unprocessed lexemes as tokens.
+    tokenize( EOT, consumer );
+    tokenize( EOT, consumer );
 
-    mQuotationMarks.sort( comparingInt( lexemes -> lexemes[ 0 ].began() ) );
+    // Lexemes not emitted as tokens may be ambiguous.
+
+    //mQuotationMarks.sort( comparingInt( lexemes -> lexemes[ 0 ].began() ) );
+
+    //
+
 
     for( final var unparsed : mQuotationMarks ) {
       System.out.println( "unparsed: " + unparsed[ 0 ] + " " + unparsed[ 1 ] + " " + unparsed[ 2 ] );
@@ -96,9 +101,12 @@ public class Parser {
     // Convert remaining single quotes to apostrophes.
   }
 
-  private void parse( final Lexeme lexeme, final Consumer<Token> consumer ) {
+  private void tokenize( final Lexeme lexeme, final Consumer<Token> consumer ) {
     mLexemes.add( lexeme );
+    tokenize( consumer );
+  }
 
+  private void tokenize( final Consumer<Token> consumer ) {
     final var lex1 = mLexemes.get( 0 );
     final var lex2 = mLexemes.get( 1 );
     final var lex3 = mLexemes.get( 2 );
@@ -143,14 +151,25 @@ public class Parser {
       // E.g., \"
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
     }
+    else if( lex2.isType( QUOTE_DOUBLE ) &&
+      (lex1.isSot() || lex1.anyType( SPACE, HYPHEN, QUOTE_SINGLE )) &&
+      lex3.anyType( WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
+      // Examples: "'Twas, "", "...
+      consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
+    }
+    else if( lex2.isType( QUOTE_DOUBLE ) &&
+      lex1.anyType( WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_SINGLE ) &&
+      (lex3.anyType( SPACE, HYPHEN, QUOTE_SINGLE, EOL ) || lex3.isEot()) ) {
+      consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
+    }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       mQuotationMarks.add( new Lexeme[]{lex1, lex2, lex3} );
     }
   }
 
   private void flush( final CircularFifoQueue<Lexeme> lexemes ) {
-    lexemes.add( Lexeme.SOT );
-    lexemes.add( Lexeme.SOT );
-    lexemes.add( Lexeme.SOT );
+    lexemes.add( SOT );
+    lexemes.add( SOT );
+    lexemes.add( SOT );
   }
 }

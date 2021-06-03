@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
+import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -19,8 +20,9 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     final var fixer = new SmartQuotes();
-    final var output = fixer.replace( "Didn' get th' message." );
-    System.out.println( output );
+    out.println( fixer.replace( "\"Didn' get th' message.\"" ) );
+    out.println( fixer.replace( "\"John asked, 'What are you, beyond " +
+                                  "\"somethin' shiny?\"'\" said Fred.\n" ) );
   }
 
   @Test

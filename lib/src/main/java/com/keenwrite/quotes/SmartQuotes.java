@@ -8,10 +8,15 @@ import static com.keenwrite.quotes.TokenType.*;
 import static java.util.Collections.sort;
 
 /**
- * Responsible for converting straight quotes into smart quotes.
+ * Responsible for replacing {@link Token} instances with equivalent smart
+ * quotes (or straight quotes).
  */
 public class SmartQuotes {
   private static final Map<TokenType, String> REPLACEMENTS = Map.of(
+    QUOTE_OPENING_SINGLE, "&lsquo;",
+    QUOTE_CLOSING_SINGLE, "&rsquo;",
+    QUOTE_OPENING_DOUBLE, "&ldquo;",
+    QUOTE_CLOSING_DOUBLE, "&rdquo;",
     QUOTE_STRAIGHT_SINGLE, "'",
     QUOTE_STRAIGHT_DOUBLE, "\"",
     QUOTE_APOSTROPHE, "&apos;",
@@ -23,8 +28,10 @@ public class SmartQuotes {
     final var parser = new Parser( text );
     final var tokens = new ArrayList<Token>();
 
-    // Store all parsed quotation marks; the parser may emit them in any order.
+    // Store all parsed quotation marks.
     parser.parse( tokens::add );
+
+    // The parser may emit tokens in any order.
     sort( tokens );
 
     final var result = new StringBuilder( text.length() );

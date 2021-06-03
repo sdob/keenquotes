@@ -6,11 +6,13 @@ public enum LexemeType {
   QUOTE_DOUBLE,
   ESC_SINGLE,
   ESC_DOUBLE,
+  EOL,
+  SPACE,
   WORD,
   NUMBER,
-  NEWLINE,
-  SPACE,
   PUNCT,
+  HYPHEN,
   PERIOD,
+  ELLIPSIS,
   FLAG
 }

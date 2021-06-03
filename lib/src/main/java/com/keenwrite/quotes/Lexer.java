@@ -3,6 +3,7 @@ package com.keenwrite.quotes;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.function.BiFunction;
 
 import static com.keenwrite.quotes.Lexeme.createLexeme;
 import static com.keenwrite.quotes.LexemeType.*;
@@ -12,7 +13,7 @@ import static java.text.CharacterIterator.DONE;
 /**
  * Turns text into words, numbers, punctuation, spaces, and more.
  */
-public class Lexer  {
+public class Lexer {
 
   private final CharacterIterator mIterator;
 
@@ -60,26 +61,28 @@ public class Lexer  {
       else if( curr == '"' ) {
         lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
+      else if( curr == '-' ) {
+        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
+      }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
-        // Tokenize all consecutive number characters at prevent the main
-        // loop from switching back to word tokens.
-        char next;
-
-        do {
-          next = i.next();
-        }
-        while( isDigit( next ) || isNumeric( next ) && isDigit( peek( i ) ) );
-
-        // The loop above will overshoot the number by one character.
-        i.previous();
+        // Parse all consecutive number characters to prevent the main loop
+        // from switching back to word tokens.
+        slurp( i, ( next, ci ) ->
+          isDigit( next ) || isNumeric( next ) && isDigit( peek( ci ) )
+        );
 
         lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
       }
       else if( curr == '.' ) {
-        lexeme = createLexeme( PERIOD, began, i.getIndex() );
+        // Parse all consecutive periods into an ellipsis lexeme. This will
+        // not capture space-separated ellipsis (such as ". . .").
+        lexeme = createLexeme(
+          slurp( i, ( next, ci ) -> next == '.' ) == 1 ? PERIOD : ELLIPSIS,
+          began, i.getIndex()
+        );
       }
       else if( curr == '\r' ) {
-        lexeme = createLexeme( NEWLINE, began, i.getIndex() );
+        lexeme = createLexeme( EOL, began, i.getIndex() );
 
         // Swallow the LF in CRLF; peeking won't work here.
         if( i.next() != '\n' ) {
@@ -88,7 +91,7 @@ public class Lexer  {
         }
       }
       else if( curr == '\n' ) {
-        lexeme = createLexeme( NEWLINE, began, i.getIndex() );
+        lexeme = createLexeme( EOL, began, i.getIndex() );
       }
       else if( isWhitespace( curr ) ) {
         lexeme = createLexeme( SPACE, began, i.getIndex() );
@@ -129,5 +132,30 @@ public class Lexer  {
     final var ch = ci.next();
     ci.previous();
     return ch;
+  }
+
+  /**
+   * Parse all characters that match a given function.
+   *
+   * @param ci The iterator containing characters to parse.
+   * @param f  The function that determines when slurping stops.
+   * @return The number of characters parsed.
+   */
+  private static int slurp(
+    final CharacterIterator ci,
+    final BiFunction<Character, CharacterIterator, Boolean> f ) {
+    char next;
+    int count = 0;
+
+    do {
+      next = ci.next();
+      count++;
+    }
+    while( f.apply( next, ci ) );
+
+    // The loop above will overshoot the number by one character.
+    ci.previous();
+
+    return count;
   }
 }

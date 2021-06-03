@@ -10,11 +10,6 @@ She stood 5'7".
 # ########################################################################
 # Primes (single, double)
 # ########################################################################
-
-# No space after the feet sign.
-It's 4'11" away.
-It&apos;s 4&prime;11&Prime; away.
-
 Alice's friend is 6'3" tall.
 Alice&apos;s friend is 6&prime;3&Prime; tall.
 
@@ -40,6 +35,69 @@ Angular measure 3° 5' 30" means 3 degs, 5 arcmins, & 30 arcsecs.
 Angular measure 3° 5&prime; 30&Prime; means 3 degs, 5 arcmins, & 30 arcsecs.
 
 # ########################################################################
+# Double quotes
+# ########################################################################
+"I am Sam"
+&ldquo;I am Sam&rdquo;
+
+"...even better!"
+&ldquo;...even better!&rdquo;
+
+"It was so," said he.
+&ldquo;It was so,&rdquo; said he.
+
+With "air quotes" in the middle.
+With &ldquo;air quotes&rdquo; in the middle.
+
+With--"air quotes"--and dashes.
+With--&ldquo;air quotes&rdquo;--and dashes.
+
+"Not "quite" what you expected?"
+&ldquo;Not &ldquo;quite&rdquo; what you expected?&rdquo;
+
+"Not all open quotes are closed...
+&ldquo;Not all open quotes are closed...
+
+# ########################################################################
+# Single quotes
+# ########################################################################
+'I am Sam'
+&lsquo;I am Sam&rsquo;
+
+'It was so,' said he.
+&lsquo;It was so,&rsquo; said he.
+
+'...even better!'
+&lsquo;...even better!&rsquo;
+
+With 'quotes' in the middle.
+With &lsquo;quotes&rsquo; in the middle.
+
+With--'imaginary'--dashes.
+With--&lsquo;imaginary&rsquo;--dashes.
+
+'Not 'quite' what you expected?'
+&lsquo;Not &lsquo;quite&rsquo; what you expected?&rsquo;
+
+''Cause I don't like it, 's why,' said Pat.
+&lsquo;&apos;Cause I don't like it, &apos;s why,&rsquo; said Pat.
+
+'It's a beautiful day!'
+&lsquo;It&apos;s a beautiful day!&rsquo;
+
+'He said, "Thinkin'."'
+&lsquo;He said, &ldquo;Thinkin&rsquo;.&rdquo;&rsquo;
+
+"She said, 'Llamas'll languish, they'll--
+&ldquo;She said, &lsquo;Llamas&apos;ll languish, they&apos;ll--
+
+# ########################################################################
+# Possessives
+# ########################################################################
+Sam's Sams' and the Ross's roses' thorns were prickly.
+Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
+
+# ########################################################################
 # Inside contractions (no leading/trailing apostrophes)
 # ########################################################################
 I don't like it: I love's it!
@@ -60,8 +118,8 @@ She&apos;d be coming o&apos;er when the horse&apos;d gone to pasture...
 # ########################################################################
 # Outside contractions (leading and trailing, no middle)
 # ########################################################################
-Salt 'n' vinegar, fish-'n'-chips, sugar 'n' spice!
-Salt &apos;n&apos; vinegar, fish-&apos;n&apos;-chips, sugar &apos;n&apos; spice!
+Salt 'n' vinegar, fish-'n'-chips, sugar 'n spice!
+Salt &apos;n&apos; vinegar, fish-&apos;n&apos;-chips, sugar &apos;n spice!
 
 # ########################################################################
 # Ending contractions (trailing apostrophes)
@@ -106,30 +164,6 @@ Took place in &apos;04, yes&apos;m!
 &lsquo;&ldquo;Trouble&apos;s my name.&ldquo;&lsquo;
 
 # ########################################################################
-# Double quotes
-# ########################################################################
-"I am Sam"
-&ldquo;I am Sam&rdquo;
-
-"...even better!"
-&ldquo;...even better!&rdquo;
-
-"It was so," said he.
-&ldquo;It was so,&rdquo; said he.
-
-"She said, 'Llamas'll languish, they'll--
-&ldquo;She said, &lsquo;Llamas&apos;ll languish, they&apos;ll--
-
-With "air quotes" in the middle.
-With &ldquo;air quotes&rdquo; in the middle.
-
-With--"air quotes"--and dashes.
-With--&ldquo;air quotes&rdquo;--and dashes.
-
-"Not "quite" what you expected?"
-&ldquo;Not &ldquo;quite&rdquo; what you expected?&rdquo;
-
-# ########################################################################
 # Nested quotations
 # ########################################################################
 "'Here I am,' said Sam"
@@ -143,42 +177,6 @@ With--&ldquo;air quotes&rdquo;--and dashes.
 
 "'Twas, t'wasn't thy name, 'twas it?" said Jim "the Barber" Brown.
 &ldquo;&apos;Twas, t&apos;wasn&apos;t thy name, &apos;twas it?&rdquo; said Jim &ldquo;the Barber&rdquo; Brown.
-
-# ########################################################################
-# Single quotes
-# ########################################################################
-'I am Sam'
-&lsquo;I am Sam&rsquo;
-
-'It was so,' said he.
-&lsquo;It was so,&rsquo; said he.
-
-'...even better!'
-&lsquo;...even better!&rsquo;
-
-With 'quotes' in the middle.
-With &lsquo;quotes&rsquo; in the middle.
-
-With--'imaginary'--dashes.
-With--&lsquo;imaginary&rsquo;--dashes.
-
-'Not 'quite' what you expected?'
-&lsquo;Not &lsquo;quite&rsquo; what you expected?&rsquo;
-
-''Cause I don't like it, 's why,' said Pat.
-&lsquo;&apos;Cause I don't like it, &apos;s why,&rsquo; said Pat.
-
-'It's a beautiful day!'
-&lsquo;It&apos;s a beautiful day!&rsquo;
-
-'He said, "Thinkin'."'
-&lsquo;He said, &ldquo;Thinkin&rsquo;.&rdquo;&rsquo;
-
-# ########################################################################
-# Possessives
-# ########################################################################
-Sam's Sams' and the Ross's roses' thorns were prickly.
-Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 
 # ########################################################################
 # Mixed
@@ -237,5 +235,5 @@ iPad 3&apos;s battery life is not great.
 Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
 Book &apos;em, Danno. Rock &apos;n&apos; roll. &apos;Cause &apos;twas the season.
 
-'85 was a good year. (The entire '80s were.)
-&apos;85 was a good year. (The entire &apos;80s were.)
+'27 was a good year. (The entire '20s were.)
+&apos;27 was a good year. (The entire &apos;20s were.)

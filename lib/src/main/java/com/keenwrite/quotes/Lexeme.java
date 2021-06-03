@@ -12,25 +12,20 @@ import static com.keenwrite.quotes.LexemeType.FLAG;
 public class Lexeme implements Comparable<Lexeme> {
   /**
    * Denotes there are no more lexemes: the end of text (EOT) has been reached.
+   * The beginning index differentiates between EOT and SOT.
    */
-  public static final Lexeme EOT = new Lexeme();
+  public static final Lexeme EOT = new Lexeme( FLAG, -1, -2 );
 
   /**
-   * Denotes parsing at the start of text. This is useful to avoid branching
-   * conditions while iterating.
+   * Denotes parsing at the start of text (SOT). This is useful to avoid
+   * branching conditions while iterating. The beginning index differentiates
+   * between EOT and SOT.
    */
-  public static final Lexeme SOT = new Lexeme();
+  public static final Lexeme SOT = new Lexeme( FLAG, 0, -2 );
 
   private final LexemeType mType;
   private final int mBegan;
   private final int mEnded;
-
-  /**
-   * Create a flag that indicates a stream marker (start or end).
-   */
-  private Lexeme() {
-    this( FLAG, -1, -1 );
-  }
 
   /**
    * Create a lexeme that represents a section of the text.
@@ -76,6 +71,14 @@ public class Lexeme implements Comparable<Lexeme> {
 
   int ended() {
     return mEnded;
+  }
+
+  boolean isEot() {
+    return mBegan == -1;
+  }
+
+  boolean isSot() {
+    return mBegan == 0;
   }
 
   @Override
