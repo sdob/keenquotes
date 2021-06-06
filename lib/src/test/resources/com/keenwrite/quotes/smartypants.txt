@@ -52,9 +52,6 @@ With &ldquo;air quotes&rdquo; in the middle.
 With--"air quotes"--and dashes.
 With--&ldquo;air quotes&rdquo;--and dashes.
 
-"Not "quite" what you expected?"
-&ldquo;Not &ldquo;quite&rdquo; what you expected?&rdquo;
-
 "Not all open quotes are closed...
 &ldquo;Not all open quotes are closed...
 
@@ -76,20 +73,11 @@ With &lsquo;quotes&rsquo; in the middle.
 With--'imaginary'--dashes.
 With--&lsquo;imaginary&rsquo;--dashes.
 
-'Not 'quite' what you expected?'
-&lsquo;Not &lsquo;quite&rsquo; what you expected?&rsquo;
-
 ''Cause I don't like it, 's why,' said Pat.
 &lsquo;&apos;Cause I don't like it, &apos;s why,&rsquo; said Pat.
 
 'It's a beautiful day!'
 &lsquo;It&apos;s a beautiful day!&rsquo;
-
-'He said, "Thinkin'."'
-&lsquo;He said, &ldquo;Thinkin&rsquo;.&rdquo;&rsquo;
-
-"She said, 'Llamas'll languish, they'll--
-&ldquo;She said, &lsquo;Llamas&apos;ll languish, they&apos;ll--
 
 # ########################################################################
 # Possessives
@@ -184,8 +172,8 @@ Took place in &apos;04, yes&apos;m!
 "I heard she said, 'That's Sam's'," said the Sams' cat.
 &ldquo;I heard she said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
 
-"'Janes' said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
-&ldquo;&lsquo;Janes&apos; said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
+"'Janes said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
+&ldquo;&lsquo;Janes said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
 
 'He's at Sams'
 &lsquo;He&apos; at Sams&rsquo;
@@ -202,7 +190,7 @@ ma&apos;am
 'A', 'B', and 'C' are letters.
 &lsquo;A&rsquo; &lsquo;B&rsquo; and &lsquo;C&rsquo; are letters.
 
-'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'
+'Oak,' 'elm,'and 'beech' are names of trees. So is 'pine.'
 &lsquo;Oak,&rsquo; &lsquo;elm,&rsquo; and &lsquo;beech&rsquo; are names of trees. So is &lsquo;pine.&rsquo;
 
 'He said, \"I want to go.\"' Were you alive in the 70's?
@@ -210,6 +198,9 @@ ma&apos;am
 
 "That's a 'magic' sock."
 &ldquo;That&apos;s a &lsquo;magic&rsquo; sock.&rdquo;
+
+'That's a "magic" sock.'
+&lsquo;That&apos;s a &ldquo;magic&rdquo; sock.&rsquo;
 
 Website! Company Name, Inc. ("Company Name" or "Company") recommends reading the following terms and conditions, carefully:
 Website! Company Name, Inc. (&ldquo;Company Name&rdquo; or &ldquo;Company&rdquo;) recommends reading the following terms and conditions, carefully:
@@ -219,6 +210,12 @@ Website! Company Name, Inc. (&lsquo;Company Name&rsquo; or &lsquo;Company&rsquo;
 
 Workin' hard
 Workin&apos; hard
+
+'He said, "Thinkin'."'
+&lsquo;He said, &ldquo;Thinkin&rsquo;.&rdquo;&rsquo;
+
+"She said, 'Llamas'll languish, they'll--
+&ldquo;She said, &lsquo;Llamas&apos;ll languish, they&apos;ll--
 
 '70s are my favorite numbers,' she said.
 &lsquo;70s are my favorite numbers,&rsquo; she said.

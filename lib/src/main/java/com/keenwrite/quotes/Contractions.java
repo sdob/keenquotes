@@ -15,11 +15,17 @@ public class Contractions {
    * opening single quote.
    */
   private static final Set<String> BEGAN_UNAMBIGUOUS = Set.of(
-    "aporth", "boutcha", "boutchu", "cept", "dillo", "e'll", "fraid",
-    "gainst", "n", "neath", "nother", "onna", "onna'", "pon", "s", "sblood",
-    "scuse", "sfar", "sfoot", "t", "taint", "tain't", "til", "tis", "tisn't",
-    "tshall", "twas", "twasn't", "tween", "twere", "tweren't", "twixt",
-    "twon't", "twou'd", "twou'dn't", "twould", "twouldn't", "ve"
+//    "aporth", "boutcha", "boutchu", "cept", "dillo", "e", "e'll", "e's",
+//    "fraid", "gainst", "n", "neath", "nother", "onna", "onna'", "pon", "s",
+//    "sblood", "scuse", "sfar", "sfoot", "t", "taint", "tain't", "til", "tis",
+//    "tisn't", "tshall", "twas", "twasn't", "tween", "twere", "tweren't",
+//    "twixt", "twon't", "twou'd", "twou'dn't", "twould", "twouldn't", "ve"
+
+    "aporth", "boutcha", "boutchu", "cept", "dillo", "fraid", "gainst",
+    "n", "neath", "nother", "onna", "onna'", "pon", "s", "sblood", "scuse",
+    "sfar", "sfoot", "t", "taint", "tain", "til", "tis", "tisn", "tshall",
+    "twas", "twasn", "tween", "twere", "tweren", "twixt", "twon", "twou",
+    "twould", "twouldn", "ve"
   );
 
   /**
@@ -27,8 +33,54 @@ public class Contractions {
    * contraction or a word that stands alone beside an opening single quote.
    */
   private static final Set<String> BEGAN_AMBIGUOUS = Set.of(
-    "bout", "choo", "ere", "e", "e's", "fro", "ho", "kay", "lo",
-    "re", "sup", "twill", "um", "zat"
+    // about|boxing match
+    "bout",
+    // what you|choo choo train
+    "choo",
+    // he|e pluribus unum
+    "e",
+    // them|emily
+    "em",
+    // here|earlier
+    "ere",
+    // afro|to and fro
+    "fro",
+    // whore|stop
+    "ho",
+    // okay|letter K
+    "kay",
+    // lo|lo and behold
+    "lo",
+    // are|regarding
+    "re",
+    // what's up|to sup
+    "sup",
+    // it will|twill fabric
+    "twill",
+    // them|utterance
+    "um",
+    // is that|Iranian village
+    "zat"
+  );
+
+  private static final Set<String> ENDED_AMBIGUOUS = Set.of(
+    // he|a
+    "a",
+    // and|an
+    "an",
+    // give|martial arts garment
+    "gi",
+    // in|I
+    "i",
+    // of|letter o
+    "o"
+  );
+
+  private static final Set<String> ENDED_UNAMBIGUOUS = Set.of(
+    // old
+    "ol",
+    // the
+    "th"
   );
 
   /**
@@ -41,7 +93,7 @@ public class Contractions {
    * @return {@code true} when the given word is in the set of unambiguous
    * contractions.
    */
-  public static boolean beginsUnambiguously( final String word ) {
+  public static boolean contractionBeganUnambiguously( final String word ) {
     assert word != null;
     return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
@@ -55,8 +107,18 @@ public class Contractions {
    * @return {@code true} when the given word is in the set of ambiguous
    * contractions.
    */
-  public static boolean beginsAmbiguously( final String word ) {
+  public static boolean contractionBeganAmbiguously( final String word ) {
     assert word != null;
     return BEGAN_AMBIGUOUS.contains( word.toLowerCase() );
+  }
+
+  public static boolean contractionEndedAmbiguously( final String word ) {
+    return ENDED_AMBIGUOUS.contains( word ) || word.endsWith( "s" ) ||
+      word.endsWith( "n" ) || word.endsWith( "z" ) ||
+      word.endsWith( "x" ) || word.endsWith( "ch" );
+  }
+
+  public static boolean contractionEndedUnambiguously( final String word ) {
+    return ENDED_UNAMBIGUOUS.contains( word );
   }
 }

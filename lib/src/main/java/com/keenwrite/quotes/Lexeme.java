@@ -31,6 +31,10 @@ public class Lexeme implements Comparable<Lexeme> {
    * Create a lexeme that represents a section of the text.
    */
   private Lexeme( final LexemeType type, final int began, final int ended ) {
+    assert type != null;
+    assert began >= 0 || ended == -2;
+    assert ended >= began || ended == -2;
+
     mType = type;
     mBegan = began;
     mEnded = ended + 1;

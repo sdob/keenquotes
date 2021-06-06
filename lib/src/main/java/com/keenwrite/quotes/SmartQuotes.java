@@ -38,6 +38,8 @@ public class SmartQuotes {
     var position = 0;
 
     for( final var token : tokens ) {
+      assert position <= token.began();
+
       result.append( text, position, token.began() );
       result.append( REPLACEMENTS.get( token.getType() ) );
 

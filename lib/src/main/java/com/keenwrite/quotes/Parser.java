@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.keenwrite.quotes.Contractions.beginsUnambiguously;
+import static com.keenwrite.quotes.Contractions.*;
 import static com.keenwrite.quotes.Lexeme.EOT;
 import static com.keenwrite.quotes.Lexeme.SOT;
 import static com.keenwrite.quotes.LexemeType.*;
@@ -26,7 +26,8 @@ import static com.keenwrite.quotes.TokenType.*;
  * Next, handle single and double quotes as primes and double primes:
  * <ol>
  *   <li>Single prime (NUMBER ') -- 2'</li>
- *   <li>Double prime (NUMBER ") -- 7.5"</li>
+ *   <li>Double prime (NUMBER ") -- 2"</li>
+ *   <li>Double prime (NUMBER '') -- 2''</li>
  * </ol>
  * Next, handle balanced double quotes:
  * <ol>
@@ -35,6 +36,54 @@ import static com.keenwrite.quotes.TokenType.*;
  * </ol>
  */
 public class Parser {
+  /**
+   * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LEADING_OPENING_QUOTE_SINGLE =
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE};
+
+  /**
+   * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] TRAILING_OPENING_QUOTE_SINGLE =
+    new LexemeType[]{WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+
+  /**
+   * Single quotes preceded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LEADING_CLOSING_QUOTE_SINGLE =
+    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_DOUBLE};
+
+  /**
+   * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] TRAILING_CLOSING_QUOTE_SINGLE =
+    new LexemeType[]{SPACE, HYPHEN, EOL};
+
+  /**
+   * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LEADING_OPENING_QUOTE_DOUBLE =
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE};
+
+  /**
+   * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] TRAILING_OPENING_QUOTE_DOUBLE =
+    new LexemeType[]{WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+
+  /**
+   * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LEADING_CLOSING_QUOTE_DOUBLE =
+    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_SINGLE};
+
+  /**
+   * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] TRAILING_CLOSING_QUOTE_DOUBLE =
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, EOL};
+
   /**
    * The text to parse. A reference is required as a minor optimization in
    * memory and speed: the lexer records integer offsets, rather than new
@@ -72,33 +121,70 @@ public class Parser {
     }
 
     // By loop's end, the lexemes list contains tokens for all except the
-    // final two elements (from tokenizing in triplets). Try emitting the last
-    // two unprocessed lexemes as tokens.
+    // final two elements (from tokenizing in triplets). Tokenize the remaining
+    // unprocessed lexemes.
     tokenize( EOT, consumer );
     tokenize( EOT, consumer );
 
-    // Lexemes not emitted as tokens may be ambiguous.
+    // Some non-emitted tokenized lexemes may be ambiguous.
+    final var ambiguousOpeningQuotes = new ArrayList<Lexeme>( 16 );
+    final var ambiguousClosingQuotes = new ArrayList<Lexeme>( 16 );
 
-    //mQuotationMarks.sort( comparingInt( lexemes -> lexemes[ 0 ].began() ) );
+    // Count the number of ambiguous and non-ambiguous open single quotes.
+    for( var i = mQuotationMarks.iterator(); i.hasNext(); ) {
+      final var quotes = i.next();
+      final var lex1 = quotes[ 0 ];
+      final var lex2 = quotes[ 1 ];
+      final var lex3 = quotes[ 2 ];
 
-    //
+      if( lex2.isType( QUOTE_SINGLE ) ) {
+        final var word1 = lex1 == SOT ? "" : lex1.toString( mText );
+        final var word3 = lex3 == EOT ? "" : lex3.toString( mText );
 
-
-    for( final var unparsed : mQuotationMarks ) {
-      System.out.println( "unparsed: " + unparsed[ 0 ] + " " + unparsed[ 1 ] + " " + unparsed[ 2 ] );
+        if( contractionBeganAmbiguously( word3 ) ) {
+          // The contraction is uncertain until closing quote is found that
+          // balances this single quote.
+          ambiguousOpeningQuotes.add( lex2 );
+        }
+        else if( contractionBeganUnambiguously( word3 ) ) {
+          // The quote mark forms a word that does not stand alone from its
+          // contraction. For example, twas is not a word: it's 'twas.
+          consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+          i.remove();
+        }
+        else if( contractionEndedAmbiguously( word1 ) ) {
+          ambiguousClosingQuotes.add( lex2 );
+        }
+        else if( contractionEndedUnambiguously( word1 ) ) {
+          consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+          i.remove();
+        }
+        else if( (lex1.isSot() || lex1.anyType( LEADING_OPENING_QUOTE_SINGLE ))
+          && lex3.anyType( TRAILING_OPENING_QUOTE_SINGLE ) ) {
+          consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
+        }
+        else if( lex1.anyType( LEADING_CLOSING_QUOTE_SINGLE ) &&
+          (lex3.isEot() || lex3.anyType( TRAILING_CLOSING_QUOTE_SINGLE )) ) {
+          consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+        }
+      }
     }
 
-    // Create/convert a list of all unambiguous quotations.
-    // Let TERM ::= (, | ; | ! | ? | .)
-    // Find unambiguous quotations by searching for:
-    //   ' WORD ('* SPACE+ WORD)* TERM '
-    // In other words, when a ' WORD is encountered, push the ' onto a stack.
-    // If ' WORD is encountered, pop the stack and push the new ' onto it.
-    // If TERM ' is encountered, push the new ' onto it.
-    // This algorithm may have to push " WORD and " TERM as well, to account
-    // for nested sentences.
+    if( ambiguousOpeningQuotes.size() == 0 ) {
+      ambiguousClosingQuotes.forEach(
+        lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
+      );
+    }
+    else {
+      System.out.println( "ambig opening: " + ambiguousOpeningQuotes.size() );
+      System.out.println( "ambig closing: " + ambiguousClosingQuotes.size() );
 
-    // Convert remaining single quotes to apostrophes.
+      // No opening quotes, then there are no closing quotes, which
+      // means the remaining single quotes are all apostrophes.
+      if( ambiguousOpeningQuotes == ambiguousClosingQuotes ) {
+        System.out.println( "MATCHING OPENING/CLOSING SINGLE QUOTES" );
+      }
+    }
   }
 
   private void tokenize( final Lexeme lexeme, final Consumer<Token> consumer ) {
@@ -140,7 +226,7 @@ public class Parser {
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
       // E.g., 'twas
-      beginsUnambiguously( lex2.toString( mText ) ) ) {
+      contractionBeganUnambiguously( lex2.toString( mText ) ) ) {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
@@ -152,14 +238,14 @@ public class Parser {
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      (lex1.isSot() || lex1.anyType( SPACE, HYPHEN, QUOTE_SINGLE )) &&
-      lex3.anyType( WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
+      (lex1.isSot() || lex1.anyType( LEADING_OPENING_QUOTE_DOUBLE )) &&
+      lex3.anyType( TRAILING_OPENING_QUOTE_DOUBLE ) ) {
       // Examples: "'Twas, "", "...
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      lex1.anyType( WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_SINGLE ) &&
-      (lex3.anyType( SPACE, HYPHEN, QUOTE_SINGLE, EOL ) || lex3.isEot()) ) {
+      lex1.anyType( LEADING_CLOSING_QUOTE_DOUBLE ) &&
+      (lex3.isEot() || lex3.anyType( TRAILING_CLOSING_QUOTE_DOUBLE )) ) {
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {

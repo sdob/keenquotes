@@ -21,6 +21,14 @@ public class SmartQuotesTest {
   public void test_parse_SingleLine_Parsed() {
     final var fixer = new SmartQuotes();
     out.println( fixer.replace( "\"Didn' get th' message.\"" ) );
+
+    out.println( "-------" );
+
+    out.println( fixer.replace( "'Bout that time I says, 'Boys! I been " +
+                                  "thinkin' 'bout th' Universe.'"));
+
+    out.println( "-------" );
+
     out.println( fixer.replace( "\"John asked, 'What are you, beyond " +
                                   "\"somethin' shiny?\"'\" said Fred.\n" ) );
   }
@@ -51,6 +59,8 @@ public class SmartQuotesTest {
         if( expected.isBlank() ) {
           expected = line;
         }
+
+        System.out.println( "EXPECT:" + expected );
 
         final var actual = parser.apply( testLine );
         assertEquals( expected, actual );
