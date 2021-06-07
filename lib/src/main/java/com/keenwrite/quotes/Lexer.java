@@ -110,6 +110,12 @@ public class Lexer {
           i.previous();
         }
       }
+      else if( curr == '(' || curr == '{' || curr == '[' ) {
+        lexeme = createLexeme( OPENING_GROUP, began, i.getIndex() );
+      }
+      else if( curr == ')' || curr == '}' || curr == ']' ) {
+        lexeme = createLexeme( CLOSING_GROUP, began, i.getIndex() );
+      }
       else if( curr != DONE ) {
         lexeme = createLexeme( PUNCT, began, i.getIndex() );
       }

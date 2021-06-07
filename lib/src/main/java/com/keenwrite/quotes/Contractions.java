@@ -94,7 +94,6 @@ public class Contractions {
    */
   public static boolean contractionBeganUnambiguously( final String word ) {
     assert word != null;
-
     return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
 
@@ -109,13 +108,11 @@ public class Contractions {
    */
   public static boolean contractionBeganAmbiguously( final String word ) {
     assert word != null;
-
     return BEGAN_AMBIGUOUS.contains( word.toLowerCase() );
   }
 
   public static boolean contractionEndedAmbiguously( final String word ) {
     assert word != null;
-
     final var check = word.toLowerCase();
 
     return ENDED_AMBIGUOUS.contains( check ) || check.endsWith( "s" ) ||
@@ -125,7 +122,6 @@ public class Contractions {
 
   public static boolean contractionEndedUnambiguously( final String word ) {
     assert word != null;
-
     return ENDED_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
 }

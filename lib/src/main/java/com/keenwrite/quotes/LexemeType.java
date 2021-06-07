@@ -11,6 +11,8 @@ public enum LexemeType {
   WORD,
   NUMBER,
   PUNCT,
+  OPENING_GROUP,
+  CLOSING_GROUP,
   HYPHEN,
   PERIOD,
   ELLIPSIS,

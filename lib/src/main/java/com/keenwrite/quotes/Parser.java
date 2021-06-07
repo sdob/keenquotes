@@ -40,7 +40,7 @@ public class Parser {
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, OPENING_GROUP};
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -58,13 +58,13 @@ public class Parser {
    * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, EOL};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, CLOSING_GROUP, EOL};
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, OPENING_GROUP};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -82,7 +82,7 @@ public class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, EOL};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, CLOSING_GROUP, EOL};
 
   /**
    * The text to parse. A reference is required as a minor optimization in
@@ -96,6 +96,18 @@ public class Parser {
   private final List<Lexeme[]> mQuotationMarks = new ArrayList<>();
   private final CircularFifoQueue<Lexeme> mLexemes =
     new CircularFifoQueue<>( 3 );
+
+  /**
+   * Incremented for each opening single quote emitted. Used to help resolve
+   * ambiguities when single quote marks are balanced.
+   */
+  private int mOpeningSingleQuote;
+
+  /**
+   * Incremented for each closing single quote emitted. Used to help resolve
+   * ambiguities when single quote marks are balanced.
+   */
+  private int mClosingSingleQuote;
 
   public Parser( final String text ) {
     mText = text;
@@ -170,15 +182,17 @@ public class Parser {
         }
         else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
           && lex3.anyType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
-          resolvedLeadingQuotes++;
           consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
           i.remove();
+          resolvedLeadingQuotes++;
+          mOpeningSingleQuote++;
         }
         else if( lex1.anyType( LEADING_QUOTE_CLOSING_SINGLE ) &&
           (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_SINGLE )) ) {
-          resolvedLaggingQuotes++;
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
           i.remove();
+          resolvedLaggingQuotes++;
+          mClosingSingleQuote++;
         }
         else if( lex3.isType( NUMBER ) ) {
           // E.g., '04
@@ -189,14 +203,14 @@ public class Parser {
 
     System.out.println( "ambig leading: " + ambiguousLeadingQuotes.size() );
     System.out.println( "ambig lagging: " + ambiguousLaggingQuotes.size() );
-    System.out.println( "unambig leading: " + resolvedLeadingQuotes );
-    System.out.println( "unambig lagging: " + resolvedLaggingQuotes );
+    System.out.println( "resolv leading: " + resolvedLeadingQuotes );
+    System.out.println( "resolv lagging: " + resolvedLaggingQuotes );
 
     if( resolvedLeadingQuotes == 1 && resolvedLaggingQuotes == 0 ) {
       if( ambiguousLeadingQuotes.size() == 0 && ambiguousLaggingQuotes.size() == 1 ) {
-        consumer.accept(
-          new Token( QUOTE_CLOSING_SINGLE, ambiguousLaggingQuotes.get( 0 ) )
-        );
+        final var balanced = mClosingSingleQuote - mOpeningSingleQuote == 0;
+        final var quote = balanced ? QUOTE_APOSTROPHE : QUOTE_CLOSING_SINGLE;
+        consumer.accept( new Token( quote, ambiguousLaggingQuotes.get( 0 ) ) );
       }
     }
     else if( ambiguousLeadingQuotes.size() > 0 && ambiguousLaggingQuotes.size() == 0 ) {
@@ -276,17 +290,30 @@ public class Parser {
     else if( lex1.isType( ESC_DOUBLE ) ) {
       // E.g., \"
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
+
+      if( lex2.isType( QUOTE_SINGLE ) &&
+        (lex3.isEot() || lex3.anyType( SPACE, HYPHEN, EOL )) ) {
+        consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+        mClosingSingleQuote++;
+      }
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_DOUBLE )) &&
       lex3.anyType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
-      // Examples: "'Twas, "", "...
+      // Examples: "", "..., "word, ---"word
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       lex1.anyType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
       (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
+      // E.g., ..."', word"', ?"'
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
+    }
+    else if( lex1.isType( QUOTE_SINGLE ) &&
+      lex2.anyType( PUNCT, PERIOD ) && lex3.isType( QUOTE_DOUBLE ) ) {
+      // E.g., '," (contraction ruled out from previous conditionals)
+      consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex1 ) );
+      mClosingSingleQuote++;
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       mQuotationMarks.add( new Lexeme[]{lex1, lex2, lex3} );

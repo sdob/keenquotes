@@ -19,16 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
-    out.println( SmartQuotes.replace( "Took place in '04, yes'm!"));
-
-    out.println( "-------" );
-    out.println( SmartQuotes.replace( "'Bout that time I says, 'Boys! I been " +
-                                  "thinkin' 'bout th' Universe.'"));
-
-    out.println( "-------" );
-
-    out.println( SmartQuotes.replace( "\"John asked, 'What are you, beyond " +
-                                  "\"somethin' shiny?\"'\" said Fred.\n" ) );
+    out.println( SmartQuotes.replace(
+      "'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'" )
+    );
   }
 
   @Test
