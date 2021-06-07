@@ -74,7 +74,7 @@ With--'imaginary'--dashes.
 With--&lsquo;imaginary&rsquo;--dashes.
 
 ''Cause I don't like it, 's why,' said Pat.
-&lsquo;&apos;Cause I don't like it, &apos;s why,&rsquo; said Pat.
+&lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
 
 'It's a beautiful day!'
 &lsquo;It&apos;s a beautiful day!&rsquo;
@@ -128,28 +128,13 @@ Took place in '04, yes'm!
 Took place in &apos;04, yes&apos;m!
 
 # ########################################################################
-# Backticks (left and right double quotes)
-# ########################################################################
-``I am Sam''
-&ldquo;I am Sam&rdquo;
-
-``Sam's away today''
-&ldquo;Sam&apos;s away today&rdquo;
-
-``Sam's gone!
-&ldquo;Sam&apos;s gone!
-
-``5'10" tall 'e was!''
-&ldquo;5&prime;10&Prime; tall &apos;e was!&rdquo;
-
-# ########################################################################
 # Consecutive quotes
 # ########################################################################
 "'I'm trouble.'"
 &ldquo;&lsquo;I&apos;m trouble.&rsquo;&rdquo;
 
 '"Trouble's my name."'
-&lsquo;&ldquo;Trouble&apos;s my name.&ldquo;&lsquo;
+&lsquo;&ldquo;Trouble&apos;s my name.&rdquo;&rsquo;
 
 # ########################################################################
 # Nested quotations
@@ -158,10 +143,10 @@ Took place in &apos;04, yes&apos;m!
 &ldquo;&lsquo;Here I am,&rsquo; said Sam&rdquo;
 
 '"Here I am," said Sam'
-&lsquo;&ldquo;Here I am,&rdquo;, said Sam&rsquo;
+&lsquo;&ldquo;Here I am,&rdquo; said Sam&rsquo;
 
 'Hello, "Dr. Brown," what's your real name?'
-&lsquo;Hello, &ldquo;Dr. Brown,&rdquo; what's your real name?&rsquo;
+&lsquo;Hello, &ldquo;Dr. Brown,&rdquo; what&apos;s your real name?&rsquo;
 
 "'Twas, t'wasn't thy name, 'twas it?" said Jim "the Barber" Brown.
 &ldquo;&apos;Twas, t&apos;wasn&apos;t thy name, &apos;twas it?&rdquo; said Jim &ldquo;the Barber&rdquo; Brown.
@@ -217,8 +202,8 @@ Workin&apos; hard
 "She said, 'Llamas'll languish, they'll--
 &ldquo;She said, &lsquo;Llamas&apos;ll languish, they&apos;ll--
 
-'70s are my favorite numbers,' she said.
-&lsquo;70s are my favorite numbers,&rsquo; she said.
+'The 70s are my favorite numbers,' she said.
+&lsquo;The 70s are my favorite numbers,&rsquo; she said.
 
 '70s fashion was weird.
 &apos;70s fashion was weird.
@@ -231,6 +216,3 @@ iPad 3&apos;s battery life is not great.
 
 Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
 Book &apos;em, Danno. Rock &apos;n&apos; roll. &apos;Cause &apos;twas the season.
-
-'27 was a good year. (The entire '20s were.)
-&apos;27 was a good year. (The entire &apos;20s were.)

@@ -19,24 +19,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
-    final var fixer = new SmartQuotes();
-    out.println( fixer.replace( "\"Didn' get th' message.\"" ) );
+    out.println( SmartQuotes.replace( "Took place in '04, yes'm!"));
 
     out.println( "-------" );
-
-    out.println( fixer.replace( "'Bout that time I says, 'Boys! I been " +
+    out.println( SmartQuotes.replace( "'Bout that time I says, 'Boys! I been " +
                                   "thinkin' 'bout th' Universe.'"));
 
     out.println( "-------" );
 
-    out.println( fixer.replace( "\"John asked, 'What are you, beyond " +
+    out.println( SmartQuotes.replace( "\"John asked, 'What are you, beyond " +
                                   "\"somethin' shiny?\"'\" said Fred.\n" ) );
   }
 
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    final var fixer = new SmartQuotes();
-    testParser( fixer::replace );
+    testParser( SmartQuotes::replace );
   }
 
   public void testParser( final Function<String, String> parser )
@@ -63,6 +60,7 @@ public class SmartQuotesTest {
         System.out.println( "EXPECT:" + expected );
 
         final var actual = parser.apply( testLine );
+        System.out.println( "ACTUAL:" + actual );
         assertEquals( expected, actual );
 
         testLine = "";

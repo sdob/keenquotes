@@ -39,49 +39,49 @@ public class Parser {
   /**
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LEADING_OPENING_QUOTE_SINGLE =
+  private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
     new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE};
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] TRAILING_OPENING_QUOTE_SINGLE =
-    new LexemeType[]{WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+  private static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
+    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
 
   /**
    * Single quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LEADING_CLOSING_QUOTE_SINGLE =
+  private static final LexemeType[] LEADING_QUOTE_CLOSING_SINGLE =
     new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_DOUBLE};
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] TRAILING_CLOSING_QUOTE_SINGLE =
-    new LexemeType[]{SPACE, HYPHEN, EOL};
+  private static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, EOL};
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LEADING_OPENING_QUOTE_DOUBLE =
+  private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
     new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] TRAILING_OPENING_QUOTE_DOUBLE =
+  private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
     new LexemeType[]{WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LEADING_CLOSING_QUOTE_DOUBLE =
+  private static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
     new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_SINGLE};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] TRAILING_CLOSING_QUOTE_DOUBLE =
+  private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
     new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, EOL};
 
   /**
@@ -127,8 +127,10 @@ public class Parser {
     tokenize( EOT, consumer );
 
     // Some non-emitted tokenized lexemes may be ambiguous.
-    final var ambiguousOpeningQuotes = new ArrayList<Lexeme>( 16 );
-    final var ambiguousClosingQuotes = new ArrayList<Lexeme>( 16 );
+    final var ambiguousLeadingQuotes = new ArrayList<Lexeme>( 16 );
+    final var ambiguousLaggingQuotes = new ArrayList<Lexeme>( 16 );
+    var resolvedLeadingQuotes = 0;
+    var resolvedLaggingQuotes = 0;
 
     // Count the number of ambiguous and non-ambiguous open single quotes.
     for( var i = mQuotationMarks.iterator(); i.hasNext(); ) {
@@ -142,9 +144,16 @@ public class Parser {
         final var word3 = lex3 == EOT ? "" : lex3.toString( mText );
 
         if( contractionBeganAmbiguously( word3 ) ) {
-          // The contraction is uncertain until closing quote is found that
-          // balances this single quote.
-          ambiguousOpeningQuotes.add( lex2 );
+          // E.g., ''Cause
+          if( lex1.isType( QUOTE_SINGLE ) ) {
+            consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+            i.remove();
+          }
+          else {
+            // The contraction is uncertain until a closing quote is found that
+            // balances this single quote.
+            ambiguousLeadingQuotes.add( lex2 );
+          }
         }
         else if( contractionBeganUnambiguously( word3 ) ) {
           // The quote mark forms a word that does not stand alone from its
@@ -153,37 +162,61 @@ public class Parser {
           i.remove();
         }
         else if( contractionEndedAmbiguously( word1 ) ) {
-          ambiguousClosingQuotes.add( lex2 );
+          ambiguousLaggingQuotes.add( lex2 );
         }
         else if( contractionEndedUnambiguously( word1 ) ) {
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
         }
-        else if( (lex1.isSot() || lex1.anyType( LEADING_OPENING_QUOTE_SINGLE ))
-          && lex3.anyType( TRAILING_OPENING_QUOTE_SINGLE ) ) {
+        else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
+          && lex3.anyType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
+          resolvedLeadingQuotes++;
           consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
+          i.remove();
         }
-        else if( lex1.anyType( LEADING_CLOSING_QUOTE_SINGLE ) &&
-          (lex3.isEot() || lex3.anyType( TRAILING_CLOSING_QUOTE_SINGLE )) ) {
+        else if( lex1.anyType( LEADING_QUOTE_CLOSING_SINGLE ) &&
+          (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_SINGLE )) ) {
+          resolvedLaggingQuotes++;
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+          i.remove();
+        }
+        else if( lex3.isType( NUMBER ) ) {
+          // E.g., '04
+          ambiguousLeadingQuotes.add( lex2 );
         }
       }
     }
 
-    if( ambiguousOpeningQuotes.size() == 0 ) {
-      ambiguousClosingQuotes.forEach(
+    System.out.println( "ambig leading: " + ambiguousLeadingQuotes.size() );
+    System.out.println( "ambig lagging: " + ambiguousLaggingQuotes.size() );
+    System.out.println( "unambig leading: " + resolvedLeadingQuotes );
+    System.out.println( "unambig lagging: " + resolvedLaggingQuotes );
+
+    if( resolvedLeadingQuotes == 1 && resolvedLaggingQuotes == 0 ) {
+      if( ambiguousLeadingQuotes.size() == 0 && ambiguousLaggingQuotes.size() == 1 ) {
+        consumer.accept(
+          new Token( QUOTE_CLOSING_SINGLE, ambiguousLaggingQuotes.get( 0 ) )
+        );
+      }
+    }
+    else if( ambiguousLeadingQuotes.size() > 0 && ambiguousLaggingQuotes.size() == 0 ) {
+      // If there are no ambiguous lagging quotes then all ambiguous leading
+      // quotes must be contractions.
+      ambiguousLeadingQuotes.forEach(
         lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
       );
     }
-    else {
-      System.out.println( "ambig opening: " + ambiguousOpeningQuotes.size() );
-      System.out.println( "ambig closing: " + ambiguousClosingQuotes.size() );
-
-      // No opening quotes, then there are no closing quotes, which
-      // means the remaining single quotes are all apostrophes.
-      if( ambiguousOpeningQuotes == ambiguousClosingQuotes ) {
-        System.out.println( "MATCHING OPENING/CLOSING SINGLE QUOTES" );
-      }
+    else if( ambiguousLeadingQuotes.size() == 0 && ambiguousLaggingQuotes.size() > 0 ) {
+      // If there are no ambiguous leading quotes then all ambiguous lagging
+      // quotes must be contractions.
+      ambiguousLaggingQuotes.forEach(
+        lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
+      );
+    }
+    else if( resolvedLeadingQuotes == 1 && ambiguousLaggingQuotes.size() == 1 ) {
+      consumer.accept(
+        new Token( QUOTE_CLOSING_SINGLE, ambiguousLaggingQuotes.get( 0 ) )
+      );
     }
   }
 
@@ -225,8 +258,15 @@ public class Parser {
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
-      // E.g., 'twas
       contractionBeganUnambiguously( lex2.toString( mText ) ) ) {
+      // E.g., 'twas
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
+    }
+    else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( NUMBER ) &&
+      lex3.isType( WORD ) &&
+      lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
+      // E.g., '70s
+      // Sentences are re-written to avoid starting with numerals.
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
@@ -238,14 +278,14 @@ public class Parser {
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      (lex1.isSot() || lex1.anyType( LEADING_OPENING_QUOTE_DOUBLE )) &&
-      lex3.anyType( TRAILING_OPENING_QUOTE_DOUBLE ) ) {
+      (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_DOUBLE )) &&
+      lex3.anyType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
       // Examples: "'Twas, "", "...
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      lex1.anyType( LEADING_CLOSING_QUOTE_DOUBLE ) &&
-      (lex3.isEot() || lex3.anyType( TRAILING_CLOSING_QUOTE_DOUBLE )) ) {
+      lex1.anyType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
+      (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {

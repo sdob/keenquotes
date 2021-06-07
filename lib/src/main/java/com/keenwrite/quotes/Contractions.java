@@ -5,9 +5,6 @@ import java.util.Set;
 
 /**
  * Placeholder for various types of contractions.
- * <p>
- * TODO: Read from an external resource file.
- * </p>
  */
 public class Contractions {
   /**
@@ -35,6 +32,8 @@ public class Contractions {
   private static final Set<String> BEGAN_AMBIGUOUS = Set.of(
     // about|boxing match
     "bout",
+    // because|causal
+    "cause",
     // what you|choo choo train
     "choo",
     // he|e pluribus unum
@@ -45,7 +44,7 @@ public class Contractions {
     "ere",
     // afro|to and fro
     "fro",
-    // whore|stop
+    // whore|ho ho!
     "ho",
     // okay|letter K
     "kay",
@@ -95,6 +94,7 @@ public class Contractions {
    */
   public static boolean contractionBeganUnambiguously( final String word ) {
     assert word != null;
+
     return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
 
@@ -109,16 +109,23 @@ public class Contractions {
    */
   public static boolean contractionBeganAmbiguously( final String word ) {
     assert word != null;
+
     return BEGAN_AMBIGUOUS.contains( word.toLowerCase() );
   }
 
   public static boolean contractionEndedAmbiguously( final String word ) {
-    return ENDED_AMBIGUOUS.contains( word ) || word.endsWith( "s" ) ||
-      word.endsWith( "n" ) || word.endsWith( "z" ) ||
-      word.endsWith( "x" ) || word.endsWith( "ch" );
+    assert word != null;
+
+    final var check = word.toLowerCase();
+
+    return ENDED_AMBIGUOUS.contains( check ) || check.endsWith( "s" ) ||
+      check.endsWith( "n" ) || check.endsWith( "z" ) ||
+      check.endsWith( "x" ) || check.endsWith( "ch" );
   }
 
   public static boolean contractionEndedUnambiguously( final String word ) {
-    return ENDED_UNAMBIGUOUS.contains( word );
+    assert word != null;
+
+    return ENDED_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
 }

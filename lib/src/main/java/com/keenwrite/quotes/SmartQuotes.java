@@ -24,7 +24,7 @@ public class SmartQuotes {
     QUOTE_PRIME_DOUBLE, "&Prime;"
   );
 
-  public String replace( final String text ) {
+  public static String replace( final String text ) {
     final var parser = new Parser( text );
     final var tokens = new ArrayList<Token>();
 
@@ -38,10 +38,10 @@ public class SmartQuotes {
     var position = 0;
 
     for( final var token : tokens ) {
-      assert position <= token.began();
-
-      result.append( text, position, token.began() );
-      result.append( REPLACEMENTS.get( token.getType() ) );
+      if( position <= token.began() ) {
+        result.append( text, position, token.began() );
+        result.append( REPLACEMENTS.get( token.getType() ) );
+      }
 
       position = token.ended();
     }
