@@ -40,13 +40,13 @@ public class Parser {
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, OPENING_GROUP};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_DOUBLE, OPENING_GROUP, EOP};
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE, EOP};
+    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
 
   /**
    * Single quotes preceded by these {@link LexemeType}s may be closing quotes.

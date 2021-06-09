@@ -202,8 +202,8 @@ Workin&apos; hard
 Model \"T2000\"
 Model "T2000"
 
-The 2's complement.\n\n"Yar, binary!"
-The 2&apos;s complement.\n\n&ldquo;Yar, binary!&rdquo;
+The 2's complement.\n\n'Yar, binary!'
+The 2&apos;s complement.\n\n&lsquo;Yar, binary!&rsquo;
 
 'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'
 &lsquo;Oak,&rsquo; &lsquo;elm,&rsquo; and &lsquo;beech&rsquo; are names of trees. So is &lsquo;pine.&rsquo;
