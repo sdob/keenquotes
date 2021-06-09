@@ -20,8 +20,14 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'" )
-    );
+      "'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'"
+    ) );
+
+    System.out.println(" ------------------------ ");
+
+    out.println( SmartQuotes.replace(
+      "'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'"
+    ) );
   }
 
   @Test
@@ -50,16 +56,21 @@ public class SmartQuotesTest {
           expected = line;
         }
 
-        System.out.println( "EXPECT:" + expected );
+        testLine = unescapeEol( testLine );
+        expected = unescapeEol( expected );
+        System.out.println( testLine );
 
         final var actual = parser.apply( testLine );
-        System.out.println( "ACTUAL:" + actual );
         assertEquals( expected, actual );
 
         testLine = "";
         expected = "";
       }
     }
+  }
+
+  private static String unescapeEol( final String s) {
+    return String.join( "\n", s.split( "\\\\n" ) );
   }
 
   @SuppressWarnings( "SameParameterValue" )

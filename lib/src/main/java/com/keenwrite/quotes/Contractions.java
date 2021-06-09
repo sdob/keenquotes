@@ -63,8 +63,6 @@ public class Contractions {
   );
 
   private static final Set<String> ENDED_AMBIGUOUS = Set.of(
-    // he|a
-    "a",
     // and|an
     "an",
     // give|martial arts garment
@@ -116,8 +114,7 @@ public class Contractions {
     final var check = word.toLowerCase();
 
     return ENDED_AMBIGUOUS.contains( check ) || check.endsWith( "s" ) ||
-      check.endsWith( "n" ) || check.endsWith( "z" ) ||
-      check.endsWith( "x" ) || check.endsWith( "ch" );
+      check.endsWith( "n" ) || check.endsWith( "z" ) || check.endsWith( "x" );
   }
 
   public static boolean contractionEndedUnambiguously( final String word ) {

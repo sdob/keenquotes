@@ -14,7 +14,9 @@ import static java.text.CharacterIterator.DONE;
  * Turns text into words, numbers, punctuation, spaces, and more.
  */
 public class Lexer {
-
+  /**
+   * Iterates over the entire string of text to help produce lexemes.
+   */
   private final CharacterIterator mIterator;
 
   /**
@@ -81,17 +83,21 @@ public class Lexer {
           began, i.getIndex()
         );
       }
-      else if( curr == '\r' ) {
-        lexeme = createLexeme( EOL, began, i.getIndex() );
+      else if( curr == '\r' || curr == '\n' ) {
+        final var cr = new int[]{curr == '\r' ? 1 : 0};
+        final var lf = new int[]{curr == '\n' ? 1 : 0};
 
-        // Swallow the LF in CRLF; peeking won't work here.
-        if( i.next() != '\n' ) {
-          // Push back the non-LF char.
-          i.previous();
-        }
-      }
-      else if( curr == '\n' ) {
-        lexeme = createLexeme( EOL, began, i.getIndex() );
+        // Swallow all consecutive CR (Mac), CRLF (Windows), and/or LF (Unix).
+        slurp(
+          i, ( next, ci ) -> {
+            cr[ 0 ] += next == '\r' ? 1 : 0;
+            lf[ 0 ] += next == '\n' ? 1 : 0;
+            return next == '\r' || next == '\n';
+          }
+        );
+
+        final var eol = cr[ 0 ] + lf[ 0 ] == 1 || cr[ 0 ] == 1 && lf[ 0 ] == 1;
+        lexeme = createLexeme( eol ? EOL : EOP, began, i.getIndex() );
       }
       else if( isWhitespace( curr ) ) {
         lexeme = createLexeme( SPACE, began, i.getIndex() );
@@ -162,6 +168,6 @@ public class Lexer {
     // The loop above will overshoot the number by one character.
     ci.previous();
 
-    return count;
+    return --count;
   }
 }

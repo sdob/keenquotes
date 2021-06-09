@@ -46,7 +46,7 @@ public class Parser {
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE, EOP};
 
   /**
    * Single quotes preceded by these {@link LexemeType}s may be closing quotes.
@@ -64,7 +64,7 @@ public class Parser {
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, OPENING_GROUP};
+    new LexemeType[]{SPACE, HYPHEN, QUOTE_SINGLE, OPENING_GROUP, EOP};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -201,33 +201,44 @@ public class Parser {
       }
     }
 
+    System.out.println( "--------------------" );
     System.out.println( "ambig leading: " + ambiguousLeadingQuotes.size() );
     System.out.println( "ambig lagging: " + ambiguousLaggingQuotes.size() );
     System.out.println( "resolv leading: " + resolvedLeadingQuotes );
     System.out.println( "resolv lagging: " + resolvedLaggingQuotes );
 
+    final var ambiguousLeadingCount = ambiguousLeadingQuotes.size();
+    final var ambiguousLaggingCount = ambiguousLaggingQuotes.size();
+
     if( resolvedLeadingQuotes == 1 && resolvedLaggingQuotes == 0 ) {
-      if( ambiguousLeadingQuotes.size() == 0 && ambiguousLaggingQuotes.size() == 1 ) {
+      if( ambiguousLeadingCount == 0 && ambiguousLaggingCount == 1 ) {
         final var balanced = mClosingSingleQuote - mOpeningSingleQuote == 0;
         final var quote = balanced ? QUOTE_APOSTROPHE : QUOTE_CLOSING_SINGLE;
         consumer.accept( new Token( quote, ambiguousLaggingQuotes.get( 0 ) ) );
       }
     }
-    else if( ambiguousLeadingQuotes.size() > 0 && ambiguousLaggingQuotes.size() == 0 ) {
+    else if( ambiguousLeadingCount > 0 && ambiguousLaggingCount == 0 ) {
       // If there are no ambiguous lagging quotes then all ambiguous leading
       // quotes must be contractions.
       ambiguousLeadingQuotes.forEach(
         lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
       );
     }
-    else if( ambiguousLeadingQuotes.size() == 0 && ambiguousLaggingQuotes.size() > 0 ) {
+    else if( ambiguousLeadingCount == 0 && ambiguousLaggingCount > 0 ) {
       // If there are no ambiguous leading quotes then all ambiguous lagging
       // quotes must be contractions.
       ambiguousLaggingQuotes.forEach(
         lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
       );
     }
-    else if( resolvedLeadingQuotes == 1 && ambiguousLaggingQuotes.size() == 1 ) {
+    else if( ambiguousLeadingCount == 0 ) {
+      if( resolvedLaggingQuotes < resolvedLeadingQuotes ) {
+        for( final var mark : mQuotationMarks ) {
+          consumer.accept( new Token( QUOTE_CLOSING_SINGLE, mark[ 1 ] ) );
+        }
+      }
+    }
+    else if( resolvedLeadingQuotes == 1 && ambiguousLaggingCount == 1 ) {
       consumer.accept(
         new Token( QUOTE_CLOSING_SINGLE, ambiguousLaggingQuotes.get( 0 ) )
       );
@@ -292,7 +303,7 @@ public class Parser {
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
 
       if( lex2.isType( QUOTE_SINGLE ) &&
-        (lex3.isEot() || lex3.anyType( SPACE, HYPHEN, EOL )) ) {
+        (lex3.isEot() || lex3.anyType( SPACE, HYPHEN, EOL, EOP )) ) {
         consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
         mClosingSingleQuote++;
       }

@@ -7,6 +7,7 @@ public enum LexemeType {
   ESC_SINGLE,
   ESC_DOUBLE,
   EOL,
+  EOP,
   SPACE,
   WORD,
   NUMBER,
