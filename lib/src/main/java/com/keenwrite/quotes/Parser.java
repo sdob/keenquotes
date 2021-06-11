@@ -156,14 +156,15 @@ public class Parser {
         final var word3 = lex3 == EOT ? "" : lex3.toString( mText );
 
         if( contractionBeganAmbiguously( word3 ) ) {
-          // E.g., ''Cause
+          // E.g., 'Cause
           if( lex1.isType( QUOTE_SINGLE ) ) {
+            // E.g., ''Cause
             consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
             i.remove();
           }
           else {
             // The contraction is uncertain until a closing quote is found that
-            // balances this single quote.
+            // may balance this single quote.
             ambiguousLeadingQuotes.add( lex2 );
           }
         }
@@ -231,6 +232,11 @@ public class Parser {
         }
       }
     }
+    else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {
+      consumer.accept(
+        new Token( QUOTE_OPENING_SINGLE, ambiguousLeadingQuotes.get( 0 ) )
+      );
+    }
   }
 
   private void tokenize( final Lexeme lexeme, final Consumer<Token> consumer ) {
@@ -285,6 +291,11 @@ public class Parser {
     else if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( NUMBER ) ) {
       // E.g., '02
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+    }
+    else if( lex2.isType( QUOTE_SINGLE ) &&
+      lex1.anyType( PUNCT, PERIOD, ELLIPSIS, HYPHEN ) &&
+      (lex3.anyType( EOL, EOP ) || lex3.isEot()) ) {
+      consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
       // E.g., \'

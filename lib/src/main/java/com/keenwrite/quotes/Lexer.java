@@ -79,7 +79,7 @@ public class Lexer {
         // Parse all consecutive periods into an ellipsis lexeme. This will
         // not capture space-separated ellipsis (such as ". . .").
         lexeme = createLexeme(
-          slurp( i, ( next, ci ) -> next == '.' ) == 1 ? PERIOD : ELLIPSIS,
+          slurp( i, ( next, ci ) -> next == '.' ) == 0 ? PERIOD : ELLIPSIS,
           began, i.getIndex()
         );
       }

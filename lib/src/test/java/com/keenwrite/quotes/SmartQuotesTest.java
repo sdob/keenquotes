@@ -20,7 +20,7 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "'Em wern't so sure."
+      "She said, 'Cause of death?\n\n'Old age, there's no doubt.'"
     ) );
   }
 

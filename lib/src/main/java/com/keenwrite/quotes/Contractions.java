@@ -19,8 +19,7 @@ public class Contractions {
    */
   public static boolean contractionBeganUnambiguously( final String word ) {
     assert word != null;
-    return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() ) ||
-      word.equals( "em" );
+    return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() );
   }
 
   /**
@@ -109,6 +108,8 @@ public class Contractions {
     "choo",
     // he|e pluribus unum
     "e",
+    // them|letter em|Emily
+    "em",
     // here|earlier
     "ere",
     // afro|to and fro
@@ -347,6 +348,7 @@ public class Contractions {
     "forthcomin",
     "foundin",
     "freezin",
+    "fuckin",
     "functionin",
     "fundin",
     "gainin",
@@ -358,6 +360,7 @@ public class Contractions {
     "governin",
     "grantin",
     "growin",
+    "hackin",
     "handlin",
     "hangin",
     "happenin",
@@ -459,6 +462,7 @@ public class Contractions {
     "pendin",
     "performin",
     "pickin",
+    "pissin",
     "placin",
     "plannin",
     "plantin",
@@ -560,12 +564,14 @@ public class Contractions {
     "sleepin",
     "smilin",
     "smokin",
+    "spankin",
     "solvin",
     "somethin",
     "speakin",
     "spellin",
     "spendin",
     "spinnin",
+    "spittin",
     "spreadin",
     "standin",
     "starin",
@@ -628,6 +634,7 @@ public class Contractions {
     "watchin",
     "wearin",
     "weddin",
+    "whackin",
     "willin",
     "windin",
     "winnin",

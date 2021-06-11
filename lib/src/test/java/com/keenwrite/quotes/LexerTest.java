@@ -68,8 +68,8 @@ class LexerTest {
     testType( "\r", EOL );
     testType( "\n", EOL );
     testType( "\r\n", EOL );
-    testType( "\r\n\r\n", EOL, EOL );
-    testType( "\r\n\n\r", EOL, EOL, EOL );
+    testType( "\r\n\r\n", EOP );
+    testType( "\r\n\n\r", EOP );
     testType( "abc \r\nabc\n", WORD, SPACE, EOL, WORD, EOL );
   }
 
