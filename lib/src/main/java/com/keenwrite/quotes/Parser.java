@@ -173,12 +173,12 @@ public class Parser {
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
         }
-        else if( contractionEndedAmbiguously( word1 ) ) {
-          ambiguousLaggingQuotes.add( lex2 );
-        }
         else if( contractionEndedUnambiguously( word1 ) ) {
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
+        }
+        else if( contractionEndedAmbiguously( word1 ) ) {
+          ambiguousLaggingQuotes.add( lex2 );
         }
         else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
           && lex3.anyType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
@@ -217,13 +217,6 @@ public class Parser {
         consumer.accept( new Token( quote, ambiguousLaggingQuotes.get( 0 ) ) );
       }
     }
-    else if( ambiguousLeadingCount > 0 && ambiguousLaggingCount == 0 ) {
-      // If there are no ambiguous lagging quotes then all ambiguous leading
-      // quotes must be contractions.
-      ambiguousLeadingQuotes.forEach(
-        lex -> consumer.accept( new Token( QUOTE_APOSTROPHE, lex ) )
-      );
-    }
     else if( ambiguousLeadingCount == 0 && ambiguousLaggingCount > 0 ) {
       // If there are no ambiguous leading quotes then all ambiguous lagging
       // quotes must be contractions.
@@ -237,11 +230,6 @@ public class Parser {
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, mark[ 1 ] ) );
         }
       }
-    }
-    else if( resolvedLeadingQuotes == 1 && ambiguousLaggingCount == 1 ) {
-      consumer.accept(
-        new Token( QUOTE_CLOSING_SINGLE, ambiguousLaggingQuotes.get( 0 ) )
-      );
     }
   }
 
@@ -267,7 +255,7 @@ public class Parser {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
     }
-    else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_SINGLE ) ) {
+    else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( NUMBER ) ) {
       if( lex3.isType( QUOTE_SINGLE ) ) {
         // E.g., 2''
         consumer.accept(
@@ -278,21 +266,25 @@ public class Parser {
         consumer.accept( new Token( QUOTE_PRIME_SINGLE, lex2 ) );
       }
     }
-    else if( lex1.isType( NUMBER ) && lex2.isType( QUOTE_DOUBLE ) ) {
+    else if( lex2.isType( QUOTE_DOUBLE ) && lex1.isType( NUMBER ) ) {
       // E.g., 2"
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
-    else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( WORD ) &&
+    else if( lex2.isType( WORD ) && lex1.isType( QUOTE_SINGLE ) &&
       contractionBeganUnambiguously( lex2.toString( mText ) ) ) {
       // E.g., 'twas
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
-    else if( lex1.isType( QUOTE_SINGLE ) && lex2.isType( NUMBER ) &&
+    else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) &&
       lex3.isType( WORD ) &&
       lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
       // E.g., '70s
       // Sentences are re-written to avoid starting with numerals.
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
+    }
+    else if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( NUMBER ) ) {
+      // E.g., '02
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
       // E.g., \'

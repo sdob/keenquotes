@@ -20,13 +20,7 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'"
-    ) );
-
-    System.out.println(" ------------------------ ");
-
-    out.println( SmartQuotes.replace(
-      "'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'"
+      "'Em wern't so sure."
     ) );
   }
 
@@ -58,7 +52,6 @@ public class SmartQuotesTest {
 
         testLine = unescapeEol( testLine );
         expected = unescapeEol( expected );
-        System.out.println( testLine );
 
         final var actual = parser.apply( testLine );
         assertEquals( expected, actual );

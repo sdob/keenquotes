@@ -181,11 +181,14 @@ ma&apos;am
 'That's a "magic" sock.'
 &lsquo;That&apos;s a &ldquo;magic&rdquo; sock.&rsquo;
 
-Website! Company Name, Inc. ("Company Name" or "Company") recommends reading the following terms and conditions, carefully:
-Website! Company Name, Inc. (&ldquo;Company Name&rdquo; or &ldquo;Company&rdquo;) recommends reading the following terms and conditions, carefully:
+'That's a "very 'magic'" sock.'
+&lsquo;That&apos;s a &ldquo;very &lsquo;magic&rsquo;&rdquo; sock.&rsquo;
 
-Website! Company Name, Inc. ('Company Name' or 'Company') recommends reading the following terms and conditions, carefully:
-Website! Company Name, Inc. (&lsquo;Company Name&rsquo; or &lsquo;Company&rsquo;) recommends reading the following terms and conditions, carefully:
+Website! Company Name, Inc. ("Company Name" or "Company") recommends reading carefully:
+Website! Company Name, Inc. (&ldquo;Company Name&rdquo; or &ldquo;Company&rdquo;) recommends reading carefully:
+
+Website! Company Name, Inc. ('Company Name' or 'Company') recommends reading carefully:
+Website! Company Name, Inc. (&lsquo;Company Name&rsquo; or &lsquo;Company&rsquo;) recommends reading carefully:
 
 Workin' hard
 Workin&apos; hard
@@ -205,6 +208,9 @@ Model "T2000"
 The 2's complement.\n\n'Yar, binary!'
 The 2&apos;s complement.\n\n&lsquo;Yar, binary!&rsquo;
 
+The Who's complement.\n\n\n"Paragraph boundary!"
+The Who&apos;s complement.\n\n\n&ldquo;Paragraph boundary!&rdquo;
+
 'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'
 &lsquo;Oak,&rsquo; &lsquo;elm,&rsquo; and &lsquo;beech&rsquo; are names of trees. So is &lsquo;pine.&rsquo;
 
@@ -212,7 +218,25 @@ The 2&apos;s complement.\n\n&lsquo;Yar, binary!&rsquo;
 &lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
 
 Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
-Book &apos;em, Danno. Rock &apos;n&apos; roll. &apos;Cause &apos;twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 
 'He said, "Thinkin'."'
 &lsquo;He said, &ldquo;Thinkin&apos;.&rdquo;&rsquo;
+
+She said, 'Cause of death?\n\n'Old age, there's no doubt.'
+She said, 'Cause of death?\n\n&lsquo;Old age, there&apos;s no doubt.&rsquo;
+
+She said, 'Cause I said so!\n\n'If we're done, I've a secret.'
+She said, 'Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rsquo;
+
+'Em wasn't so sure.'
+&lsquo;Em wasn&apos;t so sure.&rsquo;
+
+# ########################################################################
+# Ambiguous (no solution)
+# ########################################################################
+'Em wern't so sure.
+'Em wern&apos;t so sure.
+
+'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
+'Bout that time I says, &lsquo;Boys! I been thinkin&apos; 'bout th&apos; Universe.&rsquo;
