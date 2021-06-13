@@ -64,7 +64,10 @@ public class Lexer {
         lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
       else if( curr == '-' ) {
-        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
+        lexeme = createLexeme(
+          slurp( i, ( next, ci ) -> next == '-' ) == 0 ? HYPHEN : DASH,
+          began, i.getIndex()
+        );
       }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
         // Parse all consecutive number characters to prevent the main loop
@@ -165,7 +168,7 @@ public class Lexer {
     }
     while( f.apply( next, ci ) );
 
-    // The loop above will overshoot the number by one character.
+    // The loop above will overshoot the tally by one character.
     ci.previous();
 
     return --count;

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
+import static java.lang.System.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -16,6 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * apostrophes.
  */
 public class SmartQuotesTest {
+  @Test
+  public void test_parse_SingleLine_Parsed() {
+    out.println( SmartQuotes.replace(
+      "\"I heard she said, 'That's Sam's',\" said the Sams' cat."
+    ) );
+  }
+
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
     testParser( SmartQuotes::replace );

@@ -15,6 +15,7 @@ public enum LexemeType {
   OPENING_GROUP,
   CLOSING_GROUP,
   HYPHEN,
+  DASH,
   PERIOD,
   ELLIPSIS,
   FLAG

@@ -19,8 +19,11 @@ Bob&apos;s table is 5&Prime; × 4&Prime;.
 Bob's table is 5'×4'.
 Bob&apos;s table is 5&prime;×4&prime;.
 
-What's this -5.5'' all about?
-What&apos;s this -5.5&Prime; all about?
+#What's this '-5.5''' thing?
+#What&apos;s this &lsquo;-5.5&Prime;&rsquo; thing?
+
+#'What's this -5.5'' thing?'
+#&lsquo;What&apos;s this -5.5&Prime; thing?&rsquo;
 
 +7.9'' is weird.
 +7.9&Prime; is weird.
