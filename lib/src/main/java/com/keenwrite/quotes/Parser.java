@@ -90,16 +90,16 @@ public class Parser {
    */
   private final String mText;
 
+  /**
+   * Converts a string into an iterable list of {@link Lexeme} instances.
+   */
   private final Lexer mLexer;
-
-  private final List<Lexeme[]> mQuotationMarks = new ArrayList<>();
-  private final CircularFifoQueue<Lexeme> mLexemes =
-    new CircularFifoQueue<>( 3 );
 
   /**
    * Sets of contractions that help disambiguate single quotes in the text.
+   * These are effectively immutable while parsing.
    */
-  private final Contractions mContractions;
+  private final Contractions sContractions;
 
   /**
    * Incremented for each opening single quote emitted. Used to help resolve
@@ -113,17 +113,30 @@ public class Parser {
    */
   private int mClosingSingleQuote;
 
+  /**
+   * Constructs a new {@link Parser} using the default contraction sets
+   * to help resolve some ambiguous scenarios.
+   *
+   * @param text The prose to parse, containing zero or more quotation
+   *             characters.
+   */
   public Parser( final String text ) {
     this( text, new Contractions.Builder().build() );
   }
 
+  /**
+   * Constructs a new {@link Parser} using the default contraction sets
+   * to help resolve some ambiguous scenarios.
+   *
+   * @param text         The prose to parse, containing zero or more quotation
+   *                     characters.
+   * @param contractions Custom sets of contractions to help resolve
+   *                     ambiguities.
+   */
   public Parser( final String text, final Contractions contractions ) {
     mText = text;
     mLexer = new Lexer( mText );
-    mContractions = contractions;
-
-    // Allow consuming the very first token without checking the queue size.
-    flush( mLexemes );
+    sContractions = contractions;
   }
 
   /**
@@ -134,19 +147,33 @@ public class Parser {
    * @param consumer Receives emitted {@link Token}s.
    */
   public void parse( final Consumer<Token> consumer ) {
-    // Create/convert a list of all unambiguous quote characters.
+    final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
+
+    // Allow consuming the very first token without checking the queue size.
+    flush( lexemes );
+
+    final var unresolved = new ArrayList<Lexeme[]>();
     Lexeme lexeme;
 
+    // Create and convert a list of all unambiguous quote characters.
     while( (lexeme = mLexer.next()) != EOT ) {
-      tokenize( lexeme, consumer );
+      tokenize( lexeme, lexemes, consumer, unresolved );
     }
 
     // By loop's end, the lexemes list contains tokens for all except the
     // final two elements (from tokenizing in triplets). Tokenize the remaining
     // unprocessed lexemes.
-    tokenize( EOT, consumer );
-    tokenize( EOT, consumer );
+    tokenize( EOT, lexemes, consumer, unresolved );
+    tokenize( EOT, lexemes, consumer, unresolved );
 
+    // Attempt to resolve any remaining unambiguous quotes.
+    resolve( unresolved, consumer );
+
+    System.out.println( "UNRESOLVED: " + unresolved.size() );
+  }
+
+  private void resolve(
+    final List<Lexeme[]> lexemes, final Consumer<Token> consumer ) {
     // Some non-emitted tokenized lexemes may be ambiguous.
     final var ambiguousLeadingQuotes = new ArrayList<Lexeme>( 16 );
     final var ambiguousLaggingQuotes = new ArrayList<Lexeme>( 16 );
@@ -154,7 +181,7 @@ public class Parser {
     var resolvedLaggingQuotes = 0;
 
     // Count the number of ambiguous and non-ambiguous open single quotes.
-    for( var i = mQuotationMarks.iterator(); i.hasNext(); ) {
+    for( var i = lexemes.iterator(); i.hasNext(); ) {
       final var quotes = i.next();
       final var lex1 = quotes[ 0 ];
       final var lex2 = quotes[ 1 ];
@@ -164,7 +191,7 @@ public class Parser {
         final var word1 = lex1 == SOT ? "" : lex1.toString( mText );
         final var word3 = lex3 == EOT ? "" : lex3.toString( mText );
 
-        if( mContractions.beganAmbiguously( word3 ) ) {
+        if( sContractions.beganAmbiguously( word3 ) ) {
           // E.g., 'Cause
           if( lex1.isType( QUOTE_SINGLE ) ) {
             // E.g., ''Cause
@@ -177,13 +204,13 @@ public class Parser {
             ambiguousLeadingQuotes.add( lex2 );
           }
         }
-        else if( mContractions.beganUnambiguously( word3 ) ) {
+        else if( sContractions.beganUnambiguously( word3 ) ) {
           // The quote mark forms a word that does not stand alone from its
           // contraction. For example, twas is not a word: it's 'twas.
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
         }
-        else if( mContractions.endedAmbiguously( word1 ) ) {
+        else if( sContractions.endedAmbiguously( word1 ) ) {
           ambiguousLaggingQuotes.add( lex2 );
         }
         else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
@@ -207,12 +234,6 @@ public class Parser {
       }
     }
 
-    System.out.println( "--------------------" );
-    System.out.println( "ambig leading: " + ambiguousLeadingQuotes.size() );
-    System.out.println( "ambig lagging: " + ambiguousLaggingQuotes.size() );
-    System.out.println( "resolv leading: " + resolvedLeadingQuotes );
-    System.out.println( "resolv lagging: " + resolvedLaggingQuotes );
-
     final var ambiguousLeadingCount = ambiguousLeadingQuotes.size();
     final var ambiguousLaggingCount = ambiguousLaggingQuotes.size();
 
@@ -232,7 +253,7 @@ public class Parser {
     }
     else if( ambiguousLeadingCount == 0 ) {
       if( resolvedLaggingQuotes < resolvedLeadingQuotes ) {
-        for( final var mark : mQuotationMarks ) {
+        for( final var mark : lexemes ) {
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, mark[ 1 ] ) );
         }
       }
@@ -244,31 +265,32 @@ public class Parser {
     }
   }
 
-  private void tokenize( final Lexeme lexeme, final Consumer<Token> consumer ) {
-    mLexemes.add( lexeme );
-    tokenize( consumer );
-  }
+  private void tokenize( final Lexeme lexeme,
+                         final CircularFifoQueue<Lexeme> lexemes,
+                         final Consumer<Token> consumer,
+                         final List<Lexeme[]> unresolved ) {
+    // Add the next lexeme to tokenize into the queue for immediate processing.
+    lexemes.add( lexeme );
 
-  private void tokenize( final Consumer<Token> consumer ) {
-    final var lex1 = mLexemes.get( 0 );
-    final var lex2 = mLexemes.get( 1 );
-    final var lex3 = mLexemes.get( 2 );
+    final var lex1 = lexemes.get( 0 );
+    final var lex2 = lexemes.get( 1 );
+    final var lex3 = lexemes.get( 2 );
 
     if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( WORD ) &&
       lex1.anyType( WORD, PERIOD, NUMBER ) ) {
       // Examples: y'all, Ph.D.'ll, 20's, she's
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
-      flush( mLexemes );
+      flush( lexemes );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex3.isType( QUOTE_SINGLE ) &&
       "n".equalsIgnoreCase( lex2.toString( mText ) ) ) {
       // I.e., 'n'
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
-      flush( mLexemes );
+      flush( lexemes );
 
       // Remove the first apostrophe so that it isn't emitted twice.
-      mQuotationMarks.remove( mQuotationMarks.size() - 1 );
+      unresolved.remove( unresolved.size() - 1 );
     }
     else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( NUMBER ) ) {
       if( lex3.isType( QUOTE_SINGLE ) ) {
@@ -286,7 +308,7 @@ public class Parser {
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
     else if( lex2.isType( WORD ) && lex3.isType( QUOTE_SINGLE ) &&
-      mContractions.endedUnambiguously( lex2.toString( mText ) ) ) {
+      sContractions.endedUnambiguously( lex2.toString( mText ) ) ) {
       // E.g., thinkin'
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
     }
@@ -339,10 +361,17 @@ public class Parser {
       mClosingSingleQuote++;
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
-      mQuotationMarks.add( new Lexeme[]{lex1, lex2, lex3} );
+      // After tokenizing, the parser will attempt to resolve ambiguities.
+      unresolved.add( new Lexeme[]{lex1, lex2, lex3} );
     }
   }
 
+  /**
+   * Overwrites the {@link CircularFifoQueue}'s contents with start-of-text
+   * indicators.
+   *
+   * @param lexemes The queue to overflow.
+   */
   private void flush( final CircularFifoQueue<Lexeme> lexemes ) {
     lexemes.add( SOT );
     lexemes.add( SOT );

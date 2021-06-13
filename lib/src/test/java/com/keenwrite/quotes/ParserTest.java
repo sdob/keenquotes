@@ -9,6 +9,9 @@ import java.util.Map;
 import static com.keenwrite.quotes.TokenType.QUOTE_APOSTROPHE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test that all unambiguous apostrophes are emitted once.
+ */
 class ParserTest {
   private final static Map<String, Map<TokenType, Integer>> TEST_CASES =
     Map.of(
@@ -26,7 +29,7 @@ class ParserTest {
              But I must leave the proofs to those who 've seen 'em;
              But this I heard her say, and can't be wrong
              And all may think which way their judgments lean 'em,
-             ''T is strange—the Hebrew noun which means "I am,"
+             ''T is strange---the Hebrew noun which means "I am,"
              The English always use to govern d--n.'
         """,
       Map.of( QUOTE_APOSTROPHE, 5 )
