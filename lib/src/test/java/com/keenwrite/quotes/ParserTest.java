@@ -12,16 +12,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ParserTest {
   private final static Map<String, Map<TokenType, Integer>> TEST_CASES =
     Map.of(
-//      "It's the 80's...",
-//      Map.of( QUOTE_APOSTROPHE, 2 ),
-//      "Fish-'n'-chips!",
-//      Map.of( QUOTE_APOSTROPHE, 2 ),
-//      "That's a 35'×10\" yacht!",
-//      Map.of( QUOTE_APOSTROPHE, 1 ),
-//      "She's a cat ya'll couldn't've known!",
-//      Map.of( QUOTE_APOSTROPHE, 4 ),
-//      "'Twas and 'tis whate'er lay 'twixt dawn and dusk 'n River Styx.",
-//      Map.of( QUOTE_APOSTROPHE, 5 ),
+      "That's a 35'×10\" yacht!",
+      Map.of( QUOTE_APOSTROPHE, 1 ),
+      "It's the 80's...",
+      Map.of( QUOTE_APOSTROPHE, 2 ),
+      "Fish-'n'-chips!",
+      Map.of( QUOTE_APOSTROPHE, 2 ),
+      "She's a cat ya'll couldn't've known!",
+      Map.of( QUOTE_APOSTROPHE, 4 ),
+      "'Twas and 'tis whate'er lay 'twixt dawn and dusk 'n River Styx.",
+      Map.of( QUOTE_APOSTROPHE, 5 ),
       """
              But I must leave the proofs to those who 've seen 'em;
              But this I heard her say, and can't be wrong

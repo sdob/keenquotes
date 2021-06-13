@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.keenwrite.quotes.Contractions.*;
 import static com.keenwrite.quotes.Lexeme.EOT;
 import static com.keenwrite.quotes.Lexeme.SOT;
 import static com.keenwrite.quotes.LexemeType.*;
@@ -98,6 +97,11 @@ public class Parser {
     new CircularFifoQueue<>( 3 );
 
   /**
+   * Sets of contractions that help disambiguate single quotes in the text.
+   */
+  private final Contractions mContractions;
+
+  /**
    * Incremented for each opening single quote emitted. Used to help resolve
    * ambiguities when single quote marks are balanced.
    */
@@ -110,8 +114,13 @@ public class Parser {
   private int mClosingSingleQuote;
 
   public Parser( final String text ) {
+    this( text, new Contractions.Builder().build() );
+  }
+
+  public Parser( final String text, final Contractions contractions ) {
     mText = text;
     mLexer = new Lexer( mText );
+    mContractions = contractions;
 
     // Allow consuming the very first token without checking the queue size.
     flush( mLexemes );
@@ -155,7 +164,7 @@ public class Parser {
         final var word1 = lex1 == SOT ? "" : lex1.toString( mText );
         final var word3 = lex3 == EOT ? "" : lex3.toString( mText );
 
-        if( contractionBeganAmbiguously( word3 ) ) {
+        if( mContractions.beganAmbiguously( word3 ) ) {
           // E.g., 'Cause
           if( lex1.isType( QUOTE_SINGLE ) ) {
             // E.g., ''Cause
@@ -168,17 +177,13 @@ public class Parser {
             ambiguousLeadingQuotes.add( lex2 );
           }
         }
-        else if( contractionBeganUnambiguously( word3 ) ) {
+        else if( mContractions.beganUnambiguously( word3 ) ) {
           // The quote mark forms a word that does not stand alone from its
           // contraction. For example, twas is not a word: it's 'twas.
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
         }
-        else if( contractionEndedUnambiguously( word1 ) ) {
-          consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
-          i.remove();
-        }
-        else if( contractionEndedAmbiguously( word1 ) ) {
+        else if( mContractions.endedAmbiguously( word1 ) ) {
           ambiguousLaggingQuotes.add( lex2 );
         }
         else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
@@ -251,7 +256,7 @@ public class Parser {
 
     if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( WORD ) &&
       lex1.anyType( WORD, PERIOD, NUMBER ) ) {
-      // Examples: y'all, Ph.D.'ll, 20's
+      // Examples: y'all, Ph.D.'ll, 20's, she's
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
       flush( mLexemes );
     }
@@ -260,6 +265,10 @@ public class Parser {
       // I.e., 'n'
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
+      flush( mLexemes );
+
+      // Remove the first apostrophe so that it isn't emitted twice.
+      mQuotationMarks.remove( mQuotationMarks.size() - 1 );
     }
     else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( NUMBER ) ) {
       if( lex3.isType( QUOTE_SINGLE ) ) {
@@ -276,16 +285,16 @@ public class Parser {
       // E.g., 2"
       consumer.accept( new Token( QUOTE_PRIME_DOUBLE, lex2 ) );
     }
-    else if( lex2.isType( WORD ) && lex1.isType( QUOTE_SINGLE ) &&
-      contractionBeganUnambiguously( lex2.toString( mText ) ) ) {
-      // E.g., 'twas
-      consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
+    else if( lex2.isType( WORD ) && lex3.isType( QUOTE_SINGLE ) &&
+      mContractions.endedUnambiguously( lex2.toString( mText ) ) ) {
+      // E.g., thinkin'
+      consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
     }
     else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) &&
       lex3.isType( WORD ) &&
       lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
+      // Sentences must re-written to avoid starting with numerals.
       // E.g., '70s
-      // Sentences are re-written to avoid starting with numerals.
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
     }
     else if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( NUMBER ) ) {

@@ -1,12 +1,81 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import static java.util.Collections.emptySet;
 
 /**
  * Placeholder for various types of contractions.
  */
 public class Contractions {
+
+  private final Builder mBuilder;
+
+  private Contractions( final Builder builder ) {
+    assert builder != null;
+    mBuilder = builder;
+  }
+
+  /**
+   * Allows constructing a list of custom contractions.
+   */
+  @SuppressWarnings( "unused" )
+  public static class Builder {
+    private final Set<String> mBeganUnambiguous = new HashSet<>();
+    private final Set<String> mEndedUnambiguous = new HashSet<>();
+    private final Set<String> mBeganAmbiguous = new HashSet<>();
+    private final Set<String> mEndedAmbiguous = new HashSet<>();
+
+    public void withBeganUnambiguous( final Set<String> words ) {
+      mBeganUnambiguous.addAll( words );
+    }
+
+    public void withEndedUnambiguous( final Set<String> words ) {
+      mEndedUnambiguous.addAll( words );
+    }
+
+    public void withBeganAmbiguous( final Set<String> words ) {
+      mBeganAmbiguous.addAll( words );
+    }
+
+    public void withEndedAmbiguous( final Set<String> words ) {
+      mEndedAmbiguous.addAll( words );
+    }
+
+    /**
+     * Constructs a new set of {@link Contractions} that can be configured
+     * using this {@link Builder} instance.
+     *
+     * @return {@link Contractions} suitable for use with parsing text.
+     */
+    public Contractions build() {
+      mBeganUnambiguous.addAll( from( mBeganUnambiguous, BEGAN_UNAMBIGUOUS ) );
+      mEndedUnambiguous.addAll( from( mEndedUnambiguous, ENDED_UNAMBIGUOUS ) );
+      mBeganAmbiguous.addAll( from( mBeganAmbiguous, BEGAN_AMBIGUOUS ) );
+      mEndedAmbiguous.addAll( from( mEndedAmbiguous, ENDED_AMBIGUOUS ) );
+
+      return new Contractions( this );
+    }
+
+    /**
+     * This returns the {@code fallback} {@link Set} if {@code src} is empty;
+     * otherwise, this returns the empty {@link Set}.
+     *
+     * @param src      A set of contractions, possibly empty.
+     * @param fallback The default values to use if {@code src} is empty.
+     * @param <T>      The type of data used by both {@link Set}s.
+     * @return An empty {@link Set} if the {@code src} contains at least one
+     * element; otherwise, this will return {@code fallback}.
+     */
+    private static <T> Set<T> from( final Set<T> src, final Set<T> fallback ) {
+      assert src != null;
+      assert fallback != null;
+      return src.isEmpty() ? fallback : emptySet();
+    }
+  }
+
   /**
    * Answers whether the given word is a contraction that always starts
    * with an apostrophe. The comparison is case insensitive. This must
@@ -17,9 +86,9 @@ public class Contractions {
    * @return {@code true} when the given word is in the set of unambiguous
    * contractions.
    */
-  public static boolean contractionBeganUnambiguously( final String word ) {
+  public boolean beganUnambiguously( final String word ) {
     assert word != null;
-    return BEGAN_UNAMBIGUOUS.contains( word.toLowerCase() );
+    return getBeganUnambiguous().contains( word.toLowerCase() );
   }
 
   /**
@@ -31,25 +100,41 @@ public class Contractions {
    * @return {@code true} when the given word is in the set of ambiguous
    * contractions.
    */
-  public static boolean contractionBeganAmbiguously( final String word ) {
+  public boolean beganAmbiguously( final String word ) {
     assert word != null;
-    return BEGAN_AMBIGUOUS.contains( word.toLowerCase() );
+    return getBeganAmbiguous().contains( word.toLowerCase() );
   }
 
-  public static boolean contractionEndedUnambiguously( final String word ) {
+  public boolean endedUnambiguously( final String word ) {
     assert word != null;
-    return ENDED_UNAMBIGUOUS.contains( word.toLowerCase() );
+    return getEndedUnambiguous().contains( word.toLowerCase() );
   }
 
-  public static boolean contractionEndedAmbiguously( final String word ) {
+  public boolean endedAmbiguously( final String word ) {
     assert word != null;
     final var check = word.toLowerCase();
 
     // Ensure that 'n' isn't matched for ambiguity by enforcing length, yet
     // allow o' to match because 'a sentence can end with the letter o'.
-    return ENDED_AMBIGUOUS.contains( check ) ||
+    return getEndedAmbiguous().contains( check ) ||
       check.endsWith( "s" ) || check.endsWith( "z" ) ||
       check.endsWith( "x" ) || (check.length() > 1 && check.endsWith( "n" ));
+  }
+
+  private Set<String> getBeganUnambiguous() {
+    return mBuilder.mBeganUnambiguous;
+  }
+
+  private Set<String> getEndedUnambiguous() {
+    return mBuilder.mEndedUnambiguous;
+  }
+
+  private Set<String> getBeganAmbiguous() {
+    return mBuilder.mBeganAmbiguous;
+  }
+
+  private Set<String> getEndedAmbiguous() {
+    return mBuilder.mEndedAmbiguous;
   }
 
   /**
@@ -62,6 +147,7 @@ public class Contractions {
     "boutchu",
     "cept",
     "dillo",
+    "em",
     "fraid",
     "gainst",
     "n",
@@ -108,8 +194,6 @@ public class Contractions {
     "choo",
     // he|e pluribus unum
     "e",
-    // them|letter em|Emily
-    "em",
     // here|earlier
     "ere",
     // afro|to and fro
