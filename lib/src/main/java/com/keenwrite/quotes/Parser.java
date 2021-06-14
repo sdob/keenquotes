@@ -195,24 +195,15 @@ public class Parser {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
       flush( lexemes );
-
-      // Remove the first apostrophe so that it isn't emitted twice.
-      if( !unresolved.isEmpty() ) {
-        unresolved.remove( unresolved.size() - 1 );
-      }
+      resolved( unresolved );
     }
     else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( NUMBER ) ) {
       if( lex3.isType( QUOTE_SINGLE ) ) {
         // E.g., 2''
         consumer.accept(
           new Token( QUOTE_PRIME_DOUBLE, lex2.began(), lex3.ended() ) );
-
-        // Remove the first apostrophe so that it isn't emitted twice.
-        if( !unresolved.isEmpty() ) {
-          unresolved.remove( unresolved.size() - 1 );
-        }
-
         flush( lexemes );
+        resolved( unresolved );
       }
       else {
         // E.g., 2'
@@ -227,6 +218,7 @@ public class Parser {
       sContractions.endedUnambiguously( lex2.toString( mText ) ) ) {
       // E.g., thinkin'
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
+      flush( lexemes );
     }
     else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) &&
       lex3.isType( WORD ) &&
@@ -243,6 +235,7 @@ public class Parser {
       lex1.anyType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
       (lex3.anyType( EOL, EOP ) || lex3.isEot()) ) {
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+      mClosingSingleQuote++;
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
       // E.g., \'
@@ -274,6 +267,7 @@ public class Parser {
       lex2.anyType( PUNCT, PERIOD, DASH ) && lex3.isType( QUOTE_DOUBLE ) ) {
       // E.g., '," (contraction ruled out from previous conditionals)
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex1 ) );
+      resolved( unresolved );
       mClosingSingleQuote++;
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
@@ -283,7 +277,7 @@ public class Parser {
   }
 
   private void resolve(
-    final List<Lexeme[]> lexemes, final Consumer<Token> consumer ) {
+    final List<Lexeme[]> unresolved, final Consumer<Token> consumer ) {
     // Some non-emitted tokenized lexemes may be ambiguous.
     final var ambiguousLeadingQuotes = new ArrayList<Lexeme[]>( 16 );
     final var ambiguousLaggingQuotes = new ArrayList<Lexeme[]>( 16 );
@@ -291,7 +285,7 @@ public class Parser {
     var resolvedLaggingQuotes = 0;
 
     // Count the number of ambiguous and non-ambiguous open single quotes.
-    for( var i = lexemes.iterator(); i.hasNext(); ) {
+    for( var i = unresolved.iterator(); i.hasNext(); ) {
       final var quotes = i.next();
       final var lex1 = quotes[ 0 ];
       final var lex2 = quotes[ 1 ];
@@ -353,7 +347,13 @@ public class Parser {
         final var quote = balanced ? QUOTE_APOSTROPHE : QUOTE_CLOSING_SINGLE;
         final var lex = ambiguousLaggingQuotes.get( 0 );
         consumer.accept( new Token( quote, lex[ 1 ] ) );
-        lexemes.remove( lex );
+        unresolved.remove( lex );
+      }
+      else if( ambiguousLeadingCount == 0 && unresolved.size() == 1 ) {
+        // Must be a closing quote.
+        final var lex = unresolved.get( 0 );
+        consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex[ 1 ] ) );
+        unresolved.remove( lex );
       }
     }
     else if( ambiguousLeadingCount == 0 && ambiguousLaggingCount > 0 ) {
@@ -362,13 +362,13 @@ public class Parser {
       ambiguousLaggingQuotes.forEach(
         lex -> {
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex[ 1 ] ) );
-          lexemes.remove( lex );
+          unresolved.remove( lex );
         }
       );
     }
     else if( ambiguousLeadingCount == 0 ) {
       if( resolvedLaggingQuotes < resolvedLeadingQuotes ) {
-        for( final var i = lexemes.iterator(); i.hasNext(); ) {
+        for( final var i = unresolved.iterator(); i.hasNext(); ) {
           final var lex = i.next()[ 1 ];
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex ) );
           i.remove();
@@ -378,10 +378,19 @@ public class Parser {
     else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {
       final var lex = ambiguousLeadingQuotes.get( 0 );
       consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex[ 1 ] ) );
-      lexemes.remove( lex );
+      unresolved.remove( lex );
     }
+  }
 
-    System.out.println( mText );
+  /**
+   * Remove the last {@link Lexeme}s from the given list.
+   *
+   * @param unresolved The list of {@link Lexeme}s to modify.
+   */
+  private void resolved( final List<Lexeme[]> unresolved ) {
+    if( !unresolved.isEmpty() ) {
+      unresolved.remove( unresolved.size() - 1 );
+    }
   }
 
   /**

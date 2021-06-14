@@ -20,7 +20,7 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "\"I heard she said, 'That's Sam's',\" said the Sams' cat."
+      "'What's this -5.5'' thing?'"
     ) );
   }
 
