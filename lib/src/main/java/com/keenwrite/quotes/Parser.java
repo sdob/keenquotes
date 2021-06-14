@@ -269,6 +269,11 @@ public class Parser {
       resolved( unresolved );
       mClosingSingleQuote++;
     }
+    else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( SPACE ) &&
+      lex3.anyType( HYPHEN, NUMBER ) ) {
+      consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
+      mOpeningSingleQuote++;
+    }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       // After tokenizing, the parser will attempt to resolve ambiguities.
       unresolved.add( new Lexeme[]{lex1, lex2, lex3} );
@@ -350,9 +355,9 @@ public class Parser {
       }
       else if( ambiguousLeadingCount == 0 && unresolved.size() == 1 ) {
         // Must be a closing quote.
-        final var lex = unresolved.get( 0 );
-        consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex[ 1 ] ) );
-        unresolved.remove( lex );
+        final var closing = unresolved.get( 0 );
+        consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
+        unresolved.remove( closing );
       }
     }
     else if( ambiguousLeadingCount == 0 && ambiguousLaggingCount > 0 ) {
@@ -368,16 +373,31 @@ public class Parser {
     else if( ambiguousLeadingCount == 0 ) {
       if( resolvedLaggingQuotes < resolvedLeadingQuotes ) {
         for( final var i = unresolved.iterator(); i.hasNext(); ) {
-          final var lex = i.next()[ 1 ];
-          consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex ) );
+          final var closing = i.next()[ 1 ];
+          consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing ) );
           i.remove();
         }
       }
+      else if( mOpeningSingleQuote - mClosingSingleQuote == unresolved.size() ) {
+        for( final var i = unresolved.iterator(); i.hasNext(); ) {
+          final var closing = i.next();
+          consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
+          i.remove();
+        }
+      }
+      else if( unresolved.size() == 2 ) {
+        final var closing = unresolved.get( 0 );
+        final var opening = unresolved.get( 1 );
+        consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
+        consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
+
+        unresolved.clear();
+      }
     }
     else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {
-      final var lex = ambiguousLeadingQuotes.get( 0 );
-      consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex[ 1 ] ) );
-      unresolved.remove( lex );
+      final var opening = ambiguousLeadingQuotes.get( 0 );
+      consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
+      unresolved.remove( opening );
     }
   }
 
