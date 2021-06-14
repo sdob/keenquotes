@@ -203,7 +203,6 @@ public class Parser {
         consumer.accept(
           new Token( QUOTE_PRIME_DOUBLE, lex2.began(), lex3.ended() ) );
         flush( lexemes );
-        resolved( unresolved );
       }
       else {
         // E.g., 2'

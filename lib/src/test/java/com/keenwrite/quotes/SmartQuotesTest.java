@@ -20,7 +20,7 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "'What's this -5.5'' thing?'"
+      "What's this '-5.5''' thing?"
     ) );
   }
 
