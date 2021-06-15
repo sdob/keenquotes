@@ -63,11 +63,10 @@ public class Lexer {
       else if( curr == '"' ) {
         lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
-      else if( curr == '-' ) {
-        lexeme = createLexeme(
-          slurp( i, ( next, ci ) -> next == '-' ) == 0 ? HYPHEN : DASH,
-          began, i.getIndex()
-        );
+      else if( curr == '-' && peek( i ) == '-' ) {
+        slurp( i, ( next, ci ) -> next == '-' );
+
+        lexeme = createLexeme( DASH, began, i.getIndex() );
       }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
         // Parse all consecutive number characters to prevent the main loop
@@ -77,6 +76,9 @@ public class Lexer {
         );
 
         lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
+      }
+      else if( curr == '-' ) {
+        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
       }
       else if( curr == '.' ) {
         // Parse all consecutive periods into an ellipsis lexeme. This will
@@ -140,7 +142,7 @@ public class Lexer {
   }
 
   private static boolean isNumeric( final char curr ) {
-    return curr == '.' || curr == ',';
+    return curr == '.' || curr == ',' || curr == '-' || curr == '+';
   }
 
   private static char peek( final CharacterIterator ci ) {

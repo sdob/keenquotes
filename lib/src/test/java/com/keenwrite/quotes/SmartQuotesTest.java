@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
-import static java.lang.System.*;
+import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -20,7 +20,7 @@ public class SmartQuotesTest {
   @Test
   public void test_parse_SingleLine_Parsed() {
     out.println( SmartQuotes.replace(
-      "What's this '-5.5''' and other '-10.2'' cm' and another '-7.25''' thing?"
+      "What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?"
     ) );
   }
 
@@ -62,7 +62,7 @@ public class SmartQuotesTest {
     }
   }
 
-  private static String unescapeEol( final String s) {
+  private static String unescapeEol( final String s ) {
     return String.join( "\n", s.split( "\\\\n" ) );
   }
 

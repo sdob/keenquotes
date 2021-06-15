@@ -19,8 +19,8 @@ Bob&apos;s table is 5&Prime; × 4&Prime;.
 Bob's table is 5'×4'.
 Bob&apos;s table is 5&prime;×4&prime;.
 
-What's this '-5.5''', '-10.2'' cm', and another '-7.25''' thing?
-What&apos;s this &lsquo;-5.5&Prime;&rsquo;, &lsquo;-10.2&Prime; cm&rsquo;, and another &lsquo;-7.25&Prime;&rsquo; thing?
+What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?
+What&apos;s this &lsquo;-5.5&Prime;,&rsquo; &lsquo;-10.2&Prime; cm,&rsquo; and another &lsquo;-7.25&Prime;&rsquo; thing?
 
 'What's this -5.5'' thing?'
 &lsquo;What&apos;s this -5.5&Prime; thing?&rsquo;
@@ -57,6 +57,9 @@ With--&ldquo;air quotes&rdquo;--and dashes.
 
 "Not all open quotes are closed...
 &ldquo;Not all open quotes are closed...
+
+"And this" and "and this" and "and this" and "and another."
+&ldquo;And this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and another.&rdquo;
 
 # ########################################################################
 # Single quotes

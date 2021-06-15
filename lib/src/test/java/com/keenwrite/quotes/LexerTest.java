@@ -18,16 +18,16 @@ class LexerTest {
   @Test
   void test_Lexing_Words_TokenValues() {
     testText( "abc 123", "abc", " ", "123" );
-    testText( "-123 abc", "-", "123", " ", "abc" );
+    testText( "-123 abc", "-123", " ", "abc" );
   }
 
   @Test
   void test_Lexing_Numbers_EmitNumbers() {
     testType( ".123", NUMBER );
-    testType( "-123.", HYPHEN, NUMBER, PERIOD );
+    testType( "-123.", NUMBER, PERIOD );
     testType( " 123.123.123", SPACE, NUMBER );
     testType( "123 123\"", NUMBER, SPACE, NUMBER, QUOTE_DOUBLE );
-    testType( "-123,123.123", HYPHEN, NUMBER );
+    testType( "-123,123.123", NUMBER );
     testType( "...1,023...", ELLIPSIS, NUMBER, ELLIPSIS );
   }
 
@@ -37,7 +37,7 @@ class LexerTest {
     testType( "abc abc", WORD, SPACE, WORD );
     testType( "abc...", WORD, ELLIPSIS );
     testType( "abc123", WORD, NUMBER );
-    testType( "-123abc", HYPHEN, NUMBER, WORD );
+    testType( "-123abc", NUMBER, WORD );
     testType( "abc-o'-abc", WORD, HYPHEN, WORD, QUOTE_SINGLE, HYPHEN, WORD );
   }
 
@@ -47,6 +47,8 @@ class LexerTest {
     testType( ";", PUNCT );
     testType( ".", PERIOD );
     testType( "-", HYPHEN );
+    testType( "--", DASH );
+    testType( "---", DASH );
     testType( "...", ELLIPSIS );
   }
 

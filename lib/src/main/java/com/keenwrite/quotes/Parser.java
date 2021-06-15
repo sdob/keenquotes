@@ -219,16 +219,20 @@ public class Parser {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
       flush( lexemes );
     }
-    else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) &&
-      lex3.isType( WORD ) &&
-      lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
-      // Sentences must re-written to avoid starting with numerals.
-      // E.g., '70s
-      consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
-    }
-    else if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( NUMBER ) ) {
-      // E.g., '02
-      consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+    else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) ) {
+      if( lex3.anyType( SPACE, PUNCT ) || (lex3.isType( WORD ) &&
+        lex3.toString( mText ).equalsIgnoreCase( "s" )) ) {
+        // Sentences must re-written to avoid starting with numerals.
+        // Examples: '20s, '02
+        consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
+      }
+      else {
+        // E.g., '2''
+        consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex1 ) );
+        mOpeningSingleQuote++;
+      }
+
+      resolved( unresolved );
     }
     else if( lex2.isType( QUOTE_SINGLE ) &&
       lex1.anyType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
@@ -268,11 +272,6 @@ public class Parser {
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex1 ) );
       resolved( unresolved );
       mClosingSingleQuote++;
-    }
-    else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( SPACE ) &&
-      lex3.anyType( HYPHEN, NUMBER ) ) {
-      consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
-      mOpeningSingleQuote++;
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       // After tokenizing, the parser will attempt to resolve ambiguities.
