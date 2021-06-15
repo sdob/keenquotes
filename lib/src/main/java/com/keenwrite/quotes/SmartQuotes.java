@@ -3,13 +3,15 @@ package com.keenwrite.quotes;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.keenwrite.quotes.TokenType.*;
 import static java.util.Collections.sort;
 
 /**
  * Responsible for replacing {@link Token} instances with equivalent smart
- * quotes (or straight quotes).
+ * quotes (or straight quotes). This will inform the caller when ambiguous
+ * quotes cannot be reliably resolved.
  */
 public class SmartQuotes {
   private static final Map<TokenType, String> REPLACEMENTS = Map.of(
@@ -24,7 +26,17 @@ public class SmartQuotes {
     QUOTE_PRIME_DOUBLE, "&Prime;"
   );
 
-  public static String replace( final String text ) {
+  /**
+   * Converts
+   * @param text
+   * @return
+   */
+  public static String convert( final String text ) {
+    return convert( text, ( lexeme ) -> {} );
+  }
+
+  public static String convert(
+    final String text, final Consumer<Lexeme> consumer ) {
     final var parser = new Parser( text );
     final var tokens = new ArrayList<Token>();
 

@@ -145,8 +145,9 @@ public class Parser {
    * quotes.
    *
    * @param consumer Receives emitted {@link Token}s.
+   * @return The list of lexemes that could not be resolved.
    */
-  public void parse( final Consumer<Token> consumer ) {
+  public List<Lexeme> parse( final Consumer<Token> consumer ) {
     final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
 
     // Allow consuming the very first token without checking the queue size.
@@ -169,7 +170,11 @@ public class Parser {
     // Attempt to resolve any remaining unambiguous quotes.
     resolve( unresolved, consumer );
 
-    System.out.println( "UNRESOLVED: " + unresolved.size() );
+    final var result = new ArrayList<Lexeme>( unresolved.size() );
+
+    unresolved.forEach( ( lex ) -> result.add( lex[ 1 ] ) );
+
+    return result;
   }
 
   private void tokenize( final Lexeme lexeme,
