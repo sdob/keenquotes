@@ -14,5 +14,4 @@ public enum TokenType {
   QUOTE_STRAIGHT_DOUBLE,
   QUOTE_PRIME_SINGLE,
   QUOTE_PRIME_DOUBLE,
-  TEXT,
 }

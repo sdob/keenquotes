@@ -36,7 +36,7 @@ class ParserTest {
     );
 
   @Test
-  void test_Conversion_Straight_Curly() {
+  void test_Conversion_StraightQuotes_ExpectedConversionCount() {
     for( final var entry : TEST_CASES.entrySet() ) {
       parse( entry.getKey(), entry.getValue() );
     }
@@ -47,7 +47,8 @@ class ParserTest {
     final var actual = new HashMap<TokenType, Integer>();
 
     parser.parse(
-      ( token ) -> actual.merge( token.getType(), 1, Integer::sum )
+      ( token ) -> actual.merge( token.getType(), 1, Integer::sum ),
+      ( lexeme ) -> {}
     );
 
     for( final var expectedEntry : tally.entrySet() ) {

@@ -34,7 +34,7 @@ import static com.keenwrite.quotes.TokenType.*;
  *   <li>Single quotes (' (WORD (SPACE+ WORD)? (PUNCT | PERIOD))+ ')</li>
  * </ol>
  */
-public class Parser {
+public final class Parser {
   /**
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
@@ -144,10 +144,11 @@ public class Parser {
    * {@link Token}s that can be used to convert straight quotes to curly
    * quotes.
    *
-   * @param consumer Receives emitted {@link Token}s.
-   * @return The list of lexemes that could not be resolved.
+   * @param tokenConsumer Receives emitted {@link Token}s.
    */
-  public List<Lexeme> parse( final Consumer<Token> consumer ) {
+  public void parse(
+    final Consumer<Token> tokenConsumer,
+    final Consumer<Lexeme> lexemeConsumer ) {
     final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
 
     // Allow consuming the very first token without checking the queue size.
@@ -158,23 +159,20 @@ public class Parser {
 
     // Create and convert a list of all unambiguous quote characters.
     while( (lexeme = mLexer.next()) != EOT ) {
-      tokenize( lexeme, lexemes, consumer, unresolved );
+      tokenize( lexeme, lexemes, tokenConsumer, unresolved );
     }
 
     // By loop's end, the lexemes list contains tokens for all except the
     // final two elements (from tokenizing in triplets). Tokenize the remaining
     // unprocessed lexemes.
-    tokenize( EOT, lexemes, consumer, unresolved );
-    tokenize( EOT, lexemes, consumer, unresolved );
+    tokenize( EOT, lexemes, tokenConsumer, unresolved );
+    tokenize( EOT, lexemes, tokenConsumer, unresolved );
 
     // Attempt to resolve any remaining unambiguous quotes.
-    resolve( unresolved, consumer );
+    resolve( unresolved, tokenConsumer );
 
-    final var result = new ArrayList<Lexeme>( unresolved.size() );
-
-    unresolved.forEach( ( lex ) -> result.add( lex[ 1 ] ) );
-
-    return result;
+    // Notify of any unambiguous quotes that could not be resolved.
+    unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
   }
 
   private void tokenize( final Lexeme lexeme,
@@ -200,7 +198,7 @@ public class Parser {
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex3 ) );
       flush( lexemes );
-      resolved( unresolved );
+      truncate( unresolved );
     }
     else if( lex2.isType( QUOTE_SINGLE ) && lex1.isType( NUMBER ) ) {
       if( lex3.isType( QUOTE_SINGLE ) ) {
@@ -237,7 +235,7 @@ public class Parser {
         mOpeningSingleQuote++;
       }
 
-      resolved( unresolved );
+      truncate( unresolved );
     }
     else if( lex2.isType( QUOTE_SINGLE ) &&
       lex1.anyType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
@@ -268,14 +266,14 @@ public class Parser {
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       lex1.anyType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
       (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
-      // E.g., ..."', word"', ?"'
+      // Examples: ..."', word"', ?"'
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
     }
     else if( lex1.isType( QUOTE_SINGLE ) &&
       lex2.anyType( PUNCT, PERIOD, DASH ) && lex3.isType( QUOTE_DOUBLE ) ) {
       // E.g., '," (contraction ruled out from previous conditionals)
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex1 ) );
-      resolved( unresolved );
+      truncate( unresolved );
       mClosingSingleQuote++;
     }
     else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
@@ -410,7 +408,7 @@ public class Parser {
    *
    * @param unresolved The list of {@link Lexeme}s to modify.
    */
-  private void resolved( final List<Lexeme[]> unresolved ) {
+  private void truncate( final List<Lexeme[]> unresolved ) {
     if( !unresolved.isEmpty() ) {
       unresolved.remove( unresolved.size() - 1 );
     }

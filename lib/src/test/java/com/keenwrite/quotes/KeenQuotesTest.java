@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test that English straight quotes are converted to curly quotes and
  * apostrophes.
  */
-public class SmartQuotesTest {
+public class KeenQuotesTest {
   /**
    * This is a single-use test that is useful for debugging.
    */
   @Test
   @Disabled
   public void test_parse_SingleLine_Parsed() {
-    out.println( SmartQuotes.convert(
+    out.println( KeenQuotes.convert(
       "What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?",
       out::println
     ) );
@@ -37,7 +37,7 @@ public class SmartQuotesTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testConverter(  );
+    testConverter( text -> KeenQuotes.convert( text, ( lexeme ) -> {} ) );
   }
 
   /**

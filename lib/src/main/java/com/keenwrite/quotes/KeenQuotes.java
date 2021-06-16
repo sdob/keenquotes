@@ -13,7 +13,7 @@ import static java.util.Collections.sort;
  * quotes (or straight quotes). This will inform the caller when ambiguous
  * quotes cannot be reliably resolved.
  */
-public class SmartQuotes {
+public final class KeenQuotes {
   private static final Map<TokenType, String> REPLACEMENTS = Map.of(
     QUOTE_OPENING_SINGLE, "&lsquo;",
     QUOTE_CLOSING_SINGLE, "&rsquo;",
@@ -27,21 +27,21 @@ public class SmartQuotes {
   );
 
   /**
-   * Converts
-   * @param text
-   * @return
+   * Converts straight quotes to curly quotes and primes. Any quotation marks
+   * that cannot be converted are passed to the {@link Consumer}.
+   *
+   * @param text       The text to parse.
+   * @param unresolved Recipient for ambiguous {@link Lexeme}s.
+   * @return The given text string with as many straight quotes converted to
+   * curly quotes as is feasible.
    */
-  public static String convert( final String text ) {
-    return convert( text, ( lexeme ) -> {} );
-  }
-
   public static String convert(
-    final String text, final Consumer<Lexeme> consumer ) {
+    final String text, final Consumer<Lexeme> unresolved ) {
     final var parser = new Parser( text );
     final var tokens = new ArrayList<Token>();
 
-    // Store all parsed quotation marks.
-    parser.parse( tokens::add );
+    // Parse the tokens and consume all unresolved lexemes.
+    parser.parse( tokens::add, unresolved );
 
     // The parser may emit tokens in any order.
     sort( tokens );
