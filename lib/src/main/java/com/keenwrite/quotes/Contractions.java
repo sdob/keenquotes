@@ -671,6 +671,7 @@ public class Contractions {
     "startin",
     "statin",
     "stayin",
+    "stealin",
     "sterlin",
     "stimulatin",
     "stirrin",

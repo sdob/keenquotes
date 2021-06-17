@@ -54,7 +54,7 @@ public final class Parser {
    * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_SINGLE};
+    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS, QUOTE_SINGLE};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
@@ -192,7 +192,6 @@ public final class Parser {
       lex1.anyType( WORD, PERIOD, NUMBER ) ) {
       // Examples: y'all, Ph.D.'ll, 20's, she's
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
-      flush( lexemes );
     }
     else if( lex1.isType( QUOTE_SINGLE ) && lex3.isType( QUOTE_SINGLE ) &&
       "n".equalsIgnoreCase( lex2.toString( mText ) ) ) {
@@ -399,6 +398,9 @@ public final class Parser {
         final var opening = unresolved.get( 1 );
         consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
         consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
+
+        // Doesn't affect the algorithm.
+        unresolved.clear();
       }
     }
     else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {

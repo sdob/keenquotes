@@ -1,8 +1,9 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,10 +23,10 @@ public class KeenQuotesTest {
    * This is a single-use test that is useful for debugging.
    */
   @Test
-  @Disabled
+  //@Disabled
   public void test_parse_SingleLine_Parsed() {
     out.println( KeenQuotes.convert(
-      "\"What cries in the streets\"?",
+      "shouldn't drop letters, nor say \"ain't\" or \"hain't.\"",
       out::println
     ) );
   }
@@ -40,11 +41,12 @@ public class KeenQuotesTest {
     testConverter( text -> KeenQuotes.convert( text, ( lexeme ) -> {} ) );
   }
 
-  @Test
-  void test_Parse_Story_Converted() throws IOException {
+  @ParameterizedTest
+  @ValueSource( strings = {"chapman", "habberton", "foote"} )
+  void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
 
-    try( final var reader = open( "foote.txt" ) ) {
+    try( final var reader = open( filename + ".txt" ) ) {
       String line;
 
       while( (line = reader.readLine()) != null ) {
@@ -52,8 +54,7 @@ public class KeenQuotesTest {
       }
     }
 
-    final var s = KeenQuotes.convert( sb.toString(), out::println );
-    System.out.println( s );
+    KeenQuotes.convert( sb.toString(), out::println );
   }
 
   /**

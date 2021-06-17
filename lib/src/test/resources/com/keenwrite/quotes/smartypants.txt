@@ -172,6 +172,9 @@ Took place in &apos;04, yes&apos;m!
 "Ah," she said, "you knew! He told you--and you said 'my dear'! How could you?!"
 &ldquo;Ah,&rdquo; she said, &ldquo;you knew! He told you--and you said &lsquo;my dear&rsquo;! How could you?!&rdquo;
 
+shouldn't drop letters, nor say "ain't" or "hain't."
+shouldn&apos;t drop letters, nor say &ldquo;ain&apos;t&rdquo; or &ldquo;hain&apos;t.&rdquo;
+
 # ########################################################################
 # Mixed
 # ########################################################################
