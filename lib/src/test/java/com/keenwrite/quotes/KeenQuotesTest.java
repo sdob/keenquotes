@@ -26,7 +26,7 @@ public class KeenQuotesTest {
   //@Disabled
   public void test_parse_SingleLine_Parsed() {
     out.println( KeenQuotes.convert(
-      "shouldn't drop letters, nor say \"ain't\" or \"hain't.\"",
+      "\"’Kearney lives on the banks of Killarney—’",
       out::println
     ) );
   }
@@ -42,9 +42,11 @@ public class KeenQuotesTest {
   }
 
   @ParameterizedTest
-  @ValueSource( strings = {"chapman", "habberton", "foote"} )
+  @ValueSource( strings = {"westrup"} )
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
+    System.out.println( "---------------------" );
+    System.out.println( filename );
 
     try( final var reader = open( filename + ".txt" ) ) {
       String line;
@@ -54,7 +56,7 @@ public class KeenQuotesTest {
       }
     }
 
-    KeenQuotes.convert( sb.toString(), out::println );
+    System.out.println( KeenQuotes.convert( sb.toString(), out::println ) );
   }
 
   /**

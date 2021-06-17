@@ -230,6 +230,10 @@ public class Contractions {
     "an",
     // for/before
     "fo",
+    // lord
+    "lor",
+    // myself
+    "masel",
     // old
     "ol",
     // San (Francisco)
