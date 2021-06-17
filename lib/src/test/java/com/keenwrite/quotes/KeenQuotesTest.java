@@ -1,7 +1,6 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -22,7 +21,7 @@ public class KeenQuotesTest {
    * This is a single-use test that is useful for debugging.
    */
   @Test
-  @Disabled
+  //@Disabled
   public void test_parse_SingleLine_Parsed() {
     out.println( KeenQuotes.convert(
       "What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?",
@@ -40,6 +39,22 @@ public class KeenQuotesTest {
     testConverter( text -> KeenQuotes.convert( text, ( lexeme ) -> {} ) );
   }
 
+  @Test
+  void test_Parse_Story_Converted() throws IOException {
+    final var sb = new StringBuilder( 2 ^ 20 );
+
+    try( final var reader = open( "foote.txt" ) ) {
+      String line;
+
+      while( (line = reader.readLine()) != null ) {
+        sb.append( line ).append( '\n' );
+      }
+    }
+
+    final var s = KeenQuotes.convert( sb.toString(), out::println );
+    System.out.println(s);
+  }
+
   /**
    * Reads a file full of couplets. The first of the pair is the input,
    * the second of the pair is the expected result. Couplets may include
@@ -51,7 +66,7 @@ public class KeenQuotesTest {
    */
   private void testConverter( final Function<String, String> parser )
     throws IOException {
-    try( final var reader = openResource( "smartypants.txt" ) ) {
+    try( final var reader = open( "smartypants.txt" ) ) {
       String line;
       String testLine = "";
       String expected = "";
@@ -86,8 +101,14 @@ public class KeenQuotesTest {
     return String.join( "\n", s.split( "\\\\n" ) );
   }
 
-  @SuppressWarnings( "SameParameterValue" )
-  private BufferedReader openResource( final String filename ) {
+  /**
+   * Opens a text file for reading. Callers are responsible for closing.
+   *
+   * @param filename The file to open.
+   * @return An instance of {@link BufferedReader} that can be used to
+   * read all the lines in the file.
+   */
+  private BufferedReader open( final String filename ) {
     final var is = getClass().getResourceAsStream( filename );
     assertNotNull( is );
 

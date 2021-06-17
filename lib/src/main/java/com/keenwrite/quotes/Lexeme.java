@@ -61,6 +61,15 @@ public final class Lexeme implements Comparable<Lexeme> {
     return text.substring( mBegan, mEnded );
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + '{' +
+      "mType=" + mType +
+      ", mBegan=" + mBegan +
+      ", mEnded=" + mEnded +
+      '}';
+  }
+
   /**
    * Answers whether the given {@link LexemeType} is the same as this
    * instance's internal {@link LexemeType}.

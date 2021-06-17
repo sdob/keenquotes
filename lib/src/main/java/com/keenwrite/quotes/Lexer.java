@@ -7,7 +7,8 @@ import java.util.function.BiFunction;
 
 import static com.keenwrite.quotes.Lexeme.createLexeme;
 import static com.keenwrite.quotes.LexemeType.*;
-import static java.lang.Character.*;
+import static java.lang.Character.isDigit;
+import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
 
 /**
@@ -141,8 +142,31 @@ public class Lexer {
     return lexeme;
   }
 
+  /**
+   * Answers whether the given character can be considered part of a word
+   * or not. This will include {@code _} and {@code *} because plain text
+   * formats often use those characters to emphasize a word.
+   *
+   * @param curr The character to check as being part of a word.
+   * @return {@code true} if the given character is a letter or a formatting
+   * indicator.
+   */
+  private static boolean isLetter( final char curr ) {
+    return Character.isLetter( curr ) || curr == '_' || curr == '*';
+  }
+
+  /**
+   * Answers whether the given character can be considered part of a number
+   * or not. This does not include digits, which are checked independently
+   * from this method.
+   *
+   * @param curr The character to check as being related to numbers.
+   * @return {@code true} if the given character can be considered part of
+   * a number (e.g., -2,000.2^2 is considered a single number).
+   */
   private static boolean isNumeric( final char curr ) {
-    return curr == '.' || curr == ',' || curr == '-' || curr == '+';
+    return
+      curr == '.' || curr == ',' || curr == '-' || curr == '+' || curr == '^';
   }
 
   private static char peek( final CharacterIterator ci ) {

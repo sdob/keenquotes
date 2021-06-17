@@ -39,7 +39,7 @@ public final class Parser {
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_DOUBLE, OPENING_GROUP, EOP};
+    new LexemeType[]{SPACE, DASH, QUOTE_DOUBLE, OPENING_GROUP, EOL, EOP};
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -63,7 +63,7 @@ public final class Parser {
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, OPENING_GROUP, EOP};
+    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -81,7 +81,7 @@ public final class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, CLOSING_GROUP, EOL};
+    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
 
   /**
    * The text to parse. A reference is required as a minor optimization in
@@ -159,7 +159,16 @@ public final class Parser {
 
     // Create and convert a list of all unambiguous quote characters.
     while( (lexeme = mLexer.next()) != EOT ) {
-      tokenize( lexeme, lexemes, tokenConsumer, unresolved );
+      if( tokenize( lexeme, lexemes, tokenConsumer, unresolved ) ) {
+        // Attempt to resolve any remaining unambiguous quotes.
+        resolve( unresolved, tokenConsumer );
+
+        // Notify of any unambiguous quotes that could not be resolved.
+        unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
+        unresolved.clear();
+        mOpeningSingleQuote = 0;
+        mClosingSingleQuote = 0;
+      }
     }
 
     // By loop's end, the lexemes list contains tokens for all except the
@@ -175,10 +184,24 @@ public final class Parser {
     unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
   }
 
-  private void tokenize( final Lexeme lexeme,
-                         final CircularFifoQueue<Lexeme> lexemes,
-                         final Consumer<Token> consumer,
-                         final List<Lexeme[]> unresolved ) {
+  /**
+   * Converts {@link Lexeme}s identified as straight quotes into {@link Token}s
+   * that represent the curly equivalent. The {@link Token}s are passed to
+   * the given {@link Consumer} for further processing (e.g., replaced in
+   * the original text being parsed).
+   *
+   * @param lexeme     A part of the text being parsed.
+   * @param lexemes    A 3-element queue of lexemes that provide sufficient
+   *                   context to identify curly quotes.
+   * @param consumer   Recipient of equivalent quotes.
+   * @param unresolved Rolling list of potentially ambiguous {@link Lexeme}s
+   *                   that could not be tokenized, yet.
+   * @return {@code true} if an end-of-paragraph is detected.
+   */
+  private boolean tokenize( final Lexeme lexeme,
+                            final CircularFifoQueue<Lexeme> lexemes,
+                            final Consumer<Token> consumer,
+                            final List<Lexeme[]> unresolved ) {
     // Add the next lexeme to tokenize into the queue for immediate processing.
     lexemes.add( lexeme );
 
@@ -280,6 +303,11 @@ public final class Parser {
       // After tokenizing, the parser will attempt to resolve ambiguities.
       unresolved.add( new Lexeme[]{lex1, lex2, lex3} );
     }
+
+    // Suggest to the caller that resolution should be performed. This allows
+    // the algorithm to reset the opening/closing quote balance before the
+    // next paragraph is parsed.
+    return lex3.isType( EOP );
   }
 
   private void resolve(

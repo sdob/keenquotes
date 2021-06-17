@@ -232,6 +232,12 @@ public class Contractions {
     "ol",
     // the
     "th",
+    // what
+    "wha",
+    // for/before
+    "fo",
+    // San (Francisco)
+    "Sa",
     // Top ~500 common -ing words as English contractions.
     "acceptin",
     "accompanyin",
@@ -639,6 +645,7 @@ public class Contractions {
     "shiftin",
     "shinin",
     "shippin",
+    "shittin",
     "shootin",
     "shoppin",
     "showin",

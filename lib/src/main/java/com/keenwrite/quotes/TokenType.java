@@ -4,7 +4,7 @@ package com.keenwrite.quotes;
 /**
  * The {@link Parser} emits these token types.
  */
-public enum TokenType {
+enum TokenType {
   QUOTE_OPENING_SINGLE,
   QUOTE_OPENING_DOUBLE,
   QUOTE_CLOSING_SINGLE,

@@ -61,6 +61,9 @@ With--&ldquo;air quotes&rdquo;--and dashes.
 "And this" and "and this" and "and this" and "and another."
 &ldquo;And this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and another.&rdquo;
 
+"Will'll invite?" Mrs. Thorne asked;\n"because he's coming--he's at the gate."
+&ldquo;Will&apos;ll invite?&rdquo; Mrs. Thorne asked;\n&ldquo;because he&apos;s coming--he&apos;s at the gate.&rdquo;
+
 # ########################################################################
 # Single quotes
 # ########################################################################
@@ -159,6 +162,12 @@ Took place in &apos;04, yes&apos;m!
 
 "'Twas, t'wasn't thy name, 'twas it?" said Jim "the Barber" Brown.
 &ldquo;&apos;Twas, t&apos;wasn&apos;t thy name, &apos;twas it?&rdquo; said Jim &ldquo;the Barber&rdquo; Brown.
+
+"'I'm in danger. Help? Take me to--' an address on Van Ness Avenue.
+&ldquo;&lsquo;I&apos;m in danger. Help? Take me to--&rsquo; an address on Van Ness Avenue.
+
+"Ah," she said, "you knew! He told you--and you said 'my dear'! How could you?!"
+&ldquo;Ah,&rdquo; she said, &ldquo;you knew! He told you--and you said &lsquo;my dear&rsquo;! How could you?!&rdquo;
 
 # ########################################################################
 # Mixed
