@@ -6,6 +6,8 @@ package com.keenwrite.quotes;
  */
 public enum LexemeType {
   QUOTE_SINGLE,
+  QUOTE_SINGLE_OPENING,
+  QUOTE_SINGLE_CLOSING,
   QUOTE_DOUBLE,
   ESC_SINGLE,
   ESC_DOUBLE,

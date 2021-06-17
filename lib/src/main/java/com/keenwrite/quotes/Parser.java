@@ -48,13 +48,15 @@ public final class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+    new LexemeType[]{WORD, NUMBER, ELLIPSIS,
+      QUOTE_SINGLE, QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE};
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS, QUOTE_SINGLE};
+    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS,
+      QUOTE_SINGLE, QUOTE_SINGLE_CLOSING, QUOTE_SINGLE_OPENING};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.

@@ -175,8 +175,8 @@ Took place in &apos;04, yes&apos;m!
 shouldn't drop letters, nor say "ain't" or "hain't."
 shouldn&apos;t drop letters, nor say &ldquo;ain&apos;t&rdquo; or &ldquo;hain&apos;t.&rdquo;
 
-#"’Kearney lives on the banks of Killarney—’
-#&ldquo;’Kearney lives on the banks of Killarney—’
+"’Kearney lives on the banks of Killarney—’
+&ldquo;’Kearney lives on the banks of Killarney—’
 
 # ########################################################################
 # Mixed

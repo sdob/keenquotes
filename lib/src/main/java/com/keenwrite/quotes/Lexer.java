@@ -64,6 +64,12 @@ public class Lexer {
       else if( curr == '"' ) {
         lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
+      else if( curr == '‘') {
+        lexeme = createLexeme( QUOTE_SINGLE_OPENING, began, i.getIndex() );
+      }
+      else if( curr == '’') {
+        lexeme = createLexeme( QUOTE_SINGLE_CLOSING, began, i.getIndex() );
+      }
       else if( curr == '-' && peek( i ) == '-' || curr == '—' ) {
         slurp( i, ( next, ci ) -> next == '-' || next == '—' );
 
