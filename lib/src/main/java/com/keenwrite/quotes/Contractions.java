@@ -217,8 +217,6 @@ public class Contractions {
   );
 
   private static final Set<String> ENDED_AMBIGUOUS = Set.of(
-    // and|an
-    "an",
     // give|martial arts garment
     "gi",
     // in|I
@@ -228,18 +226,20 @@ public class Contractions {
   );
 
   private static final Set<String> ENDED_UNAMBIGUOUS = Set.of(
-    // old
-    "ol",
-    // the
-    "th",
-    // what
-    "wha",
+    // and
+    "an",
     // for/before
     "fo",
+    // old
+    "ol",
     // San (Francisco)
     "Sa",
     // shift
     "shif",
+    // the
+    "th",
+    // what
+    "wha",
     // Top ~500 common -ing words as English contractions.
     "acceptin",
     "accompanyin",
