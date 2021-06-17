@@ -49,6 +49,9 @@ Angular measure 3° 5&prime; 30&Prime; means 3 degs, 5 arcmins, & 30 arcsecs.
 "It was so," said he.
 &ldquo;It was so,&rdquo; said he.
 
+"What cries in the streets"?
+&ldquo;What cries in the streets&rdquo;?
+
 With "air quotes" in the middle.
 With &ldquo;air quotes&rdquo; in the middle.
 

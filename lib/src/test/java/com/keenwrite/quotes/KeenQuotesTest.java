@@ -1,6 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.keenwrite.quotes;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -21,10 +22,10 @@ public class KeenQuotesTest {
    * This is a single-use test that is useful for debugging.
    */
   @Test
-  //@Disabled
+  @Disabled
   public void test_parse_SingleLine_Parsed() {
     out.println( KeenQuotes.convert(
-      "What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?",
+      "\"What cries in the streets\"?",
       out::println
     ) );
   }
@@ -52,7 +53,7 @@ public class KeenQuotesTest {
     }
 
     final var s = KeenQuotes.convert( sb.toString(), out::println );
-    System.out.println(s);
+    System.out.println( s );
   }
 
   /**

@@ -238,6 +238,8 @@ public class Contractions {
     "fo",
     // San (Francisco)
     "Sa",
+    // shift
+    "shif",
     // Top ~500 common -ing words as English contractions.
     "acceptin",
     "accompanyin",

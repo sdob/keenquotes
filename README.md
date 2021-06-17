@@ -1,15 +1,16 @@
 # KeenQuotes
 
-A lightweight natural language parser for converting straight quotes
-into curly quotes. 
+A Java library to convert straight quotes into curly quotes.
 
-# Algorithm
+# Software Design
 
-The overall algorithm follows:
+The code models a lightweight natural language parser that performs a
+one-pass traversal through prose to emit single quotes as curly quotes.
+The algorithm follows:
 
-1. Run a lexer to produce relevant lexemes (e.g., words, numbers, and periods).
+1. Produce lexemes (e.g., words, numbers, and periods) using lexer.
 1. Add lexemes to a 3-element circular queue, capturing either side of a
-straight quote.
+quotation mark.
 1. Tokenize all unambiguous single/double quotes, primes, and apostrophes.
 1. Resolve as many ambiguous quotation marks as possible.
 1. Emit unresolved conversions.

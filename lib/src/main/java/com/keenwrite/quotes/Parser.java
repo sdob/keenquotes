@@ -12,27 +12,6 @@ import static com.keenwrite.quotes.TokenType.*;
 
 /**
  * Converts straight double/single quotes and apostrophes to curly equivalents.
- * First, handle single quotes as apostrophes, which include:
- * <ol>
- *   <li>Escaped single quote (BACKSLASH ' ) -- \'</li>
- *   <li>Escaped double quote (BACKSLASH " ) -- \"</li>
- *   <li>Inner contractions (WORD ' WORD) -- you'd've</li>
- *   <li>Inner contractions (PERIOD ' WORD) -- Ph.d.'ll</li>
- *   <li>Numeric contractions (NUMBER ' WORD) -- 70's</li>
- *   <li>Outer contractions (' WORD ') -- 'n'</li>
- *   <li>Unambiguous beginning contractions (' WORD) -- 'Twas</li>
- * </ol>
- * Next, handle single and double quotes as primes and double primes:
- * <ol>
- *   <li>Single prime (NUMBER ') -- 2'</li>
- *   <li>Double prime (NUMBER ") -- 2"</li>
- *   <li>Double prime (NUMBER '') -- 2''</li>
- * </ol>
- * Next, handle balanced double quotes:
- * <ol>
- *   <li>Double quotes (" (WORD (SPACE+ WORD)? (PUNCT | PERIOD))+ ")</li>
- *   <li>Single quotes (' (WORD (SPACE+ WORD)? (PUNCT | PERIOD))+ ')</li>
- * </ol>
  */
 public final class Parser {
   /**
@@ -81,7 +60,7 @@ public final class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
+    new LexemeType[]{SPACE, PUNCT, DASH, QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
 
   /**
    * The text to parse. A reference is required as a minor optimization in
@@ -289,7 +268,7 @@ public final class Parser {
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       lex1.anyType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
       (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
-      // Examples: ..."', word"', ?"'
+      // Examples: ..."', word"', ?"', word"?
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
     }
     else if( lex1.isType( QUOTE_SINGLE ) &&
@@ -420,8 +399,6 @@ public final class Parser {
         final var opening = unresolved.get( 1 );
         consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
         consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
-
-        unresolved.clear();
       }
     }
     else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {
