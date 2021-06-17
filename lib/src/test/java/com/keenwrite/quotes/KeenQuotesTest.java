@@ -45,8 +45,6 @@ public class KeenQuotesTest {
   @ValueSource( strings = {"westrup"} )
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
-    System.out.println( "---------------------" );
-    System.out.println( filename );
 
     try( final var reader = open( filename + ".txt" ) ) {
       String line;

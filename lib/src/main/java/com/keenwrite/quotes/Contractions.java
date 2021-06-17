@@ -230,6 +230,10 @@ public class Contractions {
     "an",
     // for/before
     "fo",
+    // friend
+    "frien",
+    // just
+    "jus",
     // lord
     "lor",
     // myself
@@ -244,6 +248,8 @@ public class Contractions {
     "th",
     // what
     "wha",
+    // world
+    "worl",
     // Top ~500 common -ing words as English contractions.
     "acceptin",
     "accompanyin",
@@ -645,6 +651,7 @@ public class Contractions {
     "servin",
     "settin",
     "settlin",
+    "sewin",
     "shakin",
     "shapin",
     "sharin",

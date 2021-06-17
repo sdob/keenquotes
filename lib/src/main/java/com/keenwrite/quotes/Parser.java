@@ -36,13 +36,14 @@ public final class Parser {
    * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_DOUBLE, CLOSING_GROUP, EOL};
+    new LexemeType[]{SPACE, HYPHEN, DASH,
+      QUOTE_DOUBLE, CLOSING_GROUP, EOL, EOP};
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP};
+    new LexemeType[]{SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -62,7 +63,8 @@ public final class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{SPACE, PUNCT, DASH, QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
+    new LexemeType[]{SPACE, PUNCT, PERIOD, EQUALS, HYPHEN, DASH,
+      QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
 
   /**
    * The text to parse. A reference is required as a minor optimization in
