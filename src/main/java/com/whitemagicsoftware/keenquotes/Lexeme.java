@@ -1,7 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
-import static com.keenwrite.quotes.LexemeType.FLAG;
+import static com.whitemagicsoftware.keenquotes.LexemeType.FLAG;
 
 /**
  * Responsible for tracking the beginning and ending offsets of a lexeme within

@@ -1,0 +1,59 @@
+plugins {
+  id 'application'
+}
+
+group 'com.whitemagicsoftware'
+version '1.0'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // Command-line parsing
+  implementation 'info.picocli:picocli:4.4.0'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ["src/main"]
+    }
+  }
+}
+
+compileJava {
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+application {
+  applicationName = 'keenquotes'
+  mainClassName = "com.whitemagicsoftware.${applicationName}.KeenQuotes"
+}
+
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+  manifest {
+    attributes 'Main-Class': mainClassName
+  }
+
+  from {
+    (configurations.runtimeClasspath.findAll { !it.path.endsWith(".pom") }).collect {
+      it.isDirectory() ? it : zipTree(it)
+    }
+  }
+
+  archiveFileName = "${applicationName}.jar"
+
+  exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
+

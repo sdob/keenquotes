@@ -1,12 +1,12 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.keenwrite.quotes.TokenType.QUOTE_APOSTROPHE;
+import static com.whitemagicsoftware.keenquotes.TokenType.QUOTE_APOSTROPHE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

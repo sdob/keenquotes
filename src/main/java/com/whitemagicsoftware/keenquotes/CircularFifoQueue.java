@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import java.util.*;
 

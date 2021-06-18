@@ -1,12 +1,12 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.function.BiFunction;
 
-import static com.keenwrite.quotes.Lexeme.createLexeme;
-import static com.keenwrite.quotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.Lexeme.createLexeme;
+import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;

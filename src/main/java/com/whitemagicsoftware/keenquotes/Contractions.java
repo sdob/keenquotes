@@ -1,5 +1,5 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import java.util.HashSet;
 import java.util.Set;

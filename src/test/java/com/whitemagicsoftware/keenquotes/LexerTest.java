@@ -1,5 +1,5 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static com.keenwrite.quotes.Lexeme.EOT;
-import static com.keenwrite.quotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.Lexeme.EOT;
+import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

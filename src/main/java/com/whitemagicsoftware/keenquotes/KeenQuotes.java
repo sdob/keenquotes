@@ -1,11 +1,11 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.keenwrite.quotes;
+package com.whitemagicsoftware.keenquotes;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.keenwrite.quotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.TokenType.*;
 import static java.util.Collections.sort;
 
 /**
