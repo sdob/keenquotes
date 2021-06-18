@@ -17,50 +17,50 @@ public final class Settings implements Callable<Integer> {
    */
   private final KeenQuotes mMain;
 
-  /**
-   * List of unambiguous contractions having leading apostrophes.
-   */
-  @CommandLine.Option(
-    names = {"-ub", "--unamb-began"},
-    description =
-      "Contractions to treat as unambiguous (e.g., cause,bout)",
-    paramLabel = "words"
-  )
-  private String[] mUnambiguousBegan;
-
-  /**
-   * List of unambiguous contractions having lagging apostrophes.
-   */
-  @CommandLine.Option(
-    names = {"-ue", "--unamb-ended"},
-    description =
-      "Contractions to treat as unambiguous (e.g., frien,thinkin)",
-    paramLabel = "words"
-  )
-  private String[] mUnambiguousEnded;
-
-  /**
-   * List of ambiguous contractions having leading apostrophes.
-   */
-  @CommandLine.Option(
-    names = {"-ab", "--amb-began"},
-    description =
-      "Contractions to treat as ambiguous (e.g., sup,kay)",
-    paramLabel = "words"
-  )
-  private String[] mAmbiguousBegan;
-
-  /**
-   * List of ambiguous contractions having lagging apostrophes.
-   */
-  @CommandLine.Option(
-    names = {"-ae", "--amb-ended"},
-    description =
-      "Contractions to treat as ambiguous (e.g., gi,o)",
-    paramLabel = "words"
-  )
-  private String[] mAmbiguousEnded;
-
+//  /**
+//   * List of unambiguous contractions having leading apostrophes.
+//   */
+//  @CommandLine.Option(
+//    names = {"-ub", "--unamb-began"},
+//    description =
+//      "Contractions to treat as unambiguous (e.g., cause,bout)",
+//    paramLabel = "words"
+//  )
+//  private String[] mUnambiguousBegan;
+//
+//  /**
+//   * List of unambiguous contractions having lagging apostrophes.
+//   */
+//  @CommandLine.Option(
+//    names = {"-ue", "--unamb-ended"},
+//    description =
+//      "Contractions to treat as unambiguous (e.g., frien,thinkin)",
+//    paramLabel = "words"
+//  )
+//  private String[] mUnambiguousEnded;
+//
+//  /**
+//   * List of ambiguous contractions having leading apostrophes.
+//   */
+//  @CommandLine.Option(
+//    names = {"-ab", "--amb-began"},
+//    description =
+//      "Contractions to treat as ambiguous (e.g., sup,kay)",
+//    paramLabel = "words"
+//  )
+//  private String[] mAmbiguousBegan;
+//
+//  /**
+//   * List of ambiguous contractions having lagging apostrophes.
+//   */
+//  @CommandLine.Option(
+//    names = {"-ae", "--amb-ended"},
+//    description =
+//      "Contractions to treat as ambiguous (e.g., gi,o)",
+//    paramLabel = "words"
+//  )
+//  private String[] mAmbiguousEnded;
+//
   /**
    * Display default values.
    */
@@ -73,6 +73,15 @@ public final class Settings implements Callable<Integer> {
   public Settings( final KeenQuotes main ) {
     assert main != null;
     mMain = main;
+  }
+
+  /**
+   * Answers whether the contractions listings should be displayed.
+   *
+   * @return {@code true} to list the contractions.
+   */
+  public boolean displayList() {
+    return mDisplayList;
   }
 
   /**

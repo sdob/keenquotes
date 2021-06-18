@@ -1,10 +1,13 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.sort;
 
 /**
  * Placeholder for various types of contractions.
@@ -135,6 +138,29 @@ public class Contractions {
 
   private Set<String> getEndedAmbiguous() {
     return mBuilder.mEndedAmbiguous;
+  }
+
+
+  @Override
+  public String toString() {
+    return
+      toString( getBeganAmbiguous(), "Ambiguous Began", "'%s" ) +
+        toString( getEndedAmbiguous(), "Ambiguous Ended", "%s'" ) +
+        toString( getBeganUnambiguous(), "Unambiguous Began", "'%s" ) +
+        toString( getEndedUnambiguous(), "Unambiguous Ended", "%s'" );
+  }
+
+  private String toString(
+    final Set<String> words, final String category, final String fmt ) {
+    final var sb = new StringBuilder( 16384 );
+    final var newline = System.lineSeparator();
+    final var list = new ArrayList<>( words );
+
+    sort( list );
+    sb.append( format( "%n%s%n", category ) );
+    list.forEach( ( s ) -> sb.append( format( fmt, s ) ).append( newline ) );
+
+    return sb.toString();
   }
 
   /**

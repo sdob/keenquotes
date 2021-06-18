@@ -33,6 +33,19 @@ public final class KeenQuotes {
   }
 
   public void run() {
+    if( getSettings().displayList() ) {
+      displayList();
+    }
+    else {
+      convert();
+    }
+  }
+
+  private void displayList() {
+    System.out.println( new Contractions.Builder().build().toString() );
+  }
+
+  private void convert() {
     final StringBuilder sb = new StringBuilder();
 
     try( final BufferedReader reader = open( System.in ) ) {
