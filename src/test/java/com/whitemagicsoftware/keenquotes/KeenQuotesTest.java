@@ -1,6 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
+import static com.whitemagicsoftware.keenquotes.Converter.convert;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,9 +25,9 @@ public class KeenQuotesTest {
    * This is a single-use test that is useful for debugging.
    */
   @Test
-  //@Disabled
+  @Disabled
   public void test_parse_SingleLine_Parsed() {
-    out.println( KeenQuotes.convert(
+    out.println( convert(
       "\"’Kearney lives on the banks of Killarney—’",
       out::println
     ) );
@@ -38,11 +40,11 @@ public class KeenQuotesTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testConverter( text -> KeenQuotes.convert( text, ( lexeme ) -> {} ) );
+    testConverter( text -> convert( text, ( lexeme ) -> {} ) );
   }
 
   @ParameterizedTest
-  @ValueSource( strings = {"westrup"} )
+  @ValueSource( strings = {"habberton"} )
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
 
@@ -54,7 +56,7 @@ public class KeenQuotesTest {
       }
     }
 
-    System.out.println( KeenQuotes.convert( sb.toString(), out::println ) );
+    System.out.println( convert( sb.toString(), out::println ) );
   }
 
   /**

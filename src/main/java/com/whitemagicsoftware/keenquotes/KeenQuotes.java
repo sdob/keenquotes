@@ -1,12 +1,17 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.function.Consumer;
+import picocli.CommandLine;
 
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
-import static java.util.Collections.sort;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+import static java.lang.String.format;
+import static picocli.CommandLine.Help.Ansi.Style.*;
+import static picocli.CommandLine.Help.ColorScheme;
 
 /**
  * Responsible for replacing {@link Token} instances with equivalent smart
@@ -14,50 +19,99 @@ import static java.util.Collections.sort;
  * quotes cannot be reliably resolved.
  */
 public final class KeenQuotes {
-  private static final Map<TokenType, String> REPLACEMENTS = Map.of(
-    QUOTE_OPENING_SINGLE, "&lsquo;",
-    QUOTE_CLOSING_SINGLE, "&rsquo;",
-    QUOTE_OPENING_DOUBLE, "&ldquo;",
-    QUOTE_CLOSING_DOUBLE, "&rdquo;",
-    QUOTE_STRAIGHT_SINGLE, "'",
-    QUOTE_STRAIGHT_DOUBLE, "\"",
-    QUOTE_APOSTROPHE, "&apos;",
-    QUOTE_PRIME_SINGLE, "&prime;",
-    QUOTE_PRIME_DOUBLE, "&Prime;"
-  );
+  private final Settings mSettings = new Settings( this );
 
-  /**
-   * Converts straight quotes to curly quotes and primes. Any quotation marks
-   * that cannot be converted are passed to the {@link Consumer}.
-   *
-   * @param text       The text to parse.
-   * @param unresolved Recipient for ambiguous {@link Lexeme}s.
-   * @return The given text string with as many straight quotes converted to
-   * curly quotes as is feasible.
-   */
-  public static String convert(
-    final String text, final Consumer<Lexeme> unresolved ) {
-    final var parser = new Parser( text );
-    final var tokens = new ArrayList<Token>();
+  private static ColorScheme createColourScheme() {
+    return new ColorScheme.Builder()
+      .commands( bold )
+      .options( fg_blue, bold )
+      .parameters( fg_blue )
+      .optionParams( italic )
+      .errors( fg_red, bold )
+      .stackTraces( italic )
+      .build();
+  }
 
-    // Parse the tokens and consume all unresolved lexemes.
-    parser.parse( tokens::add, unresolved );
+  public void run() {
+    final StringBuilder sb = new StringBuilder();
 
-    // The parser may emit tokens in any order.
-    sort( tokens );
+    try( final BufferedReader reader = open( System.in ) ) {
+      String line;
+      final var sep = System.lineSeparator();
 
-    final var result = new StringBuilder( text.length() );
-    var position = 0;
-
-    for( final var token : tokens ) {
-      if( position <= token.began() ) {
-        result.append( text, position, token.began() );
-        result.append( REPLACEMENTS.get( token.getType() ) );
+      while( (line = reader.readLine()) != null ) {
+        sb.append( line );
+        sb.append( sep );
       }
 
-      position = token.ended();
+      System.out.println(
+        Converter.convert( sb.toString(), System.err::println )
+      );
+    } catch( final Exception ex ) {
+      ex.printStackTrace( System.err );
     }
+  }
 
-    return result.append( text.substring( position ) ).toString();
+  private Settings getSettings() {
+    return mSettings;
+  }
+
+  /**
+   * Returns the application version number retrieved from the application
+   * properties file. The properties file is generated at build time, which
+   * keys off the repository.
+   *
+   * @return The application version number.
+   * @throws RuntimeException An {@link IOException} occurred.
+   */
+  private static String getVersion() {
+    try {
+      final var properties = loadProperties( "app.properties" );
+      return properties.getProperty( "application.version" );
+    } catch( final Exception ex ) {
+      throw new RuntimeException( ex );
+    }
+  }
+
+  @SuppressWarnings( "SameParameterValue" )
+  private static Properties loadProperties( final String resource )
+    throws IOException {
+    final var properties = new Properties();
+    properties.load( getResourceAsStream( getResourceName( resource ) ) );
+    return properties;
+  }
+
+  private static String getResourceName( final String resource ) {
+    return format( "%s/%s", getPackagePath(), resource );
+  }
+
+  private static String getPackagePath() {
+    return KeenQuotes.class.getPackageName().replace( '.', '/' );
+  }
+
+  private static InputStream getResourceAsStream( final String resource ) {
+    return KeenQuotes.class.getClassLoader().getResourceAsStream( resource );
+  }
+
+  @SuppressWarnings( "SameParameterValue" )
+  private static BufferedReader open( final InputStream in ) {
+    return new BufferedReader( new InputStreamReader( in ) );
+  }
+
+  public static void main( final String[] args ) {
+    final var app = new KeenQuotes();
+    final var parser = new CommandLine( app.getSettings() );
+    parser.setColorScheme( createColourScheme() );
+
+    final var exitCode = parser.execute( args );
+    final var parseResult = parser.getParseResult();
+
+    if( parseResult.isUsageHelpRequested() ) {
+      System.exit( exitCode );
+    }
+    else if( parseResult.isVersionHelpRequested() ) {
+      System.out.println( getVersion() );
+      System.exit( exitCode );
+    }
   }
 }

@@ -2,6 +2,30 @@
 
 A Java library to convert straight quotes into curly quotes.
 
+# Requirements
+
+Download and install OpenJDK 16 or greater.
+
+# Download
+
+Download the `.jar` file from this repository.
+
+# Run
+
+Run the software as follows:
+
+    java -jar keenquotes.jar < src.txt > dst.txt 2> err.txt
+
+Where:
+
+* `src.txt` -- Input document file that contains straight quotes.
+* `dst.txt` -- Output document file that'll contain curled quotes.
+* `err.txt` -- Error file that will note ambiguous conversion errors.
+
+For help, run the software as follows:
+
+    java -jar keenquotes.jar -h
+
 # Software Design
 
 The code models a lightweight natural language parser that performs a

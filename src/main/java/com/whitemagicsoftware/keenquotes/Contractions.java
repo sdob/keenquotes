@@ -538,6 +538,7 @@ public class Contractions {
     "mornin",
     "movin",
     "neighborin",
+    "neighbourin",
     "nothin",
     "notin",
     "notwithstandin",

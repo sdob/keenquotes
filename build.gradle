@@ -1,9 +1,9 @@
 plugins {
   id 'application'
+  id 'com.palantir.git-version' version '0.12.3'
 }
 
 group 'com.whitemagicsoftware'
-version '1.0'
 
 repositories {
   mavenCentral()
@@ -21,7 +21,7 @@ dependencies {
 sourceSets {
   main {
     java {
-      srcDirs = ["src/main"]
+      srcDirs = ["src/main/java"]
     }
   }
 }
@@ -34,6 +34,12 @@ application {
   applicationName = 'keenquotes'
   mainClassName = "com.whitemagicsoftware.${applicationName}.KeenQuotes"
 }
+
+version = gitVersion()
+
+def resourceDir = sourceSets.main.resources.srcDirs[0]
+final File propertiesFile = file("${resourceDir}/com/whitemagicsoftware/${applicationName}/app.properties")
+propertiesFile.write("application.version=${version}")
 
 jar {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -56,4 +62,3 @@ jar {
 tasks.named('test') {
   useJUnitPlatform()
 }
-
