@@ -27,8 +27,8 @@ public final class Settings implements Callable<Integer> {
   @CommandLine.Option(
     names = {"-ub", "--unamb-began"},
     description =
-      "Contractions to treat as unambiguous (e.g., cause,bout)",
-    paramLabel = "words"
+      "Contraction to treat as unambiguous (e.g., cause, bout)",
+    paramLabel = "word"
   )
   private String[] mBeganUnambiguous;
 
@@ -38,8 +38,8 @@ public final class Settings implements Callable<Integer> {
   @CommandLine.Option(
     names = {"-ue", "--unamb-ended"},
     description =
-      "Contractions to treat as unambiguous (e.g., frien,thinkin)",
-    paramLabel = "words"
+      "Contraction to treat as unambiguous (e.g., frien, thinkin)",
+    paramLabel = "word"
   )
   private String[] mEndedUnambiguous;
 
@@ -49,8 +49,8 @@ public final class Settings implements Callable<Integer> {
   @CommandLine.Option(
     names = {"-ab", "--amb-began"},
     description =
-      "Contractions to treat as ambiguous (e.g., sup,kay)",
-    paramLabel = "words"
+      "Contraction to treat as ambiguous (e.g., sup, kay)",
+    paramLabel = "word"
   )
   private String[] mBeganAmbiguous;
 
@@ -60,8 +60,8 @@ public final class Settings implements Callable<Integer> {
   @CommandLine.Option(
     names = {"-ae", "--amb-ended"},
     description =
-      "Contractions to treat as ambiguous (e.g., gi,o)",
-    paramLabel = "words"
+      "Contraction to treat as ambiguous (e.g., gi, o)",
+    paramLabel = "word"
   )
   private String[] mEndedAmbiguous;
 

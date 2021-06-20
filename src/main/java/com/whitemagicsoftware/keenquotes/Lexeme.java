@@ -49,6 +49,12 @@ public final class Lexeme implements Comparable<Lexeme> {
     mEnded = ended + 1;
   }
 
+  static Lexeme createLexeme(
+    final LexemeType lexeme, final int began, final int ended ) {
+    assert lexeme != null;
+    return new Lexeme( lexeme, began, ended );
+  }
+
   /**
    * Extracts a sequence of characters from the given text at the offsets
    * captured by this lexeme.
@@ -132,11 +138,5 @@ public final class Lexeme implements Comparable<Lexeme> {
   public int compareTo( final Lexeme that ) {
     assert that != null;
     return this.mBegan - that.mBegan;
-  }
-
-  static Lexeme createLexeme(
-    final LexemeType lexeme, final int began, final int ended ) {
-    assert lexeme != null;
-    return new Lexeme( lexeme, began, ended );
   }
 }

@@ -90,7 +90,7 @@ public class Lexer {
       else if( curr == '.' ) {
         lexeme = createLexeme(
           slurp( i, ( next, ci ) ->
-            next == '.' || (next == ' ' && peek( ci ) == '.') ) == 0
+            next == '.' || next == ' ' && peek( ci ) == '.' ) == 0
             ? PERIOD
             : ELLIPSIS,
           began, i.getIndex()
