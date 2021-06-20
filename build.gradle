@@ -28,6 +28,7 @@ sourceSets {
 
 compileJava {
   options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+  options.compilerArgs.addAll(['--release', '11'])
 }
 
 application {

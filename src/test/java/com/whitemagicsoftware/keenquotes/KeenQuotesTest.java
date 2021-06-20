@@ -43,8 +43,16 @@ public class KeenQuotesTest {
     testConverter( text -> convert( text, ( lexeme ) -> {} ) );
   }
 
+  /**
+   * Re-enable using <a href="https://www.gutenberg.org/">Project Gutenberg</a>
+   * texts.
+   *
+   * @param filename A plain text file to convert.
+   * @throws IOException Could not find, open, or read from text file.
+   */
   @ParameterizedTest
   @ValueSource( strings = {"habberton"} )
+  @Disabled
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
 
