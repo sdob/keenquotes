@@ -70,14 +70,6 @@ public class Lexer {
       else if( curr == '’' ) {
         lexeme = createLexeme( QUOTE_SINGLE_CLOSING, began, i.getIndex() );
       }
-      else if( curr == '-' && peek( i ) != '-' ) {
-        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
-      }
-      else if( isDash( curr ) ) {
-        slurp( i, ( next, ci ) -> isDash( next ) );
-
-        lexeme = createLexeme( DASH, began, i.getIndex() );
-      }
       else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
         // Parse all consecutive number characters to prevent the main loop
         // from switching back to word tokens.
@@ -86,6 +78,14 @@ public class Lexer {
         );
 
         lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
+      }
+      else if( curr == '-' && peek( i ) != '-' ) {
+        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
+      }
+      else if( isDash( curr ) ) {
+        slurp( i, ( next, ci ) -> isDash( next ) );
+
+        lexeme = createLexeme( DASH, began, i.getIndex() );
       }
       else if( curr == '.' ) {
         lexeme = createLexeme(
