@@ -3,6 +3,7 @@ package com.whitemagicsoftware.keenquotes;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
 import static java.util.Collections.sort;
@@ -11,7 +12,7 @@ import static java.util.Collections.sort;
  * Responsible for converting curly quotes to HTML entities throughout a
  * text string.
  */
-public class Converter {
+public class Converter implements Function<String, String> {
   private static final Map<TokenType, String> REPLACEMENTS = Map.of(
     QUOTE_OPENING_SINGLE, "&lsquo;",
     QUOTE_CLOSING_SINGLE, "&rsquo;",
@@ -24,22 +25,34 @@ public class Converter {
     QUOTE_PRIME_DOUBLE, "&Prime;"
   );
 
+  private final Consumer<Lexeme> mUnresolved;
+  private final Contractions mContractions;
+
+  public Converter( final Consumer<Lexeme> unresolved ) {
+    this( unresolved, new Contractions.Builder().build() );
+  }
+
+  public Converter( final Consumer<Lexeme> unresolved, final Contractions c ) {
+    mUnresolved = unresolved;
+    mContractions = c;
+  }
+
   /**
    * Converts straight quotes to curly quotes and primes. Any quotation marks
-   * that cannot be converted are passed to the {@link Consumer}.
+   * that cannot be converted are passed to the {@link Consumer}. This method
+   * is re-entrant, but not tested to be thread-safe.
    *
-   * @param text       The text to parse.
-   * @param unresolved Recipient for ambiguous {@link Lexeme}s.
+   * @param text The text to parse.
    * @return The given text string with as many straight quotes converted to
    * curly quotes as is feasible.
    */
-  public static String convert(
-    final String text, final Consumer<Lexeme> unresolved ) {
-    final var parser = new Parser( text );
+  @Override
+  public String apply( final String text ) {
+    final var parser = new Parser( text, mContractions );
     final var tokens = new ArrayList<Token>();
 
     // Parse the tokens and consume all unresolved lexemes.
-    parser.parse( tokens::add, unresolved );
+    parser.parse( tokens::add, mUnresolved );
 
     // The parser may emit tokens in any order.
     sort( tokens );

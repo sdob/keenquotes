@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test that all unambiguous apostrophes are emitted once.
  */
 class ParserTest {
+  @SuppressWarnings( "TextBlockMigration" )
   private final static Map<String, Map<TokenType, Integer>> TEST_CASES =
     Map.of(
       "That's a 35'×10\" yacht!",
@@ -25,13 +26,11 @@ class ParserTest {
       Map.of( QUOTE_APOSTROPHE, 4 ),
       "'Twas and 'tis whate'er lay 'twixt dawn and dusk 'n River Styx.",
       Map.of( QUOTE_APOSTROPHE, 5 ),
-      """
-             But I must leave the proofs to those who 've seen 'em;
-             But this I heard her say, and can't be wrong
-             And all may think which way their judgments lean 'em,
-             ''T is strange---the Hebrew noun which means "I am,"
-             The English always use to govern d--n.'
-        """,
+      "But I must leave the proofs to those who 've seen 'em;\n" +
+        "But this I heard her say, and can't be wrong\n" +
+        "And all may think which way their judgments lean 'em,\n" +
+        "''T is strange---the Hebrew noun which means \"I am,\"\n" +
+        "The English always use to govern d--n.'",
       Map.of( QUOTE_APOSTROPHE, 5 )
     );
 
@@ -43,7 +42,8 @@ class ParserTest {
   }
 
   private void parse( final String text, final Map<TokenType, Integer> tally ) {
-    final var parser = new Parser( text );
+    final var contractions = new Contractions.Builder().build();
+    final var parser = new Parser( text, contractions );
     final var actual = new HashMap<TokenType, Integer>();
 
     parser.parse(

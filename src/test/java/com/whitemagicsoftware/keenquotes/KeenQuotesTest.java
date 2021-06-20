@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
-import static com.whitemagicsoftware.keenquotes.Converter.convert;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,9 +26,9 @@ public class KeenQuotesTest {
   @Test
   @Disabled
   public void test_parse_SingleLine_Parsed() {
-    out.println( convert(
-      "\"’Kearney lives on the banks of Killarney—’",
-      out::println
+    final var converter = new Converter( out::println );
+    out.println( converter.apply(
+      "\"’Kearney lives on the banks of Killarney—’"
     ) );
   }
 
@@ -40,7 +39,7 @@ public class KeenQuotesTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testConverter( text -> convert( text, ( lexeme ) -> {} ) );
+    testConverter( new Converter( ( lex ) -> {} ) );
   }
 
   /**
@@ -64,7 +63,8 @@ public class KeenQuotesTest {
       }
     }
 
-    System.out.println( convert( sb.toString(), out::println ) );
+    final var converter = new Converter( out::println );
+    System.out.println( converter.apply( sb.toString() ) );
   }
 
   /**

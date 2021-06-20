@@ -33,22 +33,32 @@ public final class KeenQuotes {
   }
 
   public void run() {
-    if( getSettings().displayList() ) {
-      displayList();
+    final var settings = getSettings();
+    final var contractions = createContractions( settings );
+
+    if( settings.displayList() ) {
+      System.out.println( contractions.toString() );
     }
     else {
-      convert();
+      convert( new Converter( System.err::println, contractions ) );
     }
   }
 
-  private void displayList() {
-    System.out.println( new Contractions.Builder().build().toString() );
+  private Contractions createContractions( final Settings settings ) {
+    final var builder = new Contractions.Builder();
+
+    builder.withBeganUnambiguous( settings.getBeganUnambiguous() );
+    builder.withEndedUnambiguous( settings.getEndedUnambiguous() );
+    builder.withBeganAmbiguous( settings.getBeganAmbiguous() );
+    builder.withEndedAmbiguous( settings.getEndedAmbiguous() );
+
+    return builder.build();
   }
 
-  private void convert() {
-    final StringBuilder sb = new StringBuilder();
+  private void convert( final Converter converter ) {
+    final var sb = new StringBuilder();
 
-    try( final BufferedReader reader = open( System.in ) ) {
+    try( final var reader = open( System.in ) ) {
       String line;
       final var sep = System.lineSeparator();
 
@@ -57,9 +67,7 @@ public final class KeenQuotes {
         sb.append( sep );
       }
 
-      System.out.println(
-        Converter.convert( sb.toString(), System.err::println )
-      );
+      System.out.println( converter.apply( sb.toString() ) );
     } catch( final Exception ex ) {
       ex.printStackTrace( System.err );
     }
@@ -111,6 +119,11 @@ public final class KeenQuotes {
     return new BufferedReader( new InputStreamReader( in ) );
   }
 
+  /**
+   * Main application entry point.
+   *
+   * @param args Command-line arguments.
+   */
   public static void main( final String[] args ) {
     final var app = new KeenQuotes();
     final var parser = new CommandLine( app.getSettings() );

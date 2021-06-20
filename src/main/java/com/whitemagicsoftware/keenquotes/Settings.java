@@ -3,7 +3,11 @@ package com.whitemagicsoftware.keenquotes;
 
 import picocli.CommandLine;
 
+import java.util.List;
 import java.util.concurrent.Callable;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 @CommandLine.Command(
   name = "KeenQuotes",
@@ -17,50 +21,50 @@ public final class Settings implements Callable<Integer> {
    */
   private final KeenQuotes mMain;
 
-//  /**
-//   * List of unambiguous contractions having leading apostrophes.
-//   */
-//  @CommandLine.Option(
-//    names = {"-ub", "--unamb-began"},
-//    description =
-//      "Contractions to treat as unambiguous (e.g., cause,bout)",
-//    paramLabel = "words"
-//  )
-//  private String[] mUnambiguousBegan;
-//
-//  /**
-//   * List of unambiguous contractions having lagging apostrophes.
-//   */
-//  @CommandLine.Option(
-//    names = {"-ue", "--unamb-ended"},
-//    description =
-//      "Contractions to treat as unambiguous (e.g., frien,thinkin)",
-//    paramLabel = "words"
-//  )
-//  private String[] mUnambiguousEnded;
-//
-//  /**
-//   * List of ambiguous contractions having leading apostrophes.
-//   */
-//  @CommandLine.Option(
-//    names = {"-ab", "--amb-began"},
-//    description =
-//      "Contractions to treat as ambiguous (e.g., sup,kay)",
-//    paramLabel = "words"
-//  )
-//  private String[] mAmbiguousBegan;
-//
-//  /**
-//   * List of ambiguous contractions having lagging apostrophes.
-//   */
-//  @CommandLine.Option(
-//    names = {"-ae", "--amb-ended"},
-//    description =
-//      "Contractions to treat as ambiguous (e.g., gi,o)",
-//    paramLabel = "words"
-//  )
-//  private String[] mAmbiguousEnded;
-//
+  /**
+   * List of unambiguous contractions having leading apostrophes.
+   */
+  @CommandLine.Option(
+    names = {"-ub", "--unamb-began"},
+    description =
+      "Contractions to treat as unambiguous (e.g., cause,bout)",
+    paramLabel = "words"
+  )
+  private String[] mBeganUnambiguous;
+
+  /**
+   * List of unambiguous contractions having lagging apostrophes.
+   */
+  @CommandLine.Option(
+    names = {"-ue", "--unamb-ended"},
+    description =
+      "Contractions to treat as unambiguous (e.g., frien,thinkin)",
+    paramLabel = "words"
+  )
+  private String[] mEndedUnambiguous;
+
+  /**
+   * List of ambiguous contractions having leading apostrophes.
+   */
+  @CommandLine.Option(
+    names = {"-ab", "--amb-began"},
+    description =
+      "Contractions to treat as ambiguous (e.g., sup,kay)",
+    paramLabel = "words"
+  )
+  private String[] mBeganAmbiguous;
+
+  /**
+   * List of ambiguous contractions having lagging apostrophes.
+   */
+  @CommandLine.Option(
+    names = {"-ae", "--amb-ended"},
+    description =
+      "Contractions to treat as ambiguous (e.g., gi,o)",
+    paramLabel = "words"
+  )
+  private String[] mEndedAmbiguous;
+
   /**
    * Display default values.
    */
@@ -80,8 +84,28 @@ public final class Settings implements Callable<Integer> {
    *
    * @return {@code true} to list the contractions.
    */
-  public boolean displayList() {
+  boolean displayList() {
     return mDisplayList;
+  }
+
+  List<String> getBeganUnambiguous() {
+    return nullSafe( mBeganUnambiguous );
+  }
+
+  List<String> getEndedUnambiguous() {
+    return nullSafe( mEndedUnambiguous );
+  }
+
+  List<String> getBeganAmbiguous() {
+    return nullSafe( mBeganAmbiguous );
+  }
+
+  List<String> getEndedAmbiguous() {
+    return nullSafe( mEndedAmbiguous );
+  }
+
+  private List<String> nullSafe( final String[] words ) {
+    return words == null ? emptyList() : asList( words );
   }
 
   /**

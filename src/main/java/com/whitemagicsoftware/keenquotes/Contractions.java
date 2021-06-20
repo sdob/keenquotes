@@ -3,6 +3,7 @@ package com.whitemagicsoftware.keenquotes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -31,19 +32,19 @@ public class Contractions {
     private final Set<String> mBeganAmbiguous = new HashSet<>();
     private final Set<String> mEndedAmbiguous = new HashSet<>();
 
-    public void withBeganUnambiguous( final Set<String> words ) {
+    public void withBeganUnambiguous( final List<String> words ) {
       mBeganUnambiguous.addAll( words );
     }
 
-    public void withEndedUnambiguous( final Set<String> words ) {
+    public void withEndedUnambiguous( final List<String> words ) {
       mEndedUnambiguous.addAll( words );
     }
 
-    public void withBeganAmbiguous( final Set<String> words ) {
+    public void withBeganAmbiguous( final List<String> words ) {
       mBeganAmbiguous.addAll( words );
     }
 
-    public void withEndedAmbiguous( final Set<String> words ) {
+    public void withEndedAmbiguous( final List<String> words ) {
       mEndedAmbiguous.addAll( words );
     }
 
@@ -54,10 +55,10 @@ public class Contractions {
      * @return {@link Contractions} suitable for use with parsing text.
      */
     public Contractions build() {
-      mBeganUnambiguous.addAll( from( mBeganUnambiguous, BEGAN_UNAMBIGUOUS ) );
-      mEndedUnambiguous.addAll( from( mEndedUnambiguous, ENDED_UNAMBIGUOUS ) );
-      mBeganAmbiguous.addAll( from( mBeganAmbiguous, BEGAN_AMBIGUOUS ) );
-      mEndedAmbiguous.addAll( from( mEndedAmbiguous, ENDED_AMBIGUOUS ) );
+      mBeganUnambiguous.addAll( BEGAN_UNAMBIGUOUS );
+      mEndedUnambiguous.addAll( ENDED_UNAMBIGUOUS );
+      mBeganAmbiguous.addAll( BEGAN_AMBIGUOUS );
+      mEndedAmbiguous.addAll( ENDED_AMBIGUOUS );
 
       return new Contractions( this );
     }
@@ -179,6 +180,7 @@ public class Contractions {
     "n",
     "neath",
     "nother",
+    "nuff",
     "onna",
     "onna'",
     "pon",

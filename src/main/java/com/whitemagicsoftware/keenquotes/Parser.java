@@ -43,7 +43,8 @@ public final class Parser {
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP};
+    new LexemeType[]{SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL,
+      EOP};
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
@@ -95,17 +96,6 @@ public final class Parser {
    * ambiguities when single quote marks are balanced.
    */
   private int mClosingSingleQuote;
-
-  /**
-   * Constructs a new {@link Parser} using the default contraction sets
-   * to help resolve some ambiguous scenarios.
-   *
-   * @param text The prose to parse, containing zero or more quotation
-   *             characters.
-   */
-  public Parser( final String text ) {
-    this( text, new Contractions.Builder().build() );
-  }
 
   /**
    * Constructs a new {@link Parser} using the default contraction sets

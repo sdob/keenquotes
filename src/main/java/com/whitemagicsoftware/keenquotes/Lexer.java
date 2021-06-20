@@ -64,14 +64,17 @@ public class Lexer {
       else if( curr == '"' ) {
         lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
       }
-      else if( curr == '‘') {
+      else if( curr == '‘' ) {
         lexeme = createLexeme( QUOTE_SINGLE_OPENING, began, i.getIndex() );
       }
-      else if( curr == '’') {
+      else if( curr == '’' ) {
         lexeme = createLexeme( QUOTE_SINGLE_CLOSING, began, i.getIndex() );
       }
-      else if( curr == '-' && peek( i ) == '-' || curr == '—' ) {
-        slurp( i, ( next, ci ) -> next == '-' || next == '—' );
+      else if( curr == '-' && peek( i ) != '-' ) {
+        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
+      }
+      else if( isDash( curr ) ) {
+        slurp( i, ( next, ci ) -> isDash( next ) );
 
         lexeme = createLexeme( DASH, began, i.getIndex() );
       }
@@ -84,14 +87,12 @@ public class Lexer {
 
         lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
       }
-      else if( curr == '-' ) {
-        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
-      }
       else if( curr == '.' ) {
-        // Parse all consecutive periods into an ellipsis lexeme. This will
-        // not capture space-separated ellipsis (such as ". . .").
         lexeme = createLexeme(
-          slurp( i, ( next, ci ) -> next == '.' ) == 0 ? PERIOD : ELLIPSIS,
+          slurp( i, ( next, ci ) ->
+            next == '.' || (next == ' ' && peek( ci ) == '.') ) == 0
+            ? PERIOD
+            : ELLIPSIS,
           began, i.getIndex()
         );
       }
@@ -176,6 +177,18 @@ public class Lexer {
   private static boolean isNumeric( final char curr ) {
     return
       curr == '.' || curr == ',' || curr == '-' || curr == '+' || curr == '^';
+  }
+
+  /**
+   * Answers whether the given character may be part of an en- or em-dash.
+   * This must be called after it is known that the character isn't a lone
+   * hyphen.
+   *
+   * @param curr The character to check as being a dash.
+   * @return {@code true} if the given character is part of a dash.
+   */
+  private boolean isDash( final char curr ) {
+    return curr == '-' || curr == '–' || curr == '—';
   }
 
   private static char peek( final CharacterIterator ci ) {

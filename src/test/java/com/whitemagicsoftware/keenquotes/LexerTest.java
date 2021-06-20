@@ -49,7 +49,13 @@ class LexerTest {
     testType( "-", HYPHEN );
     testType( "--", DASH );
     testType( "---", DASH );
+    testType( "–", DASH );
+    testType( "—", DASH );
+    testType( "—-—", DASH );
     testType( "...", ELLIPSIS );
+    testType( ". .", ELLIPSIS );
+    testType( ". . .", ELLIPSIS );
+    testType( ".. ... ....", ELLIPSIS );
   }
 
   @Test
