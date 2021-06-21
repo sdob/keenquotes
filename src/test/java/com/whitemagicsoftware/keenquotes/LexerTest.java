@@ -50,6 +50,7 @@ class LexerTest {
     testType( "--", DASH );
     testType( "---", DASH );
     testType( "–", DASH );
+    testType( "―", DASH );
     testType( "—", DASH );
     testType( "—-—", DASH );
     testType( "...", ELLIPSIS );

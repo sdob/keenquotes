@@ -3,13 +3,12 @@ package com.whitemagicsoftware.keenquotes;
 
 import picocli.CommandLine;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
 
 import static java.lang.String.format;
+import static java.lang.System.*;
 import static picocli.CommandLine.Help.Ansi.Style.*;
 import static picocli.CommandLine.Help.ColorScheme;
 
@@ -37,10 +36,14 @@ public final class KeenQuotes {
     final var contractions = createContractions( settings );
 
     if( settings.displayList() ) {
-      System.out.println( contractions.toString() );
+      out.println( contractions.toString() );
     }
     else {
-      convert( new Converter( System.err::println, contractions ) );
+      try {
+        out.print( convert( new Converter( err::println, contractions ) ) );
+      } catch( final Exception ex ) {
+        ex.printStackTrace( err );
+      }
     }
   }
 
@@ -55,22 +58,8 @@ public final class KeenQuotes {
     return builder.build();
   }
 
-  private void convert( final Converter converter ) {
-    final var sb = new StringBuilder();
-
-    try( final var reader = open( System.in ) ) {
-      String line;
-      final var sep = System.lineSeparator();
-
-      while( (line = reader.readLine()) != null ) {
-        sb.append( line );
-        sb.append( sep );
-      }
-
-      System.out.println( converter.apply( sb.toString() ) );
-    } catch( final Exception ex ) {
-      ex.printStackTrace( System.err );
-    }
+  private String convert( final Converter converter ) throws IOException {
+    return converter.apply( new String( System.in.readAllBytes() ) );
   }
 
   private Settings getSettings() {
@@ -114,11 +103,6 @@ public final class KeenQuotes {
     return KeenQuotes.class.getClassLoader().getResourceAsStream( resource );
   }
 
-  @SuppressWarnings( "SameParameterValue" )
-  private static BufferedReader open( final InputStream in ) {
-    return new BufferedReader( new InputStreamReader( in ) );
-  }
-
   /**
    * Main application entry point.
    *
@@ -133,11 +117,11 @@ public final class KeenQuotes {
     final var parseResult = parser.getParseResult();
 
     if( parseResult.isUsageHelpRequested() ) {
-      System.exit( exitCode );
+      exit( exitCode );
     }
     else if( parseResult.isVersionHelpRequested() ) {
-      System.out.println( getVersion() );
-      System.exit( exitCode );
+      out.println( getVersion() );
+      exit( exitCode );
     }
   }
 }

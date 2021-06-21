@@ -57,9 +57,10 @@ public class KeenQuotesTest {
 
     try( final var reader = open( filename + ".txt" ) ) {
       String line;
+      final var sep = System.lineSeparator();
 
       while( (line = reader.readLine()) != null ) {
-        sb.append( line ).append( '\n' );
+        sb.append( line ).append( sep );
       }
     }
 

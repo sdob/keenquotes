@@ -188,7 +188,7 @@ public class Lexer {
    * @return {@code true} if the given character is part of a dash.
    */
   private boolean isDash( final char curr ) {
-    return curr == '-' || curr == '–' || curr == '—';
+    return curr == '-' || curr == '–' || curr == '—' || curr == '―';
   }
 
   private static char peek( final CharacterIterator ci ) {
