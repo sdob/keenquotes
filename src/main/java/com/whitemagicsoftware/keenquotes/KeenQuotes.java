@@ -59,7 +59,7 @@ public final class KeenQuotes {
   }
 
   private String convert( final Converter converter ) throws IOException {
-    return converter.apply( new String( System.in.readAllBytes() ) );
+    return converter.apply( new String( in.readAllBytes() ) );
   }
 
   private Settings getSettings() {

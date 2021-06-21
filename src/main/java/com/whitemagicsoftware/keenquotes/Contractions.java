@@ -60,6 +60,10 @@ public class Contractions {
       mBeganAmbiguous.addAll( BEGAN_AMBIGUOUS );
       mEndedAmbiguous.addAll( ENDED_AMBIGUOUS );
 
+      // Remove ambiguous items if they are already declared.
+      mBeganAmbiguous.removeAll( mBeganUnambiguous );
+      mEndedAmbiguous.removeAll( mEndedUnambiguous );
+
       return new Contractions( this );
     }
 
@@ -601,6 +605,7 @@ public class Contractions {
     "playin",
     "pleasin",
     "pointin",
+    "poppin",
     "possessin",
     "preachin",
     "precedin",
@@ -771,6 +776,7 @@ public class Contractions {
     "wearin",
     "weddin",
     "whackin",
+    "wi",
     "willin",
     "windin",
     "winnin",
