@@ -60,6 +60,18 @@ jar {
   exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
+task lib(type: Jar) {
+  archiveFileName = "${applicationName}.jar"
+  destinationDirectory = file("$buildDir/lib")
+
+  from "$buildDir/classes/java/main"
+  exclude "**/KeenQuotes.class"
+}
+
+lib.configure {
+  dependsOn compileJava
+}
+
 tasks.named('test') {
   useJUnitPlatform()
 }
