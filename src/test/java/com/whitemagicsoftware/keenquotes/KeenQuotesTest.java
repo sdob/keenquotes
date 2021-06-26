@@ -28,7 +28,7 @@ public class KeenQuotesTest {
   public void test_parse_SingleLine_Parsed() {
     final var converter = new Converter( out::println );
     out.println( converter.apply(
-      "\"’Kearney lives on the banks of Killarney—’"
+      "'A', 'B', and 'C' are letters."
     ) );
   }
 

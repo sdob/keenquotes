@@ -9,6 +9,8 @@ import static com.whitemagicsoftware.keenquotes.Lexeme.EOT;
 import static com.whitemagicsoftware.keenquotes.Lexeme.SOT;
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static java.lang.Math.abs;
+import static java.util.Collections.sort;
 
 /**
  * Converts straight double/single quotes and apostrophes to curly equivalents.
@@ -86,16 +88,24 @@ public final class Parser {
   private final Contractions sContractions;
 
   /**
-   * Incremented for each opening single quote emitted. Used to help resolve
-   * ambiguities when single quote marks are balanced.
+   * Contains each emitted opening single quote per paragraph.
    */
-  private int mOpeningSingleQuote;
+  private final List<Lexeme> mOpeningSingleQuotes = new ArrayList<>();
 
   /**
-   * Incremented for each closing single quote emitted. Used to help resolve
-   * ambiguities when single quote marks are balanced.
+   * Contains each emitted closing single quote per paragraph.
    */
-  private int mClosingSingleQuote;
+  private final List<Lexeme> mClosingSingleQuotes = new ArrayList<>();
+
+  /**
+   * Contains each emitted opening double quote per paragraph.
+   */
+  private final List<Lexeme> mOpeningDoubleQuotes = new ArrayList<>();
+
+  /**
+   * Contains each emitted closing double quote per paragraph.
+   */
+  private final List<Lexeme> mClosingDoubleQuotes = new ArrayList<>();
 
   /**
    * Constructs a new {@link Parser} using the default contraction sets
@@ -124,7 +134,7 @@ public final class Parser {
     final Consumer<Lexeme> lexemeConsumer ) {
     final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
 
-    // Allow consuming the very first token without checking the queue size.
+    // Allow consuming the very first token without needing a queue size check.
     flush( lexemes );
 
     final var unresolved = new ArrayList<Lexeme[]>();
@@ -132,6 +142,7 @@ public final class Parser {
 
     // Create and convert a list of all unambiguous quote characters.
     while( (lexeme = mLexer.next()) != EOT ) {
+      // Reset after tokenizing a paragraph.
       if( tokenize( lexeme, lexemes, tokenConsumer, unresolved ) ) {
         // Attempt to resolve any remaining unambiguous quotes.
         resolve( unresolved, tokenConsumer );
@@ -139,8 +150,10 @@ public final class Parser {
         // Notify of any unambiguous quotes that could not be resolved.
         unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
         unresolved.clear();
-        mOpeningSingleQuote = 0;
-        mClosingSingleQuote = 0;
+        mOpeningSingleQuotes.clear();
+        mClosingSingleQuotes.clear();
+        mOpeningDoubleQuotes.clear();
+        mClosingDoubleQuotes.clear();
       }
     }
 
@@ -183,7 +196,7 @@ public final class Parser {
     final var lex3 = lexemes.get( 2 );
 
     if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( WORD ) &&
-      lex1.anyType( WORD, PERIOD, NUMBER ) ) {
+      lex1.isType( WORD, PERIOD, NUMBER ) ) {
       // Examples: y'all, Ph.D.'ll, 20's, she's
       consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
     }
@@ -218,25 +231,25 @@ public final class Parser {
       flush( lexemes );
     }
     else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) ) {
-      if( lex3.anyType( SPACE, PUNCT ) || (lex3.isType( WORD ) &&
+      // Sentences must re-written to avoid starting with numerals.
+      if( lex3.isType( SPACE, PUNCT ) || (lex3.isType( WORD ) &&
         lex3.toString( mText ).equalsIgnoreCase( "s" )) ) {
-        // Sentences must re-written to avoid starting with numerals.
         // Examples: '20s, '02
         consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       }
       else {
         // E.g., '2''
         consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex1 ) );
-        mOpeningSingleQuote++;
+        mOpeningSingleQuotes.add( lex1 );
       }
 
       truncate( unresolved );
     }
     else if( lex2.isType( QUOTE_SINGLE ) &&
-      lex1.anyType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
-      (lex3.anyType( EOL, EOP ) || lex3.isEot()) ) {
+      lex1.isType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
+      (lex3.isType( EOL, EOP ) || lex3.isEot()) ) {
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
-      mClosingSingleQuote++;
+      mClosingSingleQuotes.add( lex2 );
     }
     else if( lex1.isType( ESC_SINGLE ) ) {
       // E.g., \'
@@ -247,31 +260,32 @@ public final class Parser {
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
 
       if( lex2.isType( QUOTE_SINGLE ) &&
-        (lex3.isEot() || lex3.anyType( SPACE, DASH, EOL, EOP )) ) {
+        (lex3.isEot() || lex3.isType( SPACE, DASH, EOL, EOP )) ) {
         consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
-        mClosingSingleQuote++;
+        mClosingSingleQuotes.add( lex2 );
       }
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_DOUBLE )) &&
-      lex3.anyType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
+      (lex1.isSot() || lex1.isType( LEADING_QUOTE_OPENING_DOUBLE )) &&
+      lex3.isType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
       // Examples: "", "..., "word, ---"word
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
+      mOpeningDoubleQuotes.add( lex2 );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      lex1.anyType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
-      (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
+      lex1.isType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
+      (lex3.isEot() || lex3.isType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
       // Examples: ..."', word"', ?"', word"?
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
+      mClosingDoubleQuotes.add( lex2 );
     }
-    else if( lex1.isType( QUOTE_SINGLE ) &&
-      lex2.anyType( PUNCT, PERIOD, DASH ) && lex3.isType( QUOTE_DOUBLE ) ) {
-      // E.g., '," (contraction ruled out from previous conditionals)
-      consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex1 ) );
-      truncate( unresolved );
-      mClosingSingleQuote++;
+    else if( lex1.isType( WORD ) && lex2.isType( QUOTE_SINGLE ) &&
+      lex3.isType( PUNCT, PERIOD ) ) {
+      // E.g., word', (contraction ruled out by previous conditions)
+      consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+      mClosingSingleQuotes.add( lex2 );
     }
-    else if( lex2.anyType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
+    else if( lex2.isType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       // After tokenizing, the parser will attempt to resolve ambiguities.
       unresolved.add( new Lexeme[]{lex1, lex2, lex3} );
     }
@@ -323,18 +337,18 @@ public final class Parser {
         else if( sContractions.endedAmbiguously( word1 ) ) {
           ambiguousLaggingQuotes.add( quotes );
         }
-        else if( (lex1.isSot() || lex1.anyType( LEADING_QUOTE_OPENING_SINGLE ))
-          && lex3.anyType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
+        else if( (lex1.isSot() || lex1.isType( LEADING_QUOTE_OPENING_SINGLE )) &&
+          lex3.isType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
           consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
           resolvedLeadingQuotes++;
-          mOpeningSingleQuote++;
+          mOpeningSingleQuotes.add( lex2 );
           i.remove();
         }
-        else if( lex1.anyType( LEADING_QUOTE_CLOSING_SINGLE ) &&
-          (lex3.isEot() || lex3.anyType( LAGGING_QUOTE_CLOSING_SINGLE )) ) {
+        else if( lex1.isType( LEADING_QUOTE_CLOSING_SINGLE ) &&
+          (lex3.isEot() || lex3.isType( LAGGING_QUOTE_CLOSING_SINGLE )) ) {
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
           resolvedLaggingQuotes++;
-          mClosingSingleQuote++;
+          mClosingSingleQuotes.add( lex2 );
           i.remove();
         }
         else if( lex3.isType( NUMBER ) ) {
@@ -344,12 +358,30 @@ public final class Parser {
       }
     }
 
+    sort( mOpeningSingleQuotes );
+    sort( mClosingSingleQuotes );
+    sort( mOpeningDoubleQuotes );
+    sort( mClosingDoubleQuotes );
+
+    final var singleQuoteEmpty =
+      mOpeningSingleQuotes.isEmpty() || mClosingSingleQuotes.isEmpty();
+    final var doubleQuoteEmpty =
+      mOpeningDoubleQuotes.isEmpty() || mClosingDoubleQuotes.isEmpty();
+
+    final var singleQuoteDelta = abs(
+      mClosingSingleQuotes.size() - mOpeningSingleQuotes.size()
+    );
+
+    final var doubleQuoteDelta = abs(
+      mClosingDoubleQuotes.size() - mOpeningDoubleQuotes.size()
+    );
+
     final var ambiguousLeadingCount = ambiguousLeadingQuotes.size();
     final var ambiguousLaggingCount = ambiguousLaggingQuotes.size();
 
     if( resolvedLeadingQuotes == 1 && resolvedLaggingQuotes == 0 ) {
       if( ambiguousLeadingCount == 0 && ambiguousLaggingCount == 1 ) {
-        final var balanced = mClosingSingleQuote - mOpeningSingleQuote == 0;
+        final var balanced = singleQuoteDelta == 0;
         final var quote = balanced ? QUOTE_APOSTROPHE : QUOTE_CLOSING_SINGLE;
         final var lex = ambiguousLaggingQuotes.get( 0 );
         consumer.accept( new Token( quote, lex[ 1 ] ) );
@@ -372,6 +404,11 @@ public final class Parser {
         }
       );
     }
+    else if( mOpeningSingleQuotes.size() == 0 && mClosingSingleQuotes.size() == 1 ) {
+      final var opening = unresolved.get( 0 );
+      consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
+      unresolved.remove( opening );
+    }
     else if( ambiguousLeadingCount == 0 ) {
       if( resolvedLaggingQuotes < resolvedLeadingQuotes ) {
         for( final var i = unresolved.iterator(); i.hasNext(); ) {
@@ -380,7 +417,7 @@ public final class Parser {
           i.remove();
         }
       }
-      else if( mOpeningSingleQuote - mClosingSingleQuote == unresolved.size() ) {
+      else if( singleQuoteDelta == unresolved.size() ) {
         for( final var i = unresolved.iterator(); i.hasNext(); ) {
           final var closing = i.next();
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, closing[ 1 ] ) );
@@ -395,6 +432,40 @@ public final class Parser {
 
         // Doesn't affect the algorithm.
         unresolved.clear();
+      }
+    }
+    else if( (singleQuoteDelta == 0 && !singleQuoteEmpty) ||
+      (doubleQuoteDelta == 0 && !doubleQuoteEmpty) ) {
+      // An apostrophe stands betwixt opening/closing single quotes.
+      for( final var lexemes = unresolved.iterator(); lexemes.hasNext(); ) {
+        final var quote = lexemes.next()[ 1 ];
+
+        for( int i = 0; i < mOpeningSingleQuotes.size(); i++ ) {
+          // An apostrophe must fall between an open/close pair.
+          final var openingQuote = mOpeningSingleQuotes.get( i );
+          final var closingQuote = mClosingSingleQuotes.get( i );
+
+          if( openingQuote.before( quote ) && closingQuote.after( quote ) ) {
+            consumer.accept( new Token( QUOTE_APOSTROPHE, quote ) );
+            lexemes.remove();
+          }
+        }
+      }
+
+      // An apostrophe stands betwixt opening/closing double quotes.
+      for( final var lexemes = unresolved.iterator(); lexemes.hasNext(); ) {
+        final var quote = lexemes.next()[ 1 ];
+
+        for( int i = 0; i < mOpeningDoubleQuotes.size(); i++ ) {
+          // An apostrophe must fall between an open/close pair.
+          final var openingQuote = mOpeningDoubleQuotes.get( i );
+          final var closingQuote = mClosingDoubleQuotes.get( i );
+
+          if( openingQuote.before( quote ) && closingQuote.after( quote ) ) {
+            consumer.accept( new Token( QUOTE_APOSTROPHE, quote ) );
+            lexemes.remove();
+          }
+        }
       }
     }
     else if( ambiguousLeadingCount == 1 && resolvedLaggingQuotes == 1 ) {

@@ -166,8 +166,8 @@ Took place in &apos;04, yes&apos;m!
 "'Twas, t'wasn't thy name, 'twas it?" said Jim "the Barber" Brown.
 &ldquo;&apos;Twas, t&apos;wasn&apos;t thy name, &apos;twas it?&rdquo; said Jim &ldquo;the Barber&rdquo; Brown.
 
-"'I'm in danger. Help? Take me to--' an address on Van Ness Avenue.
-&ldquo;&lsquo;I&apos;m in danger. Help? Take me to--&rsquo; an address on Van Ness Avenue.
+"'I'm in danger. Help? Take me to'--an address on Van Ness Avenue.
+&ldquo;&lsquo;I&apos;m in danger. Help? Take me to&rsquo;--an address on Van Ness Avenue.
 
 "Ah," she said, "you knew! He told you--and you said 'my dear'! How could you?!"
 &ldquo;Ah,&rdquo; she said, &ldquo;you knew! He told you--and you said &lsquo;my dear&rsquo;! How could you?!&rdquo;
@@ -184,8 +184,8 @@ shouldn&apos;t drop letters, nor say &ldquo;ain&apos;t&rdquo; or &ldquo;hain&apo
 "She said, 'That's Sam's'," said the Sams' cat.
 &ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
 
-"'Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
-&ldquo;&lsquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
+"Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
+&ldquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
 
 'He's at Sam's'
 &lsquo;He&apos;s at Sam&apos;s&rsquo;
@@ -250,6 +250,12 @@ The Who&apos;s complement.\n\n\n&ldquo;Paragraph boundary!&rdquo;
 ''Sup, Doc?'
 &lsquo;&apos;Sup, Doc?&rsquo;
 
+'Wouldn't 'a brushed a fly off the top twig,' exclaimed Ashbrook,
+&lsquo;Wouldn&apos;t &apos;a brushed a fly off the top twig,&rsquo; exclaimed Ashbrook,
+
+"But ye've been 'nation quiet all the day though," said the lad...
+&ldquo;But ye&apos;ve been &apos;nation quiet all the day though,&rdquo; said the lad...
+
 # ########################################################################
 # Ambiguous (no solution)
 # ########################################################################
@@ -261,3 +267,6 @@ She said, 'Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rs
 
 'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
 'Bout that time I says, &lsquo;Boys! I been thinkin&apos; 'bout th&apos; Universe.&rsquo;
+
+"Jarvis, sir? Why, him as 'listed some years ago, and fought under
+&ldquo;Jarvis, sir? Why, him as 'listed some years ago, and fought under

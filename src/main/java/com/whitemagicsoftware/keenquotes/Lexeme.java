@@ -97,7 +97,7 @@ public final class Lexeme implements Comparable<Lexeme> {
    * @return {@code true} if the internal {@link LexemeType} matches any one
    * of the given {@link LexemeType}s.
    */
-  public boolean anyType( final LexemeType... types ) {
+  public boolean isType( final LexemeType... types ) {
     assert types != null;
 
     for( final var type : types ) {
@@ -127,6 +127,14 @@ public final class Lexeme implements Comparable<Lexeme> {
 
   LexemeType getType() {
     return mType;
+  }
+
+  public boolean before( final Lexeme that ) {
+    return compareTo( that ) < 0;
+  }
+
+  public boolean after( final Lexeme that ) {
+    return compareTo( that ) > 0;
   }
 
   /**
