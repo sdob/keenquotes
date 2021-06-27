@@ -404,7 +404,8 @@ public final class Parser {
         }
       );
     }
-    else if( mOpeningSingleQuotes.size() == 0 && mClosingSingleQuotes.size() == 1 ) {
+    else if( mOpeningSingleQuotes.size() == 0 &&
+      mClosingSingleQuotes.size() == 1 && !unresolved.isEmpty() ) {
       final var opening = unresolved.get( 0 );
       consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
       unresolved.remove( opening );
