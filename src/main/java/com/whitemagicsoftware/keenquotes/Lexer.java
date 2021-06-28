@@ -56,6 +56,7 @@ public class Lexer {
         }
       }
       else if( curr == ' ' ) {
+        slurp( i, ( next, ci ) -> next == ' ' );
         lexeme = createLexeme( SPACE, began, i.getIndex() );
       }
       else if( curr == '\'' ) {

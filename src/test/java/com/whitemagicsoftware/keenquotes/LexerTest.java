@@ -82,6 +82,12 @@ class LexerTest {
     testType( "abc \r\nabc\n", WORD, SPACE, EOL, WORD, EOL );
   }
 
+  @Test
+  void test_Lexing_Whitespace_EmitSpace() {
+    testType( "   ", SPACE );
+    testType( "\n   \n", EOL, SPACE, EOL );
+  }
+
   private void testType( final String actual, final LexemeType... expected ) {
     final var list = Arrays.asList( expected );
     testType( actual, ( lexeme, text ) -> lexeme.getType(), list );
