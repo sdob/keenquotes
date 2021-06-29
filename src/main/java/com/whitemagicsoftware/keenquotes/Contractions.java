@@ -174,31 +174,52 @@ public class Contractions {
    */
   private static final Set<String> BEGAN_UNAMBIGUOUS = Set.of(
     "aporth",
+    // about you
     "boutcha",
+    // about you
     "boutchu",
+    // about well
+    "boutwell",
+    // except
     "cept",
+    // decided
+    "cided",
+    // because
     "cos",
     "dillo",
+    // them
     "em",
+    // afraid
     "fraid",
+    // against
     "gainst",
+    // him
     "im",
+    // and
     "n",
+    // beneath
     "neath",
+    // another
     "nother",
+    // enough
     "nuff",
+    // gonna
     "onna",
     "onna'",
     // horse
     "oss",
     // horses
     "osses",
+    // upon
     "pon",
     "s",
     "sblood",
+    // excuse
     "scuse",
     "sfar",
     "sfoot",
+    // considered
+    "sidered",
     "t",
     "taint",
     "tain",
@@ -216,7 +237,10 @@ public class Contractions {
     "twou",
     "twould",
     "twouldn",
-    "ve"
+    // have
+    "ve",
+    // exactly
+    "xactly"
   );
 
   /**
@@ -276,6 +300,8 @@ public class Contractions {
     "fo",
     // friend
     "frien",
+    // just
+    "jes",
     // just
     "jus",
     // lord

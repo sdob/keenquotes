@@ -69,11 +69,11 @@ public final class Lexeme implements Comparable<Lexeme> {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + '{' +
+    return getClass().getSimpleName() + '[' +
       "mType=" + mType +
       ", mBegan=" + mBegan +
       ", mEnded=" + mEnded +
-      '}';
+      ']';
   }
 
   /**

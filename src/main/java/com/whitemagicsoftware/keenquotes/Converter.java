@@ -12,8 +12,9 @@ import static java.util.Collections.sort;
  * Responsible for converting curly quotes to HTML entities throughout a
  * text string.
  */
+@SuppressWarnings( "unused" )
 public class Converter implements Function<String, String> {
-  private static final Map<TokenType, String> REPLACEMENTS = Map.of(
+  public static final Map<TokenType, String> ENTITIES = Map.of(
     QUOTE_OPENING_SINGLE, "&lsquo;",
     QUOTE_CLOSING_SINGLE, "&rsquo;",
     QUOTE_OPENING_DOUBLE, "&ldquo;",
@@ -25,16 +26,74 @@ public class Converter implements Function<String, String> {
     QUOTE_PRIME_DOUBLE, "&Prime;"
   );
 
+  /**
+   * Used by external applications to initialize the replacement map.
+   */
+  public static final Map<TokenType, String> CHARS = Map.of(
+    QUOTE_OPENING_SINGLE, "‘",
+    QUOTE_CLOSING_SINGLE, "’",
+    QUOTE_OPENING_DOUBLE, "“",
+    QUOTE_CLOSING_DOUBLE, "”",
+    QUOTE_STRAIGHT_SINGLE, "'",
+    QUOTE_STRAIGHT_DOUBLE, "\"",
+    QUOTE_APOSTROPHE, "’",
+    QUOTE_PRIME_SINGLE, "′",
+    QUOTE_PRIME_DOUBLE, "″"
+  );
+
   private final Consumer<Lexeme> mUnresolved;
   private final Contractions mContractions;
+  private final Map<TokenType, String> mReplacements;
 
+  /**
+   * Maps quotes to HTML entities.
+   *
+   * @param unresolved Consumes {@link Lexeme}s that could not be converted
+   *                   into HTML entities.
+   */
   public Converter( final Consumer<Lexeme> unresolved ) {
     this( unresolved, new Contractions.Builder().build() );
   }
 
+  /**
+   * Maps quotes to HTML entities.
+   *
+   * @param unresolved Consumes {@link Lexeme}s that could not be converted
+   *                   into HTML entities.
+   */
+  public Converter(
+    final Consumer<Lexeme> unresolved,
+    final Map<TokenType, String> replacements ) {
+    this( unresolved, new Contractions.Builder().build(), replacements );
+  }
+
+  /**
+   * Maps quotes to HTML entities.
+   *
+   * @param unresolved Consumes {@link Lexeme}s that could not be converted
+   *                   into HTML entities.
+   * @param c          Contractions listings.
+   */
   public Converter( final Consumer<Lexeme> unresolved, final Contractions c ) {
+    this( unresolved, c, ENTITIES );
+  }
+
+  /**
+   * Maps quotes to curled equivalents.
+   *
+   * @param unresolved   Consumes {@link Lexeme}s that could not be converted
+   *                     into HTML entities.
+   * @param c            Contractions listings.
+   * @param replacements Map of recognized quotes to output types (entity or
+   *                     Unicode character).
+   */
+  public Converter(
+    final Consumer<Lexeme> unresolved,
+    final Contractions c,
+    final Map<TokenType, String> replacements ) {
     mUnresolved = unresolved;
     mContractions = c;
+    mReplacements = replacements;
   }
 
   /**
@@ -63,7 +122,7 @@ public class Converter implements Function<String, String> {
     for( final var token : tokens ) {
       if( position <= token.began() ) {
         result.append( text, position, token.began() );
-        result.append( REPLACEMENTS.get( token.getType() ) );
+        result.append( mReplacements.get( token.getType() ) );
       }
 
       position = token.ended();
