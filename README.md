@@ -47,3 +47,13 @@ Clone the repository and change to the root directory as usual, then run:
 
     gradle clean build
 
+## Library
+
+To build a library for use with other software applications, run:
+
+    gradle clean lib
+
+Find the library at:
+
+    build/lib/keenquotes.jar
+
