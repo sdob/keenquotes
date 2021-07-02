@@ -663,6 +663,7 @@ public class Contractions {
     "briefin",
     "brightenin",
     "brimmin",
+    "brinin",
     "bringin",
     "bristlin",
     "britlin",

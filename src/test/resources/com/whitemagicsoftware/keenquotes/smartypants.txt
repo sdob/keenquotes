@@ -256,6 +256,9 @@ The Who&apos;s complement.\n\n\n&ldquo;Paragraph boundary!&rdquo;
 "But ye've been 'nation quiet all the day though," said the lad...
 &ldquo;But ye&apos;ve been &apos;nation quiet all the day though,&rdquo; said the lad...
 
+"Not much o' fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin' man, used to say, says he, 'If e'er I sow my wheat wi'out brinin', I'm a Dutchman,' says he; an' that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren't goin' to bother mysen about Dutchmen. There's fools enoo, an' rogues enoo, wi'out lookin' i' books for 'em."
+&ldquo;Not much o&apos; fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin&apos; man, used to say, says he, &lsquo;If e&apos;er I sow my wheat wi&apos;out brinin&apos;, I&apos;m a Dutchman,&rsquo; says he; an&apos; that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren&apos;t goin&apos; to bother mysen about Dutchmen. There&apos;s fools enoo, an&apos; rogues enoo, wi&apos;out lookin&apos; i&apos; books for &apos;em.&rdquo;
+
 # ########################################################################
 # Ambiguous (no solution)
 # ########################################################################
