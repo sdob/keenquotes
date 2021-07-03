@@ -15,7 +15,7 @@ import static java.util.Collections.sort;
 /**
  * Converts straight double/single quotes and apostrophes to curly equivalents.
  */
-public final class Parser {
+public class Parser {
   /**
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
@@ -118,7 +118,7 @@ public final class Parser {
    */
   public Parser( final String text, final Contractions contractions ) {
     mText = text;
-    mLexer = new Lexer( mText );
+    mLexer = createLexer( mText );
     sContractions = contractions;
   }
 
@@ -474,6 +474,16 @@ public final class Parser {
       consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
       unresolved.remove( opening );
     }
+  }
+
+  /**
+   * Allow subclasses to change the type of {@link Lexer}
+   *
+   * @param text The text to lex.
+   * @return A {@link Lexer} that can split the text into {@link Lexeme}s.
+   */
+  Lexer createLexer( final String text ) {
+    return new Lexer( text );
   }
 
   /**

@@ -3,12 +3,12 @@ package com.whitemagicsoftware.keenquotes;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
 import static com.whitemagicsoftware.keenquotes.Lexeme.EOT;
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class LexerTest {
   @Test
-  void test_Lexing_Words_TokenValues() {
+  void test_Lexing_Words_LexemeValues() {
     testText( "abc 123", "abc", " ", "123" );
     testText( "-123 abc", "-123", " ", "abc" );
   }
@@ -88,20 +88,35 @@ class LexerTest {
     testType( "\n   \n", EOL, SPACE, EOL );
   }
 
-  private void testType( final String actual, final LexemeType... expected ) {
-    final var list = Arrays.asList( expected );
-    testType( actual, ( lexeme, text ) -> lexeme.getType(), list );
+  static void testType(
+    final String actual, final LexemeType... expected ) {
+    final var list = asList( expected );
+    final var lexer = createLexer( actual );
+    testType( lexer, actual, ( lexeme, text ) -> lexeme.getType(), list );
   }
 
-  private void testText( final String actual, final String... expected ) {
-    testType( actual, Lexeme::toString, Arrays.asList( expected ) );
+  static void testText(
+    final String actual, final String... expected ) {
+    final var lexer = createLexer( actual );
+    testType( lexer, actual, Lexeme::toString, asList( expected ) );
   }
 
-  private <A, E> void testType(
+  static void testType(
+    final Lexer lexer, final String actual, final LexemeType... expected ) {
+    final var list = asList( expected );
+    testType( lexer, actual, ( lexeme, text ) -> lexeme.getType(), list );
+  }
+
+  static void testText(
+    final Lexer lexer, final String actual, final String... expected ) {
+    testType( lexer, actual, Lexeme::toString, asList( expected ) );
+  }
+
+  private static <A, E> void testType(
+    final Lexer lexer,
     final String text,
     final BiFunction<Lexeme, String, A> f,
     final List<E> elements ) {
-    final var lexer = new Lexer( text );
     var counter = 0;
 
     Lexeme lexeme;
@@ -115,5 +130,9 @@ class LexerTest {
 
     // Ensure all expected values are matched (verify end of text reached).
     assertEquals( elements.size(), counter );
+  }
+
+  static Lexer createLexer( final String text ) {
+    return new Lexer( text );
   }
 }

@@ -21,13 +21,15 @@ public class Lexer {
   private final CharacterIterator mIterator;
 
   /**
-   * Default constructor, no state.
+   * Constructs a {@link Lexer} capable of turning text int {@link Lexeme}s.
+   *
+   * @param text The text to lex.
    */
-  public Lexer( final String text ) {
+  Lexer( final String text ) {
     mIterator = new StringCharacterIterator( text );
   }
 
-  public Lexeme next() {
+  Lexeme next() {
     return parse( mIterator );
   }
 
@@ -40,12 +42,16 @@ public class Lexer {
    * @param i The sequence of characters to tokenize.
    * @return The next token in the sequence.
    */
-  private Lexeme parse( final CharacterIterator i ) {
+  Lexeme parse( final CharacterIterator i ) {
     int began = i.getIndex();
     boolean isWord = false;
-    Lexeme lexeme = null;
+    Lexeme lexeme;
 
     do {
+      if( (lexeme = preprocess( i )) != null ) {
+        return lexeme;
+      }
+
       final var curr = i.current();
 
       if( isLetter( curr ) ) {
@@ -153,6 +159,10 @@ public class Lexer {
     return lexeme;
   }
 
+  Lexeme preprocess( final CharacterIterator i ) {
+    return null;
+  }
+
   /**
    * Answers whether the given character can be considered part of a word
    * or not. This will include {@code _} and {@code *} because plain text
@@ -192,7 +202,7 @@ public class Lexer {
     return curr == '-' || curr == '–' || curr == '—' || curr == '―';
   }
 
-  private static char peek( final CharacterIterator ci ) {
+  static char peek( final CharacterIterator ci ) {
     final var ch = ci.next();
     ci.previous();
     return ch;
@@ -205,7 +215,7 @@ public class Lexer {
    * @param f  The function that determines when slurping stops.
    * @return The number of characters parsed.
    */
-  private static int slurp(
+  static int slurp(
     final CharacterIterator ci,
     final BiFunction<Character, CharacterIterator, Boolean> f ) {
     char next;

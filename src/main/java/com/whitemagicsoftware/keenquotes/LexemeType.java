@@ -24,5 +24,6 @@ public enum LexemeType {
   EQUALS,
   PERIOD,
   ELLIPSIS,
-  FLAG
+  FLAG,
+  TAG
 }
