@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_PLAIN;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static picocli.CommandLine.Help.Ansi.Style.*;
@@ -40,7 +41,8 @@ public final class KeenQuotes {
     }
     else {
       try {
-        out.print( convert( new Converter( err::println, contractions ) ) );
+        final var c = new Converter( err::println, contractions, PARSER_PLAIN );
+        out.print( convert( c ) );
       } catch( final Exception ex ) {
         ex.printStackTrace( err );
       }

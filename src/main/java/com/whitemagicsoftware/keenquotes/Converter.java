@@ -1,4 +1,7 @@
+/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
+
+import com.whitemagicsoftware.keenquotes.ParserFactory.ParserType;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -44,15 +47,18 @@ public class Converter implements Function<String, String> {
   private final Consumer<Lexeme> mUnresolved;
   private final Contractions mContractions;
   private final Map<TokenType, String> mReplacements;
+  private final ParserFactory mFactory;
 
   /**
    * Maps quotes to HTML entities.
    *
    * @param unresolved Consumes {@link Lexeme}s that could not be converted
    *                   into HTML entities.
+   * @param parserType Creates a parser based on document content structure.
    */
-  public Converter( final Consumer<Lexeme> unresolved ) {
-    this( unresolved, new Contractions.Builder().build() );
+  public Converter(
+    final Consumer<Lexeme> unresolved, final ParserType parserType ) {
+    this( unresolved, new Contractions.Builder().build(), parserType );
   }
 
   /**
@@ -60,11 +66,15 @@ public class Converter implements Function<String, String> {
    *
    * @param unresolved Consumes {@link Lexeme}s that could not be converted
    *                   into HTML entities.
+   * @param parserType Creates a parser based on document content structure.
    */
   public Converter(
     final Consumer<Lexeme> unresolved,
-    final Map<TokenType, String> replacements ) {
-    this( unresolved, new Contractions.Builder().build(), replacements );
+    final Map<TokenType, String> replacements,
+    final ParserType parserType ) {
+    this(
+      unresolved, new Contractions.Builder().build(), replacements, parserType
+    );
   }
 
   /**
@@ -73,9 +83,13 @@ public class Converter implements Function<String, String> {
    * @param unresolved Consumes {@link Lexeme}s that could not be converted
    *                   into HTML entities.
    * @param c          Contractions listings.
+   * @param parserType Creates a parser based on document content structure.
    */
-  public Converter( final Consumer<Lexeme> unresolved, final Contractions c ) {
-    this( unresolved, c, ENTITIES );
+  public Converter(
+    final Consumer<Lexeme> unresolved,
+    final Contractions c,
+    final ParserType parserType ) {
+    this( unresolved, c, ENTITIES, parserType );
   }
 
   /**
@@ -90,10 +104,12 @@ public class Converter implements Function<String, String> {
   public Converter(
     final Consumer<Lexeme> unresolved,
     final Contractions c,
-    final Map<TokenType, String> replacements ) {
+    final Map<TokenType, String> replacements,
+    final ParserType parserType ) {
     mUnresolved = unresolved;
     mContractions = c;
     mReplacements = replacements;
+    mFactory = new ParserFactory( parserType );
   }
 
   /**
@@ -107,7 +123,7 @@ public class Converter implements Function<String, String> {
    */
   @Override
   public String apply( final String text ) {
-    final var parser = new Parser( text, mContractions );
+    final var parser = mFactory.createParser( text, mContractions );
     final var tokens = new ArrayList<Token>();
 
     // Parse the tokens and consume all unresolved lexemes.

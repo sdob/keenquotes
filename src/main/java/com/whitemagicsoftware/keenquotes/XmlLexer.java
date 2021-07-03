@@ -3,9 +3,6 @@ package com.whitemagicsoftware.keenquotes;
 
 import java.text.CharacterIterator;
 
-import static com.whitemagicsoftware.keenquotes.Lexeme.createLexeme;
-import static com.whitemagicsoftware.keenquotes.LexemeType.TAG;
-
 /**
  * Responsible for lexing text while ignoring XML elements. The document must
  * be both sane and well-formed. This is not intended to lex documents in the
@@ -23,19 +20,27 @@ final class XmlLexer extends Lexer {
     super( text );
   }
 
+  /**
+   * Skip (do not emit) XML tags found within the prose. This effectively hides
+   * the element.
+   *
+   * @param i The {@link CharacterIterator} used to scan through the text, one
+   *          character at a time.
+   */
   @Override
-  Lexeme preprocess( final CharacterIterator i ) {
-    final var began = i.getIndex();
-    final var curr = i.current();
-    Lexeme lexeme = null;
+  boolean skip( final CharacterIterator i ) {
+    final boolean match = i.current() == '<';
 
-    if( curr == '<' ) {
+    if( match ) {
       slurp( i, ( next, ci ) -> next != '>' );
+
+      // Swallow the trailing greater than symbol.
       i.next();
-      lexeme = createLexeme( TAG, began, i.getIndex() );
+
+      // Skip to the character following the greater than symbol.
       i.next();
     }
 
-    return lexeme;
+    return match;
   }
 }

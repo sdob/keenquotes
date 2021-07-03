@@ -45,11 +45,13 @@ public class Lexer {
   Lexeme parse( final CharacterIterator i ) {
     int began = i.getIndex();
     boolean isWord = false;
-    Lexeme lexeme;
+    Lexeme lexeme = null;
 
     do {
-      if( (lexeme = preprocess( i )) != null ) {
-        return lexeme;
+      // Allow subclasses to skip character sequences. This allows XML tags
+      // to be skipped.
+      if( skip( i ) ) {
+        began = i.getIndex();
       }
 
       final var curr = i.current();
@@ -159,8 +161,8 @@ public class Lexer {
     return lexeme;
   }
 
-  Lexeme preprocess( final CharacterIterator i ) {
-    return null;
+  boolean skip( final CharacterIterator i ) {
+    return false;
   }
 
   /**

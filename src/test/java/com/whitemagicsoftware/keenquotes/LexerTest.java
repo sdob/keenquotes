@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests lexing words, numbers, punctuation, spaces, newlines, etc.
  */
-class LexerTest {
+final class LexerTest {
+
   @Test
   void test_Lexing_Words_LexemeValues() {
     testText( "abc 123", "abc", " ", "123" );
@@ -105,11 +106,6 @@ class LexerTest {
     final Lexer lexer, final String actual, final LexemeType... expected ) {
     final var list = asList( expected );
     testType( lexer, actual, ( lexeme, text ) -> lexeme.getType(), list );
-  }
-
-  static void testText(
-    final Lexer lexer, final String actual, final String... expected ) {
-    testType( lexer, actual, Lexeme::toString, asList( expected ) );
   }
 
   private static <A, E> void testType(

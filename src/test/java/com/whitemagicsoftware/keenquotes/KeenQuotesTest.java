@@ -1,19 +1,27 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import com.whitemagicsoftware.keenquotes.ParserFactory.ParserType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
+import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_XML;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Test that English straight quotes are converted to curly quotes and
@@ -26,7 +34,7 @@ public class KeenQuotesTest {
   @Test
   @Disabled
   public void test_parse_SingleLine_Parsed() {
-    final var converter = new Converter( out::println );
+    final var converter = createConverter( out::println );
     out.println( converter.apply(
       "'A', 'B', and 'C' are letters."
     ) );
@@ -39,7 +47,16 @@ public class KeenQuotesTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testConverter( new Converter( ( lex ) -> {} ) );
+    testConverter( createConverter( ( lex ) -> {} ) );
+  }
+
+  @ParameterizedTest
+  @MethodSource( "param_XmlParse_StraightQuotes_CurlyQuotes" )
+  public void test_XmlParse_StraightQuotes_CurlyQuotes(
+    final String input, final String expected ) {
+    final var converter = createConverter( out::println, PARSER_XML );
+    final var actual = converter.apply( input );
+    assertEquals( expected, actual );
   }
 
   /**
@@ -64,8 +81,30 @@ public class KeenQuotesTest {
       }
     }
 
-    final var converter = new Converter( out::println );
+    final var converter = createConverter( out::println );
     System.out.println( converter.apply( sb.toString() ) );
+  }
+
+  @SuppressWarnings( "unused" )
+  static Stream<Arguments> param_XmlParse_StraightQuotes_CurlyQuotes() {
+    return Stream.of(
+      arguments(
+        "<em>'twas</em>",
+        "<em>&apos;twas</em>"
+      ),
+      arguments(
+        "<bold>'twas</bold> redeemed for the <em>cat</em>'s eye",
+        "<bold>&apos;twas</bold> redeemed for the <em>cat</em>&apos;s eye"
+      ),
+      arguments(
+        "<a href=\"https://x.org\" title=\"X's Homepage\">X11's bomb</a>",
+        "<a href=\"https://x.org\" title=\"X's Homepage\">X11&apos;s bomb</a>"
+      ),
+      arguments(
+        "''<em>Twas</em> happening!'",
+        "&lsquo;&apos;<em>Twas</em> happening!&rsquo;"
+      )
+    );
   }
 
   /**
@@ -126,5 +165,15 @@ public class KeenQuotesTest {
     assertNotNull( is );
 
     return new BufferedReader( new InputStreamReader( is ) );
+  }
+
+  private Function<String, String> createConverter(
+    final Consumer<Lexeme> unresolved ) {
+    return createConverter( unresolved, PARSER_PLAIN );
+  }
+
+  private Function<String, String> createConverter(
+    final Consumer<Lexeme> unresolved, final ParserType parserType ) {
+    return new Converter( unresolved, parserType );
   }
 }

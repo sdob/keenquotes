@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test that all unambiguous apostrophes are emitted once.
  */
-class ParserTest {
+final class ParserTest {
+
   @SuppressWarnings( "TextBlockMigration" )
   private final static Map<String, Map<TokenType, Integer>> TEST_CASES =
     Map.of(
