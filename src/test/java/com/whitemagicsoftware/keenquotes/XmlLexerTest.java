@@ -13,10 +13,11 @@ final class XmlLexerTest {
 
   @Test
   void test_Lexing_Xml_EmitTags() {
-    final var actual = "The <em>world's</em> aflame.";
+    final var actual =
+      "A <em>world's</em> aflame <pre><code>ch = '\\''</code></pre>.";
     testType(
       createXmlLexer( actual ), actual,
-      WORD, SPACE, WORD, QUOTE_SINGLE, WORD, SPACE, WORD, PERIOD
+      WORD, SPACE, WORD, QUOTE_SINGLE, WORD, SPACE, WORD, SPACE, PERIOD
     );
   }
 

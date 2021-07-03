@@ -93,6 +93,10 @@ public class KeenQuotesTest {
         "<em>&apos;twas</em>"
       ),
       arguments(
+        "<strong>'Twas</strong> <kbd>'</kbd> in <tex>Knuth's TeX</tex>",
+        "<strong>&apos;Twas</strong> <kbd>'</kbd> in <tex>Knuth's TeX</tex>"
+      ),
+      arguments(
         "<bold>'twas</bold> redeemed for the <em>cat</em>'s eye",
         "<bold>&apos;twas</bold> redeemed for the <em>cat</em>&apos;s eye"
       ),
