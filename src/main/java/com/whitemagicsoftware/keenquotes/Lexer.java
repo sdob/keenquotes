@@ -50,7 +50,7 @@ public class Lexer {
     do {
       // Allow subclasses to skip character sequences. This allows XML tags
       // to be skipped.
-      if( skip( i ) ) {
+      while( skip( i ) ) {
         began = i.getIndex();
       }
 
