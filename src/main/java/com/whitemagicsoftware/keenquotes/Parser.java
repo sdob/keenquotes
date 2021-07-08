@@ -52,7 +52,7 @@ public class Parser {
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
   private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, ELLIPSIS, OPENING_GROUP,
+    new LexemeType[]{WORD, NUMBER, DASH, ELLIPSIS, OPENING_GROUP,
       QUOTE_SINGLE, QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE};
 
   /**

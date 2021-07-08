@@ -32,11 +32,10 @@ public class KeenQuotesTest {
    * This is a single-use test that is useful for debugging.
    */
   @Test
-  @Disabled
   public void test_parse_SingleLine_Parsed() {
     final var converter = createConverter( out::println );
     out.println( converter.apply(
-      "'A', 'B', and 'C' are letters."
+      "\"---retroactively!\""
     ) );
   }
 

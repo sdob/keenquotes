@@ -61,6 +61,9 @@ With--&ldquo;air quotes&rdquo;--and dashes.
 "Not all open quotes are closed...
 &ldquo;Not all open quotes are closed...
 
+"---retroactively!"
+&ldquo;---retroactively!&rdquo;
+
 "And this" and "and this" and "and this" and "and another."
 &ldquo;And this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and this&rdquo; and &ldquo;and another.&rdquo;
 
@@ -90,9 +93,6 @@ With--&lsquo;imaginary&rsquo;--dashes.
 
 'It's a beautiful day!'
 &lsquo;It&apos;s a beautiful day!&rsquo;
-
-Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
-Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 
 # ########################################################################
 # Possessives
@@ -267,6 +267,9 @@ She said, 'Cause of death?\n\n&lsquo;Old age, there&apos;s no doubt.&rsquo;
 
 She said, 'Cause I said so!\n\n'If we're done, I've a secret.'
 She said, 'Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rsquo;
+
+Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 
 'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
 'Bout that time I says, &lsquo;Boys! I been thinkin&apos; 'bout th&apos; Universe.&rsquo;
