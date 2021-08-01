@@ -50,14 +50,12 @@ public final class KeenQuotes {
   }
 
   private Contractions createContractions( final Settings settings ) {
-    final var builder = new Contractions.Builder();
-
-    builder.withBeganUnambiguous( settings.getBeganUnambiguous() );
-    builder.withEndedUnambiguous( settings.getEndedUnambiguous() );
-    builder.withBeganAmbiguous( settings.getBeganAmbiguous() );
-    builder.withEndedAmbiguous( settings.getEndedAmbiguous() );
-
-    return builder.build();
+    return new Contractions.Builder()
+      .withBeganUnambiguous( settings.getBeganUnambiguous() )
+      .withEndedUnambiguous( settings.getEndedUnambiguous() )
+      .withBeganAmbiguous( settings.getBeganAmbiguous() )
+      .withEndedAmbiguous( settings.getEndedAmbiguous() )
+      .build();
   }
 
   private String convert( final Converter converter ) throws IOException {

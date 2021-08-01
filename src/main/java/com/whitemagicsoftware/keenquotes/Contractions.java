@@ -32,20 +32,24 @@ public class Contractions {
     private final Set<String> mBeganAmbiguous = new HashSet<>();
     private final Set<String> mEndedAmbiguous = new HashSet<>();
 
-    public void withBeganUnambiguous( final List<String> words ) {
+    public Builder withBeganUnambiguous( final List<String> words ) {
       mBeganUnambiguous.addAll( words );
+      return this;
     }
 
-    public void withEndedUnambiguous( final List<String> words ) {
+    public Builder withEndedUnambiguous( final List<String> words ) {
       mEndedUnambiguous.addAll( words );
+      return this;
     }
 
-    public void withBeganAmbiguous( final List<String> words ) {
+    public Builder withBeganAmbiguous( final List<String> words ) {
       mBeganAmbiguous.addAll( words );
+      return this;
     }
 
-    public void withEndedAmbiguous( final List<String> words ) {
+    public Builder withEndedAmbiguous( final List<String> words ) {
       mEndedAmbiguous.addAll( words );
+      return this;
     }
 
     /**
