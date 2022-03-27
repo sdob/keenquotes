@@ -227,6 +227,8 @@ public class Contractions {
     "sidered",
     // exploit
     "sploit",
+    // exploits
+    "sploits",
     "t",
     "taint",
     "tain",
