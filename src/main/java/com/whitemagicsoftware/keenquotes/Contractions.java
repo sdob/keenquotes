@@ -13,6 +13,7 @@ import static java.util.Collections.sort;
 /**
  * Placeholder for various types of contractions.
  */
+@SuppressWarnings( "SpellCheckingInspection" )
 public class Contractions {
 
   private final Builder mBuilder;
@@ -224,6 +225,8 @@ public class Contractions {
     "sfoot",
     // considered
     "sidered",
+    // exploit
+    "sploit",
     "t",
     "taint",
     "tain",
@@ -278,7 +281,7 @@ public class Contractions {
     "nation",
     // are|regarding
     "re",
-    // what's up|to sup
+    // what's up|to eat
     "sup",
     // it will|twill fabric
     "twill",

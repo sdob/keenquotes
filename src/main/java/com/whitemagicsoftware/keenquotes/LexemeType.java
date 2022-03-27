@@ -2,8 +2,9 @@
 package com.whitemagicsoftware.keenquotes;
 
 /**
- * Represents the type of a {@link Lexeme} parsed by the {@link Lexer}.
+ * Represents the type of {@link Lexeme} parsed by the {@link Lexer}.
  */
+@SuppressWarnings( "SpellCheckingInspection" )
 public enum LexemeType {
   QUOTE_SINGLE,
   QUOTE_SINGLE_OPENING,
@@ -24,6 +25,5 @@ public enum LexemeType {
   EQUALS,
   PERIOD,
   ELLIPSIS,
-  FLAG,
-  TAG
+  FLAG
 }
