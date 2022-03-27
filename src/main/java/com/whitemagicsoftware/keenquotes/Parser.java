@@ -285,6 +285,13 @@ public class Parser {
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
       mClosingSingleQuotes.add( lex2 );
     }
+    else if( lex1.isType( DASH ) &&
+      lex2.isType( QUOTE_SINGLE ) &&
+      lex3.isType( QUOTE_DOUBLE ) ) {
+      // Example: ---'"
+      consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
+      mClosingSingleQuotes.add( lex2 );
+    }
     else if( lex2.isType( QUOTE_SINGLE, QUOTE_DOUBLE ) ) {
       // After tokenizing, the parser will attempt to resolve ambiguities.
       unresolved.add( new Lexeme[]{lex1, lex2, lex3} );
