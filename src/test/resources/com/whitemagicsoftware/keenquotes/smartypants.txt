@@ -31,11 +31,14 @@ What&apos;s this &lsquo;-5.5&Prime;,&rsquo; &lsquo;-10.2&Prime; cm,&rsquo; and a
 12" record, 5'10" height
 12&Prime; record, 5&prime;10&Prime; height
 
-Use 11.5"x14.25" virtual paper!
-Use 11.5&Prime;x14.25&Prime; virtual paper!
+Use 11.5"×14.25" virtual paper!
+Use 11.5&Prime;×14.25&Prime; virtual paper!
 
 Angular measure 3° 5' 30" means 3 degs, 5 arcmins, & 30 arcsecs.
 Angular measure 3° 5&prime; 30&Prime; means 3 degs, 5 arcmins, & 30 arcsecs.
+
+Play 12½" records.
+Play 12½&Prime; records.
 
 # ########################################################################
 # Double quotes
@@ -69,6 +72,9 @@ With--&ldquo;air quotes&rdquo;--and dashes.
 
 "Will'll invite?" Mrs. Thorne asked;\n"because he's coming--he's at the gate."
 &ldquo;Will&apos;ll invite?&rdquo; Mrs. Thorne asked;\n&ldquo;because he&apos;s coming--he&apos;s at the gate.&rdquo;
+
+Model "T2000"
+Model &ldquo;T2000&rdquo;
 
 # ########################################################################
 # Single quotes

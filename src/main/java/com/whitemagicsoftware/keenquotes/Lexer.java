@@ -7,7 +7,6 @@ import java.util.function.BiFunction;
 
 import static com.whitemagicsoftware.keenquotes.Lexeme.createLexeme;
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
-import static java.lang.Character.isDigit;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
 
@@ -59,7 +58,9 @@ public class Lexer {
       if( isLetter( curr ) ) {
         isWord = true;
 
-        if( !isLetter( peek( i ) ) ) {
+        final var next = peek(i);
+
+        if( !isLetter( next ) && !isDigit( next ) ) {
           lexeme = createLexeme( WORD, began, i.getIndex() );
         }
       }
@@ -178,18 +179,24 @@ public class Lexer {
     return Character.isLetter( curr ) || curr == '_' || curr == '*';
   }
 
+  private static boolean isDigit( final char curr ) {
+    return Character.isDigit( curr ) ||
+      "¼½¾⅐⅑⅒⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞".indexOf( curr ) > -1;
+  }
+
   /**
    * Answers whether the given character can be considered part of a number
    * or not. This does not include digits, which are checked independently
-   * from this method.
+   * of this method.
    *
-   * @param curr The character to check as being related to numbers.
+   * @param curr The character to check as being related to a number.
    * @return {@code true} if the given character can be considered part of
    * a number (e.g., -2,000.2^2 is considered a single number).
    */
   private static boolean isNumeric( final char curr ) {
     return
-      curr == '.' || curr == ',' || curr == '-' || curr == '+' || curr == '^';
+      curr == '.' || curr == ',' || curr == '-' || curr == '+' ||
+        curr == '^' || curr == '⅟' || curr == '⁄';
   }
 
   /**
