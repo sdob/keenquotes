@@ -84,7 +84,6 @@ public class KeenQuotesTest {
     System.out.println( converter.apply( sb.toString() ) );
   }
 
-  @SuppressWarnings( "unused" )
   static Stream<Arguments> param_XmlParse_StraightQuotes_CurlyQuotes() {
     return Stream.of(
       arguments(

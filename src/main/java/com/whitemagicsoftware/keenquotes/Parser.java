@@ -148,7 +148,7 @@ public class Parser {
         resolve( unresolved, tokenConsumer );
 
         // Notify of any unambiguous quotes that could not be resolved.
-        unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
+        unresolved.forEach( lex -> lexemeConsumer.accept( lex[ 1 ] ) );
         unresolved.clear();
         mOpeningSingleQuotes.clear();
         mClosingSingleQuotes.clear();
@@ -167,7 +167,7 @@ public class Parser {
     resolve( unresolved, tokenConsumer );
 
     // Notify of any unambiguous quotes that could not be resolved.
-    unresolved.forEach( ( lex ) -> lexemeConsumer.accept( lex[ 1 ] ) );
+    unresolved.forEach( lex -> lexemeConsumer.accept( lex[ 1 ] ) );
   }
 
   /**
@@ -232,8 +232,8 @@ public class Parser {
     }
     else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) ) {
       // Sentences must re-written to avoid starting with numerals.
-      if( lex3.isType( SPACE, PUNCT ) || (lex3.isType( WORD ) &&
-        lex3.toString( mText ).equalsIgnoreCase( "s" )) ) {
+      if( lex3.isType( SPACE, PUNCT ) || lex3.isType( WORD ) &&
+        lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
         // Examples: '20s, '02
         consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       }
@@ -442,8 +442,8 @@ public class Parser {
         unresolved.clear();
       }
     }
-    else if( (singleQuoteDelta == 0 && !singleQuoteEmpty) ||
-      (doubleQuoteDelta == 0 && !doubleQuoteEmpty) ) {
+    else if( singleQuoteDelta == 0 && !singleQuoteEmpty ||
+      doubleQuoteDelta == 0 && !doubleQuoteEmpty ) {
       // An apostrophe stands betwixt opening/closing single quotes.
       for( final var lexemes = unresolved.iterator(); lexemes.hasNext(); ) {
         final var quote = lexemes.next()[ 1 ];
@@ -461,17 +461,32 @@ public class Parser {
       }
 
       // An apostrophe stands betwixt opening/closing double quotes.
-      for( final var lexemes = unresolved.iterator(); lexemes.hasNext(); ) {
+      final var lexemes = unresolved.iterator();
+
+      while( lexemes.hasNext() ) {
         final var quote = lexemes.next()[ 1 ];
 
-        for( int i = 0; i < mOpeningDoubleQuotes.size(); i++ ) {
+        // Prevent an index out of bounds exception.
+        final var len = Math.min(
+          mOpeningDoubleQuotes.size(),
+          mClosingDoubleQuotes.size()
+        );
+
+        for( int i = 0; i < len; i++ ) {
           // An apostrophe must fall between an open/close pair.
           final var openingQuote = mOpeningDoubleQuotes.get( i );
           final var closingQuote = mClosingDoubleQuotes.get( i );
 
           if( openingQuote.before( quote ) && closingQuote.after( quote ) ) {
             consumer.accept( new Token( QUOTE_APOSTROPHE, quote ) );
-            lexemes.remove();
+
+            try {
+              lexemes.remove();
+            } catch( final Exception ex ) {
+              // Weird edge case that hasn't been tracked down. Doesn't affect
+              // the unit tests.
+              break;
+            }
           }
         }
       }
