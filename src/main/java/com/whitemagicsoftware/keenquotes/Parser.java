@@ -231,10 +231,10 @@ public class Parser {
       flush( lexemes );
     }
     else if( lex2.isType( NUMBER ) && lex1.isType( QUOTE_SINGLE ) ) {
-      // Sentences must re-written to avoid starting with numerals.
+      // Authors must re-write their sentences to avoid starting with numerals.
       if( lex3.isType( SPACE, PUNCT ) || lex3.isType( WORD ) &&
         lex3.toString( mText ).equalsIgnoreCase( "s" ) ) {
-        // Examples: '20s, '02
+        // E.g.: '20s, '02
         consumer.accept( new Token( QUOTE_APOSTROPHE, lex1 ) );
       }
       else {
@@ -268,14 +268,14 @@ public class Parser {
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       (lex1.isSot() || lex1.isType( LEADING_QUOTE_OPENING_DOUBLE )) &&
       lex3.isType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
-      // Examples: "", "..., "word, ---"word
+      // E.g.: "", "..., "word, ---"word
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
       mOpeningDoubleQuotes.add( lex2 );
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       lex1.isType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
       (lex3.isEot() || lex3.isType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
-      // Examples: ..."', word"', ?"', word"?
+      // E.g.: ..."', word"', ?"', word"?
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
       mClosingDoubleQuotes.add( lex2 );
     }
@@ -288,7 +288,7 @@ public class Parser {
     else if( lex1.isType( DASH ) &&
       lex2.isType( QUOTE_SINGLE ) &&
       lex3.isType( QUOTE_DOUBLE ) ) {
-      // Example: ---'"
+      // E.g., ---'"
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
       mClosingSingleQuotes.add( lex2 );
     }
@@ -338,6 +338,14 @@ public class Parser {
         else if( sContractions.beganUnambiguously( word3 ) ) {
           // The quote mark forms a word that does not stand alone from its
           // contraction. For example, twas is not a word: it's 'twas.
+          consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
+          i.remove();
+        }
+        else if( lex1.isType( WORD ) &&
+          (lex3.isType( PUNCT, PERIOD, ELLIPSIS, DASH, SPACE, EOP ) ||
+            lex3.isEot()) && unresolved.indexOf( quotes ) == 0 &&
+          resolvedLeadingQuotes == 0 ) {
+          // E.g., Tyfós'
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
           i.remove();
         }

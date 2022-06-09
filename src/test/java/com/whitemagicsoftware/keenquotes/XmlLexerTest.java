@@ -24,7 +24,7 @@ final class XmlLexerTest {
   @Test
   void test_Lexing_XmlAttribute_EmitTags() {
     final var actual = "<a href=\"http://x.org\">X11</a>";
-    testType( createXmlLexer( actual ), actual, WORD, NUMBER );
+    testType( createXmlLexer( actual ), actual, WORD );
   }
 
   static Lexer createXmlLexer( final String text ) {

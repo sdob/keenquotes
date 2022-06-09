@@ -37,7 +37,7 @@ final class LexerTest {
     testType( "abc", WORD );
     testType( "abc abc", WORD, SPACE, WORD );
     testType( "abc...", WORD, ELLIPSIS );
-    testType( "abc123", WORD, NUMBER );
+    testType( "abc123", WORD );
     testType( "-123abc", NUMBER, WORD );
     testType( "abc-o'-abc", WORD, HYPHEN, WORD, QUOTE_SINGLE, HYPHEN, WORD );
   }
