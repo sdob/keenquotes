@@ -106,6 +106,9 @@ With--&lsquo;imaginary&rsquo;--dashes.
 Sam's Sams' and the Ross's roses' thorns were prickly.
 Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 
+"You 'cause---" all fifteen years' worth.
+&ldquo;You &apos;cause---&rdquo; all fifteen years&apos; worth.
+
 # ########################################################################
 # Inside contractions (no leading/trailing apostrophes)
 # ########################################################################

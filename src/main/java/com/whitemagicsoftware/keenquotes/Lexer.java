@@ -41,7 +41,7 @@ public class Lexer {
    * @param i The sequence of characters to tokenize.
    * @return The next token in the sequence.
    */
-  Lexeme parse( final CharacterIterator i ) {
+  private Lexeme parse( final CharacterIterator i ) {
     int began = i.getIndex();
     boolean isWord = false;
     Lexeme lexeme = null;
@@ -58,7 +58,7 @@ public class Lexer {
       if( isLetter( curr ) ) {
         isWord = true;
 
-        final var next = peek(i);
+        final var next = peek( i );
 
         if( !isLetter( next ) && !isDigit( next ) ) {
           lexeme = createLexeme( WORD, began, i.getIndex() );
@@ -162,6 +162,11 @@ public class Lexer {
     return lexeme;
   }
 
+  /**
+   * @param i The {@link CharacterIterator} used to scan through the text, one
+   *          character at a time.
+   * @return {@code true} if any characters were skipped.
+   */
   boolean skip( final CharacterIterator i ) {
     return false;
   }
@@ -185,6 +190,18 @@ public class Lexer {
   }
 
   /**
+   * Answers whether the given character may be part of an en- or em-dash.
+   * This must be called after it is known that the character isn't a lone
+   * hyphen.
+   *
+   * @param curr The character to check as being a dash.
+   * @return {@code true} if the given character is part of a dash.
+   */
+  private static boolean isDash( final char curr ) {
+    return curr == '-' || curr == '–' || curr == '—' || curr == '―';
+  }
+
+  /**
    * Answers whether the given character can be considered part of a number
    * or not. This does not include digits, which are checked independently
    * of this method.
@@ -199,19 +216,7 @@ public class Lexer {
         curr == '^' || curr == '⅟' || curr == '⁄';
   }
 
-  /**
-   * Answers whether the given character may be part of an en- or em-dash.
-   * This must be called after it is known that the character isn't a lone
-   * hyphen.
-   *
-   * @param curr The character to check as being a dash.
-   * @return {@code true} if the given character is part of a dash.
-   */
-  private boolean isDash( final char curr ) {
-    return curr == '-' || curr == '–' || curr == '—' || curr == '―';
-  }
-
-  static char peek( final CharacterIterator ci ) {
+  private static char peek( final CharacterIterator ci ) {
     final var ch = ci.next();
     ci.previous();
     return ch;
@@ -224,7 +229,7 @@ public class Lexer {
    * @param f  The function that determines when slurping stops.
    * @return The number of characters parsed.
    */
-  static int slurp(
+  protected static int slurp(
     final CharacterIterator ci,
     final BiFunction<Character, CharacterIterator, Boolean> f ) {
     char next;
@@ -236,7 +241,7 @@ public class Lexer {
     }
     while( f.apply( next, ci ) );
 
-    // The loop above will overshoot the tally by one character.
+    // The loop will have overshot the tally by one character.
     ci.previous();
 
     return --count;

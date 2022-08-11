@@ -283,6 +283,8 @@ public class Contractions {
     "nation",
     // are|regarding
     "re",
+    // circular|around
+    "round",
     // what's up|to eat
     "sup",
     // it will|twill fabric
@@ -294,12 +296,14 @@ public class Contractions {
   );
 
   private static final Set<String> ENDED_AMBIGUOUS = Set.of(
+    // pin|head dunk
+    "bobbin",
     // give|martial arts garment
     "gi",
     // in|I
     "i",
     // of|letter o
-    "o"
+    "o",
   );
 
   private static final Set<String> ENDED_UNAMBIGUOUS = Set.of(

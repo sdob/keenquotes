@@ -50,9 +50,6 @@ final class XmlLexer extends Lexer {
   /**
    * Skip (do not emit) XML tags found within the prose. This effectively hides
    * the element.
-   *
-   * @param i The {@link CharacterIterator} used to scan through the text, one
-   *          character at a time.
    */
   @Override
   boolean skip( final CharacterIterator i ) {
