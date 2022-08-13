@@ -97,13 +97,10 @@ final class FastCharacterIterator {
   /**
    * Parse all characters that match a given function.
    *
-   * @param f The function that determines when slurping stops.
-   * @return The number of characters parsed.
+   * @param f The function that determines when skipping stops.
    */
-  public int skip( final Function<Character, Boolean> f ) {
+  public void skip( final Function<Character, Boolean> f ) {
     assert f != null;
-
-    final var began = index();
 
     do {
       next();
@@ -112,8 +109,6 @@ final class FastCharacterIterator {
 
     // The loop always overshoots by one character.
     prev();
-
-    return index() - began;
   }
 
   /**

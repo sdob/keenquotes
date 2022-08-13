@@ -84,10 +84,11 @@ public final class Lexer {
         token = NUMBER;
       }
       else if( curr == '.' ) {
-        token =
-          i.skip( next -> next == '.' || next == ' ' && i.peek() == '.' ) == 0
-            ? PERIOD
-            : ELLIPSIS;
+        final var start = i.index();
+
+        i.skip( next -> next == '.' || next == ' ' && i.peek() == '.' );
+
+        token = i.index() - start == 0 ? PERIOD : ELLIPSIS;
       }
       else if( curr == '"' ) {
         token = QUOTE_DOUBLE;
