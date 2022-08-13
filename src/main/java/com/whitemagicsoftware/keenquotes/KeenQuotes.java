@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_PLAIN;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static picocli.CommandLine.Help.Ansi.Style.*;

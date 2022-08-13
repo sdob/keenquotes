@@ -125,7 +125,8 @@ public class Parser {
    */
   public void parse(
     final Consumer<Token> tokenConsumer,
-    final Consumer<Lexeme> lexemeConsumer ) {
+    final Consumer<Lexeme> lexemeConsumer,
+    final Consumer<FastCharacterIterator> filter ) {
     final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
 
     // Allow consuming the very first token without needing a queue size check.
@@ -148,7 +149,7 @@ public class Parser {
         mOpeningDoubleQuotes.clear();
         mClosingDoubleQuotes.clear();
       }
-    });
+    }, filter);
 
     // By loop's end, the lexemes list contains tokens for all except the
     // final two elements (from tokenizing in triplets). Tokenize the remaining

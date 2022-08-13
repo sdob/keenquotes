@@ -1,8 +1,6 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import com.whitemagicsoftware.keenquotes.ParserFactory.ParserType;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -10,6 +8,7 @@ import java.util.function.Function;
 
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
 import static java.util.Collections.sort;
+import static java.util.Map.*;
 
 /**
  * Responsible for converting curly quotes to HTML entities throughout a
@@ -17,37 +16,41 @@ import static java.util.Collections.sort;
  */
 @SuppressWarnings( "unused" )
 public class Converter implements Function<String, String> {
-  public static final Map<TokenType, String> ENTITIES = Map.of(
-    QUOTE_OPENING_SINGLE, "&lsquo;",
-    QUOTE_CLOSING_SINGLE, "&rsquo;",
-    QUOTE_OPENING_DOUBLE, "&ldquo;",
-    QUOTE_CLOSING_DOUBLE, "&rdquo;",
-    QUOTE_STRAIGHT_SINGLE, "'",
-    QUOTE_STRAIGHT_DOUBLE, "\"",
-    QUOTE_APOSTROPHE, "&apos;",
-    QUOTE_PRIME_SINGLE, "&prime;",
-    QUOTE_PRIME_DOUBLE, "&Prime;"
+  public static final Map<TokenType, String> ENTITIES = ofEntries(
+    entry( QUOTE_OPENING_SINGLE, "&lsquo;" ),
+    entry( QUOTE_CLOSING_SINGLE, "&rsquo;" ),
+    entry( QUOTE_OPENING_DOUBLE, "&ldquo;" ),
+    entry( QUOTE_CLOSING_DOUBLE, "&rdquo;" ),
+    entry( QUOTE_STRAIGHT_SINGLE, "'" ),
+    entry( QUOTE_STRAIGHT_DOUBLE, "\"" ),
+    entry( QUOTE_APOSTROPHE, "&apos;" ),
+    entry( QUOTE_PRIME_SINGLE, "&prime;" ),
+    entry( QUOTE_PRIME_DOUBLE, "&Prime;" ),
+    entry( QUOTE_PRIME_TRIPLE, "&tprime;" ),
+    entry( QUOTE_PRIME_QUADRUPLE, "&qprime;" )
   );
 
   /**
    * Used by external applications to initialize the replacement map.
    */
-  public static final Map<TokenType, String> CHARS = Map.of(
-    QUOTE_OPENING_SINGLE, "‘",
-    QUOTE_CLOSING_SINGLE, "’",
-    QUOTE_OPENING_DOUBLE, "“",
-    QUOTE_CLOSING_DOUBLE, "”",
-    QUOTE_STRAIGHT_SINGLE, "'",
-    QUOTE_STRAIGHT_DOUBLE, "\"",
-    QUOTE_APOSTROPHE, "’",
-    QUOTE_PRIME_SINGLE, "′",
-    QUOTE_PRIME_DOUBLE, "″"
+  public static final Map<TokenType, String> CHARS = ofEntries(
+    entry( QUOTE_OPENING_SINGLE, "‘" ),
+    entry( QUOTE_CLOSING_SINGLE, "’" ),
+    entry( QUOTE_OPENING_DOUBLE, "“" ),
+    entry( QUOTE_CLOSING_DOUBLE, "”" ),
+    entry( QUOTE_STRAIGHT_SINGLE, "'" ),
+    entry( QUOTE_STRAIGHT_DOUBLE, "\"" ),
+    entry( QUOTE_APOSTROPHE, "’" ),
+    entry( QUOTE_PRIME_SINGLE, "′" ),
+    entry( QUOTE_PRIME_DOUBLE, "″" ),
+    entry( QUOTE_PRIME_TRIPLE, "‴" ),
+    entry( QUOTE_PRIME_QUADRUPLE, "⁗" )
   );
 
   private final Consumer<Lexeme> mUnresolved;
   private final Contractions mContractions;
   private final Map<TokenType, String> mReplacements;
-  private final ParserFactory mFactory;
+  private final ParserType mParserType;
 
   /**
    * Maps quotes to HTML entities.
@@ -109,7 +112,7 @@ public class Converter implements Function<String, String> {
     mUnresolved = unresolved;
     mContractions = c;
     mReplacements = replacements;
-    mFactory = new ParserFactory( parserType );
+    mParserType = parserType;
   }
 
   /**
@@ -123,11 +126,11 @@ public class Converter implements Function<String, String> {
    */
   @Override
   public String apply( final String text ) {
-    final var parser = mFactory.createParser( text, mContractions );
+    final var parser = new Parser( text, mContractions );
     final var tokens = new ArrayList<Token>();
 
     // Parse the tokens and consume all unresolved lexemes.
-    parser.parse( tokens::add, mUnresolved );
+    parser.parse( tokens::add, mUnresolved, mParserType.filter() );
 
     // The parser may emit tokens in any order.
     sort( tokens );

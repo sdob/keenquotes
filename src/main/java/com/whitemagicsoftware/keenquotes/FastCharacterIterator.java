@@ -17,7 +17,7 @@ import static java.text.CharacterIterator.DONE;
  * out some efficiency.
  * </p>
  */
-public class FastCharacterIterator {
+final class FastCharacterIterator {
 
   private final String mS;
   private final int mLen;
@@ -64,7 +64,8 @@ public class FastCharacterIterator {
    * @return {@link CharacterIterator#DONE} if there are no more characters.
    */
   public char current() {
-    return hasNext() ? mS.charAt( mPos ) : DONE;
+    final var pos = mPos;
+    return pos < mLen ? mS.charAt( pos ) : DONE;
   }
 
   /**
@@ -91,17 +92,6 @@ public class FastCharacterIterator {
   public char peek() {
     final var pos = mPos;
     return pos + 1 < mLen ? mS.charAt( pos + 1 ) : DONE;
-  }
-
-  /**
-   * Answers whether the internal index is less than the string's length,
-   * meaning that calling {@link #next()} followed by {@link #current()} will
-   * succeed.
-   *
-   * @return {@code true} if there are more characters to iterate.
-   */
-  public boolean hasNext() {
-    return mPos < mLen;
   }
 
   /**

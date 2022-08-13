@@ -48,8 +48,9 @@ final class ParserTest {
     final var actual = new HashMap<TokenType, Integer>();
 
     parser.parse(
-      ( token ) -> actual.merge( token.getType(), 1, Integer::sum ),
-      ( lexeme ) -> {}
+      token -> actual.merge( token.getType(), 1, Integer::sum ),
+      lexeme -> {},
+      filter -> {}
     );
 
     for( final var expectedEntry : tally.entrySet() ) {

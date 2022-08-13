@@ -10,7 +10,7 @@ import static java.text.CharacterIterator.DONE;
 /**
  * Turns text into words, numbers, punctuation, spaces, and more.
  */
-public class Lexer {
+public final class Lexer {
   /**
    * Tokenizes a sequence of characters. The order of comparisons is optimized
    * towards probability of the occurrence of a character in regular English
@@ -32,7 +32,7 @@ public class Lexer {
     lex( new FastCharacterIterator( text ), emitter, filter );
   }
 
-  public static void lex(
+  private static void lex(
     final FastCharacterIterator i,
     final Consumer<Lexeme> emitter,
     final Consumer<FastCharacterIterator> filter ) {

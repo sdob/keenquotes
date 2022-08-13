@@ -1,7 +1,6 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import com.whitemagicsoftware.keenquotes.ParserFactory.ParserType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +15,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_PLAIN;
-import static com.whitemagicsoftware.keenquotes.ParserFactory.ParserType.PARSER_XML;
+import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_XML;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
