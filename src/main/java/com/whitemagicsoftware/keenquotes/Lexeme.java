@@ -50,27 +50,6 @@ public final class Lexeme implements Comparable<Lexeme> {
   }
 
   /**
-   * Extracts a sequence of characters from the given text at the offsets
-   * captured by this lexeme.
-   *
-   * @param text The text that was parsed using this class.
-   * @return The character string captured by the lexeme.
-   */
-  public String toString( final String text ) {
-    assert text != null;
-    return text.substring( mBegan, mEnded );
-  }
-
-  @Override
-  public String toString() {
-    return getClass().getSimpleName() + '[' +
-      "mType=" + mType +
-      ", mBegan=" + mBegan +
-      ", mEnded=" + mEnded +
-      ']';
-  }
-
-  /**
    * Answers whether the given {@link LexemeType} is the same as this
    * instance's internal {@link LexemeType}.
    *
@@ -140,5 +119,26 @@ public final class Lexeme implements Comparable<Lexeme> {
   public int compareTo( final Lexeme that ) {
     assert that != null;
     return this.mBegan - that.mBegan;
+  }
+
+  /**
+   * Extracts a sequence of characters from the given text at the offsets
+   * captured by this lexeme.
+   *
+   * @param text The text that was parsed using this class.
+   * @return The character string captured by the lexeme.
+   */
+  public String toString( final String text ) {
+    assert text != null;
+    return text.substring( mBegan, mEnded );
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + '[' +
+      "mType=" + mType +
+      ", mBegan=" + mBegan +
+      ", mEnded=" + mEnded +
+      ']';
   }
 }

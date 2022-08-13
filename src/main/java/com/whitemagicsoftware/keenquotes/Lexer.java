@@ -17,14 +17,11 @@ public final class Lexer {
    * prose: letters, space, quotation marks, numbers, periods, new lines,
    * then end of text.
    *
-   * @param text The sequence of characters to tokenize.
+   * @param text    The sequence of characters to tokenize.
+   * @param emitter Recipient of all tokenized character sequences.
+   * @param filter  Tokenization preprocessor, usually empty, but can be used
+   *                to skip certain character sequences (such as XML tags).
    */
-  public static void lex(
-    final String text,
-    final Consumer<Lexeme> emitter ) {
-    lex( text, emitter, filter -> {} );
-  }
-
   public static void lex(
     final String text,
     final Consumer<Lexeme> emitter,
@@ -89,8 +86,8 @@ public final class Lexer {
       else if( curr == '.' ) {
         token =
           i.skip( next -> next == '.' || next == ' ' && i.peek() == '.' ) == 0
-          ? PERIOD
-          : ELLIPSIS;
+            ? PERIOD
+            : ELLIPSIS;
       }
       else if( curr == '"' ) {
         token = QUOTE_DOUBLE;
