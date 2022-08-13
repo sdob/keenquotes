@@ -1,11 +1,8 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.Lexeme.createLexeme;
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
@@ -15,160 +12,146 @@ import static java.text.CharacterIterator.DONE;
  */
 public class Lexer {
   /**
-   * Iterates over the entire string of text to help produce lexemes.
-   */
-  private final CharacterIterator mIterator;
-
-  /**
-   * Constructs a {@link Lexer} capable of turning text int {@link Lexeme}s.
-   *
-   * @param text The text to lex.
-   */
-  Lexer( final String text ) {
-    mIterator = new StringCharacterIterator( text );
-  }
-
-  Lexeme next() {
-    return parse( mIterator );
-  }
-
-  /**
    * Tokenizes a sequence of characters. The order of comparisons is optimized
    * towards probability of the occurrence of a character in regular English
    * prose: letters, space, quotation marks, numbers, periods, new lines,
    * then end of text.
    *
-   * @param i The sequence of characters to tokenize.
-   * @return The next token in the sequence.
+   * @param text The sequence of characters to tokenize.
    */
-  private Lexeme parse( final CharacterIterator i ) {
-    int began = i.getIndex();
-    boolean isWord = false;
-    Lexeme lexeme = null;
+  public static void lex(
+    final String text,
+    final Consumer<Lexeme> emitter ) {
+    lex( text, emitter, filter -> {} );
+  }
 
-    do {
-      // Allow subclasses to skip character sequences. This allows XML tags
-      // to be skipped.
-      while( skip( i ) ) {
-        began = i.getIndex();
-      }
+  public static void lex(
+    final String text,
+    final Consumer<Lexeme> emitter,
+    final Consumer<FastCharacterIterator> filter ) {
+    lex( new FastCharacterIterator( text ), emitter, filter );
+  }
 
-      final var curr = i.current();
+  public static void lex(
+    final FastCharacterIterator i,
+    final Consumer<Lexeme> emitter,
+    final Consumer<FastCharacterIterator> filter ) {
+    var index = i.index();
+    var length = i.length();
+    var curr = ' ';
+
+    while( index < length ) {
+      // Allow filters to skip character sequences (such as XML tags).
+      filter.accept( i );
+
+      index = i.index();
+      curr = i.current();
+
+      var token = PUNCT;
 
       if( isLetter( curr ) ) {
-        isWord = true;
-
-        final var next = peek( i );
-
-        if( !isLetter( next ) && !isDigit( next ) ) {
-          lexeme = createLexeme( WORD, began, i.getIndex() );
-        }
+        // T1000 is one word, not a word and a number.
+        i.skip( next -> isLetter( next ) || isDigit( next ) );
+        token = WORD;
       }
       else if( curr == ' ' ) {
-        slurp( i, ( next, ci ) -> next == ' ' );
-        lexeme = createLexeme( SPACE, began, i.getIndex() );
-      }
-      else if( curr == '\'' ) {
-        lexeme = createLexeme( QUOTE_SINGLE, began, i.getIndex() );
-      }
-      else if( curr == '"' ) {
-        lexeme = createLexeme( QUOTE_DOUBLE, began, i.getIndex() );
-      }
-      else if( curr == '‘' ) {
-        lexeme = createLexeme( QUOTE_SINGLE_OPENING, began, i.getIndex() );
-      }
-      else if( curr == '’' ) {
-        lexeme = createLexeme( QUOTE_SINGLE_CLOSING, began, i.getIndex() );
-      }
-      else if( isDigit( curr ) || isNumeric( curr ) && isDigit( peek( i ) ) ) {
-        // Parse all consecutive number characters to prevent the main loop
-        // from switching back to word tokens.
-        slurp( i, ( next, ci ) ->
-          isDigit( next ) || isNumeric( next ) && isDigit( peek( ci ) )
-        );
-
-        lexeme = createLexeme( isWord ? WORD : NUMBER, began, i.getIndex() );
-      }
-      else if( curr == '-' && peek( i ) != '-' ) {
-        lexeme = createLexeme( HYPHEN, began, i.getIndex() );
-      }
-      else if( isDash( curr ) ) {
-        slurp( i, ( next, ci ) -> isDash( next ) );
-
-        lexeme = createLexeme( DASH, began, i.getIndex() );
-      }
-      else if( curr == '.' ) {
-        lexeme = createLexeme(
-          slurp( i, ( next, ci ) ->
-            next == '.' || next == ' ' && peek( ci ) == '.' ) == 0
-            ? PERIOD
-            : ELLIPSIS,
-          began, i.getIndex()
-        );
+        i.skip( next -> next == ' ' );
+        token = SPACE;
       }
       else if( curr == '\r' || curr == '\n' ) {
         final var cr = new int[]{curr == '\r' ? 1 : 0};
         final var lf = new int[]{curr == '\n' ? 1 : 0};
 
         // Swallow all consecutive CR (Mac), CRLF (Windows), and/or LF (Unix).
-        slurp(
-          i, ( next, ci ) -> {
-            cr[ 0 ] += next == '\r' ? 1 : 0;
-            lf[ 0 ] += next == '\n' ? 1 : 0;
-            return next == '\r' || next == '\n';
-          }
-        );
+        i.skip( next -> {
+          cr[ 0 ] += next == '\r' ? 1 : 0;
+          lf[ 0 ] += next == '\n' ? 1 : 0;
 
-        final var eol = cr[ 0 ] + lf[ 0 ] == 1 || cr[ 0 ] == 1 && lf[ 0 ] == 1;
-        lexeme = createLexeme( eol ? EOL : EOP, began, i.getIndex() );
+          return next == '\r' || next == '\n';
+        } );
+
+        token = cr[ 0 ] + lf[ 0 ] == 1 || cr[ 0 ] == 1 && lf[ 0 ] == 1
+          ? EOL
+          : EOP;
       }
       else if( isWhitespace( curr ) ) {
-        lexeme = createLexeme( SPACE, began, i.getIndex() );
+        i.skip( Character::isWhitespace );
+        token = SPACE;
+      }
+      else if( isDigit( curr ) || isNumeric( curr ) && isDigit( i.peek() ) ) {
+        // Parse all consecutive number characters to prevent the main loop
+        // from switching back to word tokens.
+        i.skip(
+          next -> isDigit( next ) || isNumeric( next ) && isDigit( i.peek() )
+        );
+        token = NUMBER;
+      }
+      else if( curr == '.' ) {
+        token =
+          i.skip( next -> next == '.' || next == ' ' && i.peek() == '.' ) == 0
+          ? PERIOD
+          : ELLIPSIS;
+      }
+      else if( curr == '"' ) {
+        token = QUOTE_DOUBLE;
+      }
+      else if( curr == '\'' ) {
+        token = QUOTE_SINGLE;
+      }
+      else if( curr == '-' && i.peek() != '-' ) {
+        token = HYPHEN;
+      }
+      else if( isDash( curr ) ) {
+        i.skip( Lexer::isDash );
+        token = DASH;
+      }
+      else if( curr == '(' || curr == '{' || curr == '[' ) {
+        token = OPENING_GROUP;
+      }
+      else if( curr == ')' || curr == '}' || curr == ']' ) {
+        token = CLOSING_GROUP;
+      }
+      else if( curr == '“' ) {
+        token = QUOTE_DOUBLE_OPENING;
+      }
+      else if( curr == '”' ) {
+        token = QUOTE_DOUBLE_CLOSING;
+      }
+      else if( curr == '‘' ) {
+        token = QUOTE_SINGLE_OPENING;
+      }
+      else if( curr == '’' ) {
+        token = QUOTE_SINGLE_CLOSING;
       }
       else if( curr == '\\' ) {
-        final var next = i.next();
+        i.next();
+        final var next = i.current();
 
         if( next == '\'' ) {
-          lexeme = createLexeme( ESC_SINGLE, began, i.getIndex() );
+          token = ESC_SINGLE;
         }
         else if( next == '\"' ) {
-          lexeme = createLexeme( ESC_DOUBLE, began, i.getIndex() );
+          token = ESC_DOUBLE;
         }
         else {
           // Push back the escaped character, which wasn't a straight quote.
-          i.previous();
+          i.prev();
         }
       }
-      else if( curr == '(' || curr == '{' || curr == '[' ) {
-        lexeme = createLexeme( OPENING_GROUP, began, i.getIndex() );
-      }
-      else if( curr == ')' || curr == '}' || curr == ']' ) {
-        lexeme = createLexeme( CLOSING_GROUP, began, i.getIndex() );
-      }
       else if( curr == '=' ) {
-        lexeme = createLexeme( EQUALS, began, i.getIndex() );
+        token = EQUALS;
       }
-      else if( curr != DONE ) {
-        lexeme = createLexeme( PUNCT, began, i.getIndex() );
-      }
-      else {
-        lexeme = Lexeme.EOT;
+      else if( curr == DONE ) {
+        continue;
       }
 
+      assert index >= 0;
+      assert curr != DONE;
+
+      emitter.accept( new Lexeme( token, index, i.index() + 1 ) );
       i.next();
+      index = i.index();
     }
-    while( lexeme == null );
-
-    return lexeme;
-  }
-
-  /**
-   * @param i The {@link CharacterIterator} used to scan through the text, one
-   *          character at a time.
-   * @return {@code true} if any characters were skipped.
-   */
-  boolean skip( final CharacterIterator i ) {
-    return false;
   }
 
   /**
@@ -214,36 +197,5 @@ public class Lexer {
     return
       curr == '.' || curr == ',' || curr == '-' || curr == '+' ||
         curr == '^' || curr == '⅟' || curr == '⁄';
-  }
-
-  private static char peek( final CharacterIterator ci ) {
-    final var ch = ci.next();
-    ci.previous();
-    return ch;
-  }
-
-  /**
-   * Parse all characters that match a given function.
-   *
-   * @param ci The iterator containing characters to parse.
-   * @param f  The function that determines when slurping stops.
-   * @return The number of characters parsed.
-   */
-  protected static int slurp(
-    final CharacterIterator ci,
-    final BiFunction<Character, CharacterIterator, Boolean> f ) {
-    char next;
-    int count = 0;
-
-    do {
-      next = ci.next();
-      count++;
-    }
-    while( f.apply( next, ci ) );
-
-    // The loop will have overshot the tally by one character.
-    ci.previous();
-
-    return --count;
   }
 }

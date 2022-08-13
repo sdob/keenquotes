@@ -77,11 +77,6 @@ public class Parser {
   private final String mText;
 
   /**
-   * Converts a string into an iterable list of {@link Lexeme} instances.
-   */
-  private final Lexer mLexer;
-
-  /**
    * Sets of contractions that help disambiguate single quotes in the text.
    * These are effectively immutable while parsing.
    */
@@ -118,7 +113,6 @@ public class Parser {
    */
   public Parser( final String text, final Contractions contractions ) {
     mText = text;
-    mLexer = createLexer( mText );
     sContractions = contractions;
   }
 
@@ -138,10 +132,9 @@ public class Parser {
     flush( lexemes );
 
     final var unresolved = new ArrayList<Lexeme[]>();
-    Lexeme lexeme;
 
     // Create and convert a list of all unambiguous quote characters.
-    while( (lexeme = mLexer.next()) != EOT ) {
+    Lexer.lex(mText, lexeme -> {
       // Reset after tokenizing a paragraph.
       if( tokenize( lexeme, lexemes, tokenConsumer, unresolved ) ) {
         // Attempt to resolve any remaining unambiguous quotes.
@@ -155,7 +148,7 @@ public class Parser {
         mOpeningDoubleQuotes.clear();
         mClosingDoubleQuotes.clear();
       }
-    }
+    });
 
     // By loop's end, the lexemes list contains tokens for all except the
     // final two elements (from tokenizing in triplets). Tokenize the remaining
@@ -504,16 +497,6 @@ public class Parser {
       consumer.accept( new Token( QUOTE_OPENING_SINGLE, opening[ 1 ] ) );
       unresolved.remove( opening );
     }
-  }
-
-  /**
-   * Allow subclasses to change the type of {@link Lexer}
-   *
-   * @param text The text to lex.
-   * @return A {@link Lexer} that can split the text into {@link Lexeme}s.
-   */
-  Lexer createLexer( final String text ) {
-    return new Lexer( text );
   }
 
   /**

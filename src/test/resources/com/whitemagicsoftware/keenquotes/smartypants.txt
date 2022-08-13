@@ -106,9 +106,6 @@ With--&lsquo;imaginary&rsquo;--dashes.
 Sam's Sams' and the Ross's roses' thorns were prickly.
 Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 
-"You 'cause---" all fifteen years' worth.
-&ldquo;You &apos;cause---&rdquo; all fifteen years&apos; worth.
-
 # ########################################################################
 # Inside contractions (no leading/trailing apostrophes)
 # ########################################################################
@@ -288,3 +285,6 @@ Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 
 "Jarvis, sir? Why, him as 'listed some years ago, and fought under
 &ldquo;Jarvis, sir? Why, him as 'listed some years ago, and fought under
+
+"You 'cause---" all fifteen years' worth.
+&ldquo;You &apos;cause---&rdquo; all fifteen years' worth.

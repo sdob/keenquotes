@@ -303,7 +303,7 @@ public class Contractions {
     // in|I
     "i",
     // of|letter o
-    "o",
+    "o"
   );
 
   private static final Set<String> ENDED_UNAMBIGUOUS = Set.of(

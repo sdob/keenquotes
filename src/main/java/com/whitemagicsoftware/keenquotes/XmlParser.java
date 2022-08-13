@@ -17,9 +17,4 @@ public final class XmlParser extends Parser {
     final String text, final Contractions contractions ) {
     super( text, contractions );
   }
-
-  @Override
-  public Lexer createLexer( final String text ) {
-    return new XmlLexer( text );
-  }
 }

@@ -3,8 +3,7 @@ package com.whitemagicsoftware.keenquotes;
 
 import java.text.CharacterIterator;
 import java.util.Set;
-
-import static java.text.CharacterIterator.DONE;
+import java.util.function.Consumer;
 
 /**
  * Responsible for lexing text while ignoring XML elements. The document must
@@ -13,13 +12,7 @@ import static java.text.CharacterIterator.DONE;
  * angle brackets are not balanced. Additionally, any less than or greater than
  * symbols must be encoded as {@code &lt;} or {@code &gt;}, respectively.
  */
-final class XmlLexer extends Lexer {
-
-  /**
-   * Referenced when skipping text, to determine whether lexing has found
-   * an untouchable element, such as preformatted text.
-   */
-  private final String mText;
+final class XmlFilter implements Consumer<FastCharacterIterator> {
 
   /**
    * Elements that indicate preformatted text, intentional straight quotes.
@@ -36,26 +29,14 @@ final class XmlLexer extends Lexer {
     "blockcode"
   );
 
-  /**
-   * Constructs a {@link Lexer} capable of turning text int {@link Lexeme}s.
-   *
-   * @param text The text to lex.
-   */
-  XmlLexer( final String text ) {
-    super( text );
-
-    mText = text;
-  }
+  public XmlFilter() {}
 
   /**
-   * Skip (do not emit) XML tags found within the prose. This effectively hides
-   * the element.
+   * Skip XML tags found within the prose, which hides the elements.
    */
   @Override
-  boolean skip( final CharacterIterator i ) {
-    final var match = i.current() == '<';
-
-    if( match ) {
+  public void accept( final FastCharacterIterator i ) {
+    if( i.current() == '<' ) {
       final var openingTag = nextTag( i );
 
       if( UNTOUCHABLE.contains( openingTag.toLowerCase() ) ) {
@@ -64,11 +45,9 @@ final class XmlLexer extends Lexer {
         do {
           closingTag = nextTag( i );
         }
-        while( !closingTag.endsWith( openingTag ) && i.current() != DONE );
+        while( !closingTag.endsWith( openingTag ) );
       }
     }
-
-    return match;
   }
 
   /**
@@ -78,10 +57,10 @@ final class XmlLexer extends Lexer {
    *          character at a time.
    * @return An opening/closing tag name, or the content within the element.
    */
-  private String nextTag( final CharacterIterator i ) {
-    final var begin = i.getIndex();
+  private String nextTag( final FastCharacterIterator i ) {
+    final var begin = i.index();
 
-    slurp( i, ( next, ci ) -> next != '>' && next != '<' );
+    i.skip( next -> next != '>' && next != '<' );
 
     // Swallow the trailing greater than symbol.
     i.next();
@@ -89,6 +68,6 @@ final class XmlLexer extends Lexer {
     // Skip to the character following the greater than symbol.
     i.next();
 
-    return mText.substring( begin + 1, i.getIndex() - 1 );
+    return i.substring( begin + 1, i.index() - 1 );
   }
 }

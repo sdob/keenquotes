@@ -39,20 +39,14 @@ public final class Lexeme implements Comparable<Lexeme> {
    * @param began Offset into the text where this instance starts (0-based).
    * @param ended Offset into the text where this instance stops (0-based).
    */
-  private Lexeme( final LexemeType type, final int began, final int ended ) {
+  public Lexeme( final LexemeType type, final int began, final int ended ) {
     assert type != null;
     assert began >= 0 || ended == E_INDEX;
-    assert ended >= began || ended == E_INDEX;
+    assert began <= ended || ended == E_INDEX;
 
     mType = type;
     mBegan = began;
-    mEnded = ended + 1;
-  }
-
-  static Lexeme createLexeme(
-    final LexemeType lexeme, final int began, final int ended ) {
-    assert lexeme != null;
-    return new Lexeme( lexeme, began, ended );
+    mEnded = ended;
   }
 
   /**
