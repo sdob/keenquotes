@@ -6,8 +6,8 @@ package com.whitemagicsoftware.keenquotes;
  */
 final class Token implements Comparable<Token> {
   private final TokenType mType;
-  final int mBegan;
-  final int mEnded;
+  private final int mBegan;
+  private final int mEnded;
 
   /**
    * Convenience constructor to create a token that uses the lexeme's

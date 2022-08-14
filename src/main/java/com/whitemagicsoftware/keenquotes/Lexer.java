@@ -33,17 +33,13 @@ public final class Lexer {
     final FastCharacterIterator i,
     final Consumer<Lexeme> emitter,
     final Consumer<FastCharacterIterator> filter ) {
-    var index = i.index();
-    var length = i.length();
-    var curr = ' ';
 
-    while( index < length ) {
+    while( i.hasNext() ) {
       // Allow filters to skip character sequences (such as XML tags).
       filter.accept( i );
 
-      index = i.index();
-      curr = i.current();
-
+      final var index = i.index();
+      final var curr = i.current();
       var token = PUNCT;
 
       if( isLetter( curr ) ) {
@@ -84,11 +80,9 @@ public final class Lexer {
         token = NUMBER;
       }
       else if( curr == '.' ) {
-        final var start = i.index();
-
         i.skip( next -> next == '.' || next == ' ' && i.peek() == '.' );
 
-        token = i.index() - start == 0 ? PERIOD : ELLIPSIS;
+        token = i.index() - index == 0 ? PERIOD : ELLIPSIS;
       }
       else if( curr == '"' ) {
         token = QUOTE_DOUBLE;
@@ -148,7 +142,6 @@ public final class Lexer {
 
       emitter.accept( new Lexeme( token, index, i.index() + 1 ) );
       i.next();
-      index = i.index();
     }
   }
 

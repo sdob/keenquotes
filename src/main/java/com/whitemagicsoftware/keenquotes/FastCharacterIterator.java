@@ -39,15 +39,6 @@ final class FastCharacterIterator {
   }
 
   /**
-   * Returns the total number of characters in the string to iterate.
-   *
-   * @return The string length.
-   */
-  public int length() {
-    return mLen;
-  }
-
-  /**
    * Returns the iterated index. The return value is not guaranteed to be
    * within the string bounds.
    *
@@ -92,6 +83,15 @@ final class FastCharacterIterator {
   public char peek() {
     final var pos = mPos;
     return pos + 1 < mLen ? mS.charAt( pos + 1 ) : DONE;
+  }
+
+  /**
+   * Answers whether {@link #next()} followed by {@link #current()} is safe.
+   *
+   * @return {@code true} if there are more characters to be iterated.
+   */
+  public boolean hasNext() {
+    return mPos < mLen;
   }
 
   /**
