@@ -3,8 +3,6 @@ package com.whitemagicsoftware.keenquotes;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Consumer;
-
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static com.whitemagicsoftware.keenquotes.LexerTest.testType;
 
@@ -31,7 +29,7 @@ final class XmlFilterTest {
     testType( actual, createXmlFilter(), WORD );
   }
 
-  static Consumer<FastCharacterIterator> createXmlFilter() {
+  static LexerFilter createXmlFilter() {
     return new XmlFilter();
   }
 }

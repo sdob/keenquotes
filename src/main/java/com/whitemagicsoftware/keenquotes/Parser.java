@@ -19,55 +19,70 @@ public class Parser {
   /**
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{SPACE, DASH, QUOTE_DOUBLE, OPENING_GROUP, EOL, EOP};
+  public static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
+    new LexemeType[]{
+      LexemeType.SOT, SPACE, DASH, QUOTE_DOUBLE, OPENING_GROUP, EOL, EOP
+    };
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
-    new LexemeType[]{WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE};
+  public static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
+    new LexemeType[]{
+      WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE
+    };
 
   /**
    * Single quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LEADING_QUOTE_CLOSING_SINGLE =
-    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_DOUBLE};
+  public static final LexemeType[] LEADING_QUOTE_CLOSING_SINGLE =
+    new LexemeType[]{
+      WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_DOUBLE
+    };
 
   /**
    * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
-    new LexemeType[]{SPACE, HYPHEN, DASH,
-      QUOTE_DOUBLE, CLOSING_GROUP, EOL, EOP};
+  public static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
+    new LexemeType[]{
+      SPACE, HYPHEN, DASH, PUNCT, PERIOD, ELLIPSIS, QUOTE_DOUBLE, CLOSING_GROUP,
+      ENDING
+    };
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL,
-      EOP};
+  public static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
+    new LexemeType[]{
+      LexemeType.SOT, SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP
+    };
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
    */
-  private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, DASH, ELLIPSIS, OPENING_GROUP,
-      QUOTE_SINGLE, QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE};
+  public static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
+    new LexemeType[]{
+      WORD, NUMBER, DASH, ELLIPSIS, OPENING_GROUP, QUOTE_SINGLE,
+      QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE
+    };
 
   /**
    * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS, CLOSING_GROUP,
-      QUOTE_SINGLE, QUOTE_SINGLE_CLOSING, QUOTE_SINGLE_OPENING};
+  public static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
+    new LexemeType[]{
+      WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS, CLOSING_GROUP, QUOTE_SINGLE,
+      QUOTE_SINGLE_CLOSING, QUOTE_SINGLE_OPENING
+    };
 
   /**
    * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
    */
-  private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
-    new LexemeType[]{SPACE, PUNCT, PERIOD, EQUALS, HYPHEN, DASH,
-      QUOTE_SINGLE, CLOSING_GROUP, EOL, EOP};
+  public static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
+    new LexemeType[]{
+      SPACE, PUNCT, PERIOD, EQUALS, HYPHEN, DASH, QUOTE_SINGLE, CLOSING_GROUP,
+      ENDING
+    };
 
   /**
    * The text to parse. A reference is required as a minor optimization in
@@ -126,7 +141,7 @@ public class Parser {
   public void parse(
     final Consumer<Token> tokenConsumer,
     final Consumer<Lexeme> lexemeConsumer,
-    final Consumer<FastCharacterIterator> filter ) {
+    final LexerFilter filter ) {
     final var lexemes = new CircularFifoQueue<Lexeme>( 3 );
 
     // Allow consuming the very first token without needing a queue size check.
@@ -135,7 +150,7 @@ public class Parser {
     final var unresolved = new ArrayList<Lexeme[]>();
 
     // Create and convert a list of all unambiguous quote characters.
-    Lexer.lex(mText, lexeme -> {
+    Lexer.lex( mText, lexeme -> {
       // Reset after tokenizing a paragraph.
       if( tokenize( lexeme, lexemes, tokenConsumer, unresolved ) ) {
         // Attempt to resolve any remaining unambiguous quotes.
@@ -149,7 +164,7 @@ public class Parser {
         mOpeningDoubleQuotes.clear();
         mClosingDoubleQuotes.clear();
       }
-    }, filter);
+    }, filter );
 
     // By loop's end, the lexemes list contains tokens for all except the
     // final two elements (from tokenizing in triplets). Tokenize the remaining
@@ -241,7 +256,7 @@ public class Parser {
     }
     else if( lex2.isType( QUOTE_SINGLE ) &&
       lex1.isType( PUNCT, PERIOD, ELLIPSIS, DASH ) &&
-      (lex3.isType( EOL, EOP ) || lex3.isEot()) ) {
+      lex3.isType( ENDING ) ) {
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
       mClosingSingleQuotes.add( lex2 );
     }
@@ -253,14 +268,13 @@ public class Parser {
       // E.g., \"
       consumer.accept( new Token( QUOTE_STRAIGHT_DOUBLE, lex1 ) );
 
-      if( lex2.isType( QUOTE_SINGLE ) &&
-        (lex3.isEot() || lex3.isType( SPACE, DASH, EOL, EOP )) ) {
+      if( lex2.isType( QUOTE_SINGLE ) && lex3.isType( SPACE, DASH, ENDING ) ) {
         consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
         mClosingSingleQuotes.add( lex2 );
       }
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
-      (lex1.isSot() || lex1.isType( LEADING_QUOTE_OPENING_DOUBLE )) &&
+      lex1.isType( LEADING_QUOTE_OPENING_DOUBLE ) &&
       lex3.isType( LAGGING_QUOTE_OPENING_DOUBLE ) ) {
       // E.g.: "", "..., "word, ---"word
       consumer.accept( new Token( QUOTE_OPENING_DOUBLE, lex2 ) );
@@ -268,12 +282,13 @@ public class Parser {
     }
     else if( lex2.isType( QUOTE_DOUBLE ) &&
       lex1.isType( LEADING_QUOTE_CLOSING_DOUBLE ) &&
-      (lex3.isEot() || lex3.isType( LAGGING_QUOTE_CLOSING_DOUBLE )) ) {
+      lex3.isType( LAGGING_QUOTE_CLOSING_DOUBLE ) ) {
       // E.g.: ..."', word"', ?"', word"?
       consumer.accept( new Token( QUOTE_CLOSING_DOUBLE, lex2 ) );
       mClosingDoubleQuotes.add( lex2 );
     }
-    else if( lex1.isType( WORD ) && lex2.isType( QUOTE_SINGLE ) &&
+    else if( lex1.isType( WORD ) &&
+      lex2.isType( QUOTE_SINGLE ) &&
       lex3.isType( PUNCT, PERIOD ) ) {
       // E.g., word', (contraction ruled out by previous conditions)
       consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
@@ -336,8 +351,14 @@ public class Parser {
           i.remove();
         }
         else if( lex1.isType( WORD ) &&
-          (lex3.isType( PUNCT, PERIOD, ELLIPSIS, DASH, SPACE, EOP ) ||
-            lex3.isEot()) && unresolved.indexOf( quotes ) == 0 &&
+          lex3.isType( PUNCT,
+                       PERIOD,
+                       ELLIPSIS,
+                       DASH,
+                       SPACE,
+                       EOP,
+                       LexemeType.EOT ) &&
+          unresolved.indexOf( quotes ) == 0 &&
           resolvedLeadingQuotes == 0 ) {
           // E.g., Tyfós'
           consumer.accept( new Token( QUOTE_APOSTROPHE, lex2 ) );
@@ -346,7 +367,8 @@ public class Parser {
         else if( sContractions.endedAmbiguously( word1 ) ) {
           ambiguousLaggingQuotes.add( quotes );
         }
-        else if( (lex1.isSot() || lex1.isType( LEADING_QUOTE_OPENING_SINGLE )) &&
+        else if( (lex1.isType( LexemeType.SOT ) ||
+          lex1.isType( LEADING_QUOTE_OPENING_SINGLE )) &&
           lex3.isType( LAGGING_QUOTE_OPENING_SINGLE ) ) {
           consumer.accept( new Token( QUOTE_OPENING_SINGLE, lex2 ) );
           resolvedLeadingQuotes++;
@@ -354,7 +376,8 @@ public class Parser {
           i.remove();
         }
         else if( lex1.isType( LEADING_QUOTE_CLOSING_SINGLE ) &&
-          (lex3.isEot() || lex3.isType( LAGGING_QUOTE_CLOSING_SINGLE )) ) {
+          (lex3.isType( LexemeType.EOT ) || lex3.isType(
+            LAGGING_QUOTE_CLOSING_SINGLE )) ) {
           consumer.accept( new Token( QUOTE_CLOSING_SINGLE, lex2 ) );
           resolvedLaggingQuotes++;
           mClosingSingleQuotes.add( lex2 );

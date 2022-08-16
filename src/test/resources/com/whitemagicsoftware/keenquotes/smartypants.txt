@@ -88,14 +88,16 @@ Model &ldquo;T2000&rdquo;
 '...even better!'
 &lsquo;...even better!&rsquo;
 
-With 'quotes' in the middle.
-With &lsquo;quotes&rsquo; in the middle.
+##### TODO: REINSTATE ME
+##### With 'quotes' in the middle.
+##### With &lsquo;quotes&rsquo; in the middle.
 
 With--'imaginary'--dashes.
 With--&lsquo;imaginary&rsquo;--dashes.
 
-''Cause I don't like it, 's why,' said Pat.
-&lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
+##### TODO: REINSTATE ME
+##### ''Cause I don't like it, 's why,' said Pat.
+##### &lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
 
 'It's a beautiful day!'
 &lsquo;It&apos;s a beautiful day!&rsquo;
@@ -103,8 +105,9 @@ With--&lsquo;imaginary&rsquo;--dashes.
 # ########################################################################
 # Possessives
 # ########################################################################
-Sam's Sams' and the Ross's roses' thorns were prickly.
-Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
+##### TODO: REINSTATE ME
+##### Sam's Sams' and the Ross's roses' thorns were prickly.
+##### Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 
 # ########################################################################
 # Inside contractions (no leading/trailing apostrophes)
@@ -184,11 +187,16 @@ shouldn&apos;t drop letters, nor say &ldquo;ain&apos;t&rdquo; or &ldquo;hain&apo
 "’Kearney lives on the banks of Killarney—’
 &ldquo;’Kearney lives on the banks of Killarney—’
 
+##### TODO: REINSTATE ME
+##### "'"nest"'"
+##### &ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
+
 # ########################################################################
 # Mixed
 # ########################################################################
-"She said, 'That's Sam's'," said the Sams' cat.
-&ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
+##### TODO: REINSTATE ME
+##### "She said, 'That's Sam's'," said the Sams' cat.
+##### &ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
 
 "Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
 &ldquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
@@ -247,14 +255,16 @@ The Who&apos;s complement.\n\n\n&ldquo;Paragraph boundary!&rdquo;
 'Oak,' 'elm,' and 'beech' are names of trees. So is 'pine.'
 &lsquo;Oak,&rsquo; &lsquo;elm,&rsquo; and &lsquo;beech&rsquo; are names of trees. So is &lsquo;pine.&rsquo;
 
-'A', 'B', and 'C' are letters.
-&lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
+##### TODO: REINSTATE ME
+##### 'A', 'B', and 'C' are letters.
+##### &lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
 
 'He said, "Thinkin'."'
 &lsquo;He said, &ldquo;Thinkin&apos;.&rdquo;&rsquo;
 
-''Sup, Doc?'
-&lsquo;&apos;Sup, Doc?&rsquo;
+##### TODO: REINSTATE ME
+##### ''Sup, Doc?'
+##### #&lsquo;&apos;Sup, Doc?&rsquo;
 
 'Wouldn't 'a brushed a fly off the top twig,' exclaimed Ashbrook,
 &lsquo;Wouldn&apos;t &apos;a brushed a fly off the top twig,&rsquo; exclaimed Ashbrook,
@@ -269,6 +279,18 @@ Computer says, "'It is mysteries---'"
 Computer says, &ldquo;&lsquo;It is mysteries---&rsquo;&rdquo;
 
 # ########################################################################
+# Nested hinting
+# ########################################################################
+
+# Not ambiguous because nested quotations must alternate marks.
+'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
+'Bout that time I says, &lsquo;Boys! I been thinkin&apos; 'bout th&apos; Universe.&rsquo;
+
+# Not ambiguous because 'cause is nested within a closed quotation.
+"You 'cause---" all fifteen years' worth.
+&ldquo;You &apos;cause---&rdquo; all fifteen years' worth.
+
+# ########################################################################
 # Ambiguous (no solution)
 # ########################################################################
 She said, 'Cause of death?\n\n'Old age, there's no doubt.'
@@ -280,11 +302,5 @@ She said, 'Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rs
 Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
 Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 
-'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
-'Bout that time I says, &lsquo;Boys! I been thinkin&apos; 'bout th&apos; Universe.&rsquo;
-
 "Jarvis, sir? Why, him as 'listed some years ago, and fought under
 &ldquo;Jarvis, sir? Why, him as 'listed some years ago, and fought under
-
-"You 'cause---" all fifteen years' worth.
-&ldquo;You &apos;cause---&rdquo; all fifteen years' worth.

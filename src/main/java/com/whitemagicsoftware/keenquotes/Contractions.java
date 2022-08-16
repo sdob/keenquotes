@@ -191,6 +191,7 @@ public class Contractions {
     "cided",
     // because
     "cos",
+    // armadillo
     "dillo",
     // them
     "em",
@@ -277,7 +278,7 @@ public class Contractions {
     "kay",
     // lo|lo and behold
     "lo",
-    // ???
+    // leaned|enlisted
     "listed",
     // ???
     "nation",
@@ -309,6 +310,8 @@ public class Contractions {
   private static final Set<String> ENDED_UNAMBIGUOUS = Set.of(
     // and
     "an",
+    // didn't
+    "didn",
     // for/before
     "fo",
     // friend

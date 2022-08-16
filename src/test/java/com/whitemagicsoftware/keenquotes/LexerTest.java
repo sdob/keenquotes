@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
 import static java.util.Arrays.asList;
@@ -31,6 +30,9 @@ final class LexerTest {
     testType( "123 123\"", NUMBER, SPACE, NUMBER, QUOTE_DOUBLE );
     testType( "-123,123.123", NUMBER );
     testType( "...1,023...", ELLIPSIS, NUMBER, ELLIPSIS );
+    testType( "123-456", NUMBER );
+    testType( "123-", NUMBER, HYPHEN );
+    testType( "123 - 456", NUMBER, SPACE, HYPHEN, SPACE, NUMBER );
   }
 
   @Test
@@ -40,6 +42,7 @@ final class LexerTest {
     testType( "abc...", WORD, ELLIPSIS );
     testType( "abc123", WORD );
     testType( "-123abc", NUMBER, WORD );
+    testType( "-123abc123", NUMBER, WORD );
     testType( "abc-o'-abc", WORD, HYPHEN, WORD, QUOTE_SINGLE, HYPHEN, WORD );
   }
 
@@ -95,17 +98,20 @@ final class LexerTest {
     testType( "\n   \n", EOL, SPACE, EOL );
   }
 
-  static void testType(
-    final String actual, final LexemeType... expected ) {
-    final var list = asList( expected );
-    testType( actual, ( lexeme, text ) -> lexeme.getType(), list );
+  static void testType( final String actual, final LexemeType... expected ) {
+    testType( actual, filter -> false, expected );
   }
 
   static void testType(
     final String actual,
-    final Consumer<FastCharacterIterator> filter,
+    final LexerFilter filter,
     final LexemeType... expected ) {
+    assert actual != null;
+    assert filter != null;
+    assert expected != null;
+
     final var list = asList( expected );
+
     testType( actual, ( lexeme, text ) -> lexeme.getType(), filter, list );
   }
 
@@ -118,21 +124,24 @@ final class LexerTest {
     final String text,
     final BiFunction<Lexeme, String, A> f,
     final List<E> elements ) {
-    testType( text, f, filter -> {}, elements );
+    testType( text, f, filter -> false, elements );
   }
 
   private static <A, E> void testType(
     final String text,
     final BiFunction<Lexeme, String, A> f,
-    final Consumer<FastCharacterIterator> filter,
+    final LexerFilter filter,
     final List<E> elements ) {
     var counter = new AtomicInteger();
 
     Lexer.lex( text, lexeme -> {
-      final var expected = elements.get( counter.getAndIncrement() );
-      final var actual = f.apply( lexeme, text );
+      // Ignore the SOT and EOT lexemes (avoids duplication).
+      if( !lexeme.isType( SOT, EOT ) ) {
+        final var expected = elements.get( counter.getAndIncrement() );
+        final var actual = f.apply( lexeme, text );
 
-      assertEquals( expected, actual );
+        assertEquals( expected, actual );
+      }
     }, filter );
 
     // Ensure all expected values are matched (verify end of text reached).

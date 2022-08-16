@@ -1,6 +1,10 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import java.util.Map;
+
+import static com.whitemagicsoftware.keenquotes.TokenType.*;
+
 /**
  * Represents a high-level token read from the text.
  */
@@ -25,16 +29,16 @@ final class Token implements Comparable<Token> {
    * single character.  Almost all tokens represent a single character, only
    * the double-prime sequence ({@code ''}) is more than one character.
    *
-   * @param type  The type of {@link Token} to create.
-   * @param began Beginning offset into text where token is found.
-   * @param ended Ending offset into text where token is found.
+   * @param tokenType The type of {@link Token} to create.
+   * @param began     Beginning offset into text where token is found.
+   * @param ended     Ending offset into text where token is found.
    */
-  Token( final TokenType type, final int began, final int ended ) {
-    assert type != null;
+  Token( final TokenType tokenType, final int began, final int ended ) {
+    assert tokenType != null;
     assert began >= 0;
     assert ended > began;
 
-    mType = type;
+    mType = tokenType;
     mBegan = began;
     mEnded = ended;
   }
@@ -51,8 +55,25 @@ final class Token implements Comparable<Token> {
     return mEnded;
   }
 
+  boolean isAmbiguous() {
+    return mType == AMBIGUOUS;
+  }
+
+  public String toString( final Map<TokenType, String> entities ) {
+    return entities.get( getType() );
+  }
+
   @Override
   public int compareTo( final Token that ) {
     return this.mBegan - that.mBegan;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + '[' +
+      "mType=" + mType +
+      ", mBegan=" + mBegan +
+      ", mEnded=" + mEnded +
+      ']';
   }
 }

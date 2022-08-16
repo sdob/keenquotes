@@ -1,19 +1,17 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import java.util.function.Consumer;
-
 public enum ParserType {
-  PARSER_PLAIN( filter -> {} ),
-  PARSER_XML( filter -> new XmlFilter() );
+  PARSER_PLAIN( filter -> false ),
+  PARSER_XML( new XmlFilter() );
 
-  private final Consumer<FastCharacterIterator> mFilter;
+  private final LexerFilter mFilter;
 
-  ParserType( final Consumer<FastCharacterIterator> filter ) {
+  ParserType( final LexerFilter filter ) {
     mFilter = filter;
   }
 
-  Consumer<FastCharacterIterator> filter() {
+  LexerFilter filter() {
     return mFilter;
   }
 }

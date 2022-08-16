@@ -8,18 +8,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_PLAIN;
 import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_XML;
+import static com.whitemagicsoftware.keenquotes.TestResource.open;
+import static com.whitemagicsoftware.keenquotes.TestResource.readPairs;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
@@ -45,7 +44,7 @@ public class KeenQuotesTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testConverter( createConverter( ( lex ) -> {} ) );
+    testConverter( createConverter( lex -> {} ) );
   }
 
   @ParameterizedTest
@@ -119,53 +118,14 @@ public class KeenQuotesTest {
    */
   private void testConverter( final Function<String, String> parser )
     throws IOException {
-    try( final var reader = open( "smartypants.txt" ) ) {
-      String line;
-      String testLine = "";
-      String expected = "";
+    final var couplets = readPairs( "smartypants.txt" );
 
-      while( ((line = reader.readLine()) != null) ) {
-        if( line.startsWith( "#" ) || line.isBlank() ) { continue; }
+    couplets.forEach( couplet -> {
+      final var actual = parser.apply( couplet.item1() );
+      final var expected = couplet.item2();
 
-        // Read the first line of the couplet.
-        if( testLine.isBlank() ) {
-          testLine = line;
-          continue;
-        }
-
-        // Read the second line of the couplet.
-        if( expected.isBlank() ) {
-          expected = line;
-        }
-
-        testLine = unescapeEol( testLine );
-        expected = unescapeEol( expected );
-
-        final var actual = parser.apply( testLine );
-        assertEquals( expected, actual );
-
-        testLine = "";
-        expected = "";
-      }
-    }
-  }
-
-  private static String unescapeEol( final String s ) {
-    return String.join( "\n", s.split( "\\\\n" ) );
-  }
-
-  /**
-   * Opens a text file for reading. Callers are responsible for closing.
-   *
-   * @param filename The file to open.
-   * @return An instance of {@link BufferedReader} that can be used to
-   * read all the lines in the file.
-   */
-  private BufferedReader open( final String filename ) {
-    final var is = getClass().getResourceAsStream( filename );
-    assertNotNull( is );
-
-    return new BufferedReader( new InputStreamReader( is ) );
+      assertEquals( expected, actual );
+    });
   }
 
   private Function<String, String> createConverter(

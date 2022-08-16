@@ -3,7 +3,6 @@ package com.whitemagicsoftware.keenquotes;
 
 import java.text.CharacterIterator;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Responsible for lexing text while ignoring XML elements. The document must
@@ -12,7 +11,7 @@ import java.util.function.Consumer;
  * angle brackets are not balanced. Additionally, any less than or greater than
  * symbols must be encoded as {@code &lt;} or {@code &gt;}, respectively.
  */
-final class XmlFilter implements Consumer<FastCharacterIterator> {
+public final class XmlFilter implements LexerFilter {
 
   /**
    * Elements that indicate preformatted text, intentional straight quotes.
@@ -35,8 +34,10 @@ final class XmlFilter implements Consumer<FastCharacterIterator> {
    * Skip XML tags found within the prose, which hides the elements.
    */
   @Override
-  public void accept( final FastCharacterIterator i ) {
-    if( i.current() == '<' ) {
+  public boolean test( final FastCharacterIterator i ) {
+    final var match = i.current() == '<';
+
+    if( match ) {
       final var openingTag = nextTag( i );
 
       if( UNTOUCHABLE.contains( openingTag.toLowerCase() ) ) {
@@ -48,6 +49,8 @@ final class XmlFilter implements Consumer<FastCharacterIterator> {
         while( !closingTag.endsWith( openingTag ) );
       }
     }
+
+    return match;
   }
 
   /**

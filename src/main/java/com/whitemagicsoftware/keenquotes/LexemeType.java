@@ -14,8 +14,10 @@ public enum LexemeType {
   QUOTE_DOUBLE_CLOSING,
   ESC_SINGLE,
   ESC_DOUBLE,
+  SOT,
   EOL,
   EOP,
+  EOT,
   SPACE,
   WORD,
   NUMBER,
@@ -27,5 +29,7 @@ public enum LexemeType {
   EQUALS,
   PERIOD,
   ELLIPSIS,
-  FLAG
+  ANY,
+  ENDING,
+  EAT
 }

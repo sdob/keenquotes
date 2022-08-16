@@ -50,7 +50,7 @@ final class ParserTest {
     parser.parse(
       token -> actual.merge( token.getType(), 1, Integer::sum ),
       lexeme -> {},
-      filter -> {}
+      filter -> false
     );
 
     for( final var expectedEntry : tally.entrySet() ) {

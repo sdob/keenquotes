@@ -18,22 +18,23 @@ package com.whitemagicsoftware.keenquotes;
 
 import java.util.*;
 
+import static java.lang.String.*;
+
 /**
- * CircularFifoQueue is a first-in first-out queue with a fixed size that
- * replaces its oldest element if full.
+ * This is a first-in first-out queue with a fixed size that replaces its
+ * oldest element if full.
  * <p>
  * The removal order of a {@link CircularFifoQueue} is based on the
  * insertion order; elements are removed in the same order in which they
- * were added.  The iteration order is the same as the removal order.
+ * were added. The iteration order is the same as the removal order.
  * </p>
  * <p>
  * The {@link #add(Object)}, {@link #remove()}, {@link #peek()},
- * {@link #poll()},
- * {@link #offer(Object)} operations all perform in constant time.
- * All other operations perform in linear time or worse.
+ * {@link #poll()}, {@link #offer(Object)} operations all perform in constant
+ * time. All other operations perform in linear time or worse.
  * </p>
  * <p>
- * This queue prevents null objects from being added.
+ * This queue prevents {@code null} objects from being added.
  * </p>
  *
  * @param <E> the type of elements in this collection
@@ -140,8 +141,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
 
   /**
    * Adds the given element to this queue. If the queue is full, the least
-   * recently added
-   * element is discarded so that a new element can be inserted.
+   * recently added element is discarded so that a new element can be inserted.
    *
    * @param element the element to add
    * @return true, always
@@ -171,33 +171,42 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
   /**
    * Returns the element at the specified position in this queue.
    *
-   * @param index the position of the element in the queue
-   * @return the element at position {@code index}
+   * @param index the position of the element in the queue, zero-based.
+   * @return The element at position {@code index}.
    * @throws NoSuchElementException if the requested position is outside the
-   *                                range [0, size)
+   *                                range [0, size).
    */
   public E get( final int index ) {
+    invariant( index );
+
+    return elements[ (start + index) % maxElements ];
+  }
+
+  public void set( final E element, final int index ) {
+    Objects.requireNonNull( element, "element" );
+
+    invariant( index );
+
+    elements[ (start + index) % maxElements ] = element;
+  }
+
+  private void invariant( final int index ) {
     final int sz = size();
 
     if( index < 0 || index >= sz ) {
-      throw new NoSuchElementException(
-        String.format(
-          "Index %1$d is outside the available range [0, %2$d)",
-          index, sz ) );
+      throw new NoSuchElementException( format(
+        "Index %1$d is outside the available range [0, %2$d)", index, sz
+      ) );
     }
-
-    final int idx = (start + index) % maxElements;
-    return elements[ idx ];
   }
 
   /**
    * Adds the given element to this queue. If the queue is full, the least
-   * recently added
-   * element is discarded so that a new element can be inserted.
+   * recently added element is discarded so that a new element can be inserted.
    *
-   * @param element the element to add
-   * @return true, always
-   * @throws NullPointerException if the given element is null
+   * @param element The element to add.
+   * @return {@code true}, always
+   * @throws NullPointerException if the given element is {@code null}.
    */
   @Override
   public boolean offer( final E element ) {
@@ -230,6 +239,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
     }
 
     final E element = elements[ start ];
+
     if( null != element ) {
       elements[ start++ ] = null;
 
@@ -238,6 +248,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
       }
       full = false;
     }
+
     return element;
   }
 
@@ -251,6 +262,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
     if( ++index >= maxElements ) {
       index = 0;
     }
+
     return index;
   }
 
@@ -264,6 +276,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
     if( --index < 0 ) {
       index = maxElements - 1;
     }
+
     return index;
   }
 
@@ -275,7 +288,6 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
   @Override
   public Iterator<E> iterator() {
     return new Iterator<>() {
-
       private int index = start;
       private int lastReturnedIndex = -1;
       private boolean isFirst = full;
