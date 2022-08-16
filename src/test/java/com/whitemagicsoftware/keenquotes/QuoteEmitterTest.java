@@ -37,7 +37,7 @@ class QuoteEmitterTest {
 
   @Test
   void test_Emit_SingleInput_QuotesEmitted() {
-    final var input = "jack-o'-lantern!";
+    final var input = "Computer says, \"'It is mysteries---'\"";
     final var output = new StringBuilder( input );
     final var offset = new AtomicInteger( 0 );
 
