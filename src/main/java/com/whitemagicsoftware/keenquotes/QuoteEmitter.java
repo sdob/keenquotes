@@ -237,7 +237,6 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
 
   private void emit( final TokenType tokenType, final Lexeme lexeme ) {
     mConsumer.accept( new Token( tokenType, lexeme ) );
-    System.out.printf( "INSERT %s at %s%n", tokenType, lexeme );
   }
 
   private void emit(
@@ -245,18 +244,21 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     final int began,
     final int ended ) {
     mConsumer.accept( new Token( tokenType, began, ended ) );
-    System.out.printf( "INSERT %s at %d to %d%n", tokenType, began, ended );
   }
 
+  /**
+   * Emits a token that represents an ambiguous quotation mark.
+   *
+   * @param lexeme A quotation mark that could not be curled.
+   */
   private void emit( final Lexeme lexeme ) {
     mConsumer.accept( new Token( AMBIGUOUS, lexeme ) );
-    System.out.printf( "AMBIGUOUS %s%n", lexeme );
   }
 
   private boolean match(
-    final LexemeType[] l1,
+    final LexemeType l1,
     final LexemeType l2,
-    final LexemeType[] l3,
+    final LexemeType l3,
     final LexemeType l4 ) {
     return mQ.get( 0 ).isType( l1 ) &&
       mQ.get( 1 ).isType( l2 ) &&
@@ -265,9 +267,9 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
   }
 
   private boolean match(
-    final LexemeType l1,
+    final LexemeType[] l1,
     final LexemeType l2,
-    final LexemeType[] l3,
+    final LexemeType l3,
     final LexemeType l4 ) {
     return mQ.get( 0 ).isType( l1 ) &&
       mQ.get( 1 ).isType( l2 ) &&
@@ -289,18 +291,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
   private boolean match(
     final LexemeType l1,
     final LexemeType l2,
-    final LexemeType l3,
-    final LexemeType l4 ) {
-    return mQ.get( 0 ).isType( l1 ) &&
-      mQ.get( 1 ).isType( l2 ) &&
-      mQ.get( 2 ).isType( l3 ) &&
-      mQ.get( 3 ).isType( l4 );
-  }
-
-  private boolean match(
-    final LexemeType[] l1,
-    final LexemeType l2,
-    final LexemeType l3,
+    final LexemeType[] l3,
     final LexemeType l4 ) {
     return mQ.get( 0 ).isType( l1 ) &&
       mQ.get( 1 ).isType( l2 ) &&
@@ -313,6 +304,17 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     final LexemeType l2,
     final LexemeType l3,
     final LexemeType[] l4 ) {
+    return mQ.get( 0 ).isType( l1 ) &&
+      mQ.get( 1 ).isType( l2 ) &&
+      mQ.get( 2 ).isType( l3 ) &&
+      mQ.get( 3 ).isType( l4 );
+  }
+
+  private boolean match(
+    final LexemeType[] l1,
+    final LexemeType l2,
+    final LexemeType[] l3,
+    final LexemeType l4 ) {
     return mQ.get( 0 ).isType( l1 ) &&
       mQ.get( 1 ).isType( l2 ) &&
       mQ.get( 2 ).isType( l3 ) &&

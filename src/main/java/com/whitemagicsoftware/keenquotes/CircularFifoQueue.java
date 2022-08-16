@@ -19,6 +19,7 @@ package com.whitemagicsoftware.keenquotes;
 import java.util.*;
 
 import static java.lang.String.*;
+import static java.util.Objects.*;
 
 /**
  * This is a first-in first-out queue with a fixed size that replaces its
@@ -91,7 +92,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
    */
   @Override
   public int size() {
-    int size;
+    final int size;
 
     if( end < start ) {
       size = maxElements - start + end;
@@ -149,7 +150,7 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
    */
   @Override
   public boolean add( final E element ) {
-    Objects.requireNonNull( element, "element" );
+    requireNonNull( element, "element" );
 
     if( isAtFullCapacity() ) {
       remove();
@@ -182,9 +183,17 @@ public final class CircularFifoQueue<E> extends AbstractCollection<E>
     return elements[ (start + index) % maxElements ];
   }
 
+  /**
+   * Sets the element at the specified position in this queue.
+   *
+   * @param element The element to replace at the given {@code index}.
+   * @param index   The element at position {@code index} to replace,
+   *                zero-based.
+   * @throws NoSuchElementException if the requested position is outside the
+   *                                range [0, size).
+   */
   public void set( final E element, final int index ) {
-    Objects.requireNonNull( element, "element" );
-
+    requireNonNull( element, "element" );
     invariant( index );
 
     elements[ (start + index) % maxElements ] = element;
