@@ -5,16 +5,34 @@ package com.whitemagicsoftware.keenquotes;
  * The {@link Parser} emits these token types.
  */
 enum TokenType {
-  QUOTE_OPENING_SINGLE,
-  QUOTE_OPENING_DOUBLE,
-  QUOTE_CLOSING_SINGLE,
-  QUOTE_CLOSING_DOUBLE,
-  QUOTE_APOSTROPHE,
+  QUOTE_OPENING_SINGLE( "opening-single" ),
+  QUOTE_OPENING_DOUBLE( "opening-double" ),
+  QUOTE_CLOSING_SINGLE( "closing-single" ),
+  QUOTE_CLOSING_DOUBLE( "closing-double" ),
+  QUOTE_APOSTROPHE( "apostrophe" ),
   QUOTE_STRAIGHT_SINGLE,
   QUOTE_STRAIGHT_DOUBLE,
   QUOTE_PRIME_SINGLE,
   QUOTE_PRIME_DOUBLE,
   QUOTE_PRIME_TRIPLE,
   QUOTE_PRIME_QUADRUPLE,
-  AMBIGUOUS,
+  QUOTE_AMBIGUOUS_LEADING( "opening-ambiguous" ),
+  QUOTE_AMBIGUOUS_LAGGING( "closing-ambiguous" ),
+  AMBIGUOUS( "ambiguous" ),
+  NONE;
+
+  private final String mName;
+
+  TokenType() {
+    this( "token" );
+  }
+
+  TokenType( final String name ) {
+    mName = name;
+  }
+
+  @Override
+  public String toString() {
+    return mName;
+  }
 }

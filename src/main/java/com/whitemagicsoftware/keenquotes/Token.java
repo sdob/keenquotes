@@ -8,8 +8,13 @@ import static com.whitemagicsoftware.keenquotes.TokenType.*;
 /**
  * Represents a high-level token read from the text.
  */
-final class Token implements Comparable<Token> {
-  private final TokenType mType;
+final class Token implements Comparable<Token>, Stem {
+  /**
+   * Denotes that the token does not represent a value in the parsed document.
+   */
+  public static final Token NONE = new Token( TokenType.NONE, Lexeme.NONE );
+
+  private final TokenType mTokenType;
   private final int mBegan;
   private final int mEnded;
 
@@ -26,7 +31,7 @@ final class Token implements Comparable<Token> {
 
   /**
    * This constructor can be used to create tokens that span more than a
-   * single character.  Almost all tokens represent a single character, only
+   * single character. Almost all tokens represent a single character, only
    * the double-prime sequence ({@code ''}) is more than one character.
    *
    * @param tokenType The type of {@link Token} to create.
@@ -36,15 +41,51 @@ final class Token implements Comparable<Token> {
   Token( final TokenType tokenType, final int began, final int ended ) {
     assert tokenType != null;
     assert began >= 0;
-    assert ended > began;
+    assert ended >= began;
 
-    mType = tokenType;
+    mTokenType = tokenType;
     mBegan = began;
     mEnded = ended;
   }
 
+  /**
+   * Answers whether this {@link Token} appears before the given {@link Token}
+   * in the document. If they overlap, this will return {@code false}.
+   *
+   * @param token The {@link Token} to compare against.
+   * @return {@code true} iff this {@link Token} sequence ends
+   * <em>before</em> the given {@link Token} sequence begins.
+   */
+  boolean isBefore( final Token token ) {
+    assert token != null;
+    assert token != NONE;
+
+    return mEnded < token.mBegan;
+  }
+
+  /**
+   * Answers whether this {@link Token} appears after the given {@link Token}
+   * in the document. If they overlap, this will return {@code false}.
+   *
+   * @param token The {@link Token} to compare against.
+   * @return {@code true} iff this {@link Token} sequence starts <em>after</em>
+   * the given {@link Token} sequence ends.
+   */
+  boolean isAfter( final Token token ) {
+    assert token != null;
+    assert token != NONE;
+
+    return mBegan > token.mEnded;
+  }
+
   TokenType getType() {
-    return mType;
+    return mTokenType;
+  }
+
+  boolean isType( final TokenType tokenType ) {
+    assert tokenType != null;
+
+    return mTokenType == tokenType;
   }
 
   int began() {
@@ -56,7 +97,9 @@ final class Token implements Comparable<Token> {
   }
 
   boolean isAmbiguous() {
-    return mType == AMBIGUOUS;
+    return mTokenType == AMBIGUOUS ||
+      mTokenType == QUOTE_AMBIGUOUS_LEADING ||
+      mTokenType == QUOTE_AMBIGUOUS_LAGGING;
   }
 
   public String toString( final Map<TokenType, String> entities ) {
@@ -69,9 +112,18 @@ final class Token implements Comparable<Token> {
   }
 
   @Override
+  public String toXml() {
+    return "<" +
+      mTokenType +
+      " type='" + getType().name() + "'" +
+      " began='" + began() + "'" +
+      " ended='" + ended() + "' />";
+  }
+
+  @Override
   public String toString() {
     return getClass().getSimpleName() + '[' +
-      "mType=" + mType +
+      "mType=" + mTokenType +
       ", mBegan=" + mBegan +
       ", mEnded=" + mEnded +
       ']';

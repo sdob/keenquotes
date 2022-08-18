@@ -29,7 +29,7 @@ public enum LexemeType {
   EQUALS,
   PERIOD,
   ELLIPSIS,
-  ANY,
   ENDING,
-  EAT
+  ANY,
+  NONE
 }

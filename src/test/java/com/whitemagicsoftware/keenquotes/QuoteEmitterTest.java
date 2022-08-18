@@ -16,7 +16,8 @@ class QuoteEmitterTest {
 
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
-    final var couplets = readPairs( "smartypants.txt" );
+    final var couplets = readPairs(
+      "unambiguous-1-pass.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();
@@ -41,14 +42,11 @@ class QuoteEmitterTest {
     final var output = new StringBuilder( input );
     final var offset = new AtomicInteger( 0 );
 
-    System.out.println( input );
     QuoteEmitter.analyze(
       input,
       CONTRACTIONS,
       tokenConsumer( output, offset )
     );
-
-    System.out.println( output );
   }
 
   private static Consumer<Token> tokenConsumer(
@@ -58,7 +56,6 @@ class QuoteEmitterTest {
     return token -> {
       if( !token.isAmbiguous() ) {
         final var entity = token.toString( ENTITIES );
-        final var delta = token.ended() - token.began();
 
         output.replace(
           token.began() + offset.get(),
@@ -66,7 +63,7 @@ class QuoteEmitterTest {
           entity
         );
 
-        offset.addAndGet( entity.length() - delta );
+        offset.addAndGet( entity.length() - (token.ended() - token.began()) );
       }
     };
   }

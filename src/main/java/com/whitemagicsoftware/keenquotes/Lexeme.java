@@ -28,7 +28,11 @@ public final class Lexeme implements Comparable<Lexeme> {
    */
   public static final Lexeme SOT = new Lexeme( LexemeType.SOT, 0, E_INDEX );
 
-  public static final Lexeme EAT = new Lexeme( LexemeType.EAT, -1, E_INDEX );
+  /**
+   * Denotes that a lexeme from the lexer has been obliterated and must not
+   * be considered when parsing tokens.
+   */
+  public static final Lexeme NONE = new Lexeme( LexemeType.NONE, 0, 0 );
 
   private final LexemeType mType;
   private final int mBegan;
@@ -61,7 +65,7 @@ public final class Lexeme implements Comparable<Lexeme> {
    */
   public boolean isType( final LexemeType type ) {
     assert type != null;
-    return (mType != LexemeType.EAT || type == LexemeType.EAT) &&
+    return (mType != LexemeType.NONE || type == LexemeType.NONE) &&
       (mType == type || type == ANY ||
         (type == ENDING &&
           (mType == EOL || mType == EOP || mType == LexemeType.EOT)

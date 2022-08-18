@@ -101,12 +101,12 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       "n".equalsIgnoreCase( lex3.toString( mText ) ) ) {
       emit( QUOTE_APOSTROPHE, lex2 );
       emit( QUOTE_APOSTROPHE, lex4 );
-      mQ.set( Lexeme.EAT, 3 );
+      mQ.set( Lexeme.NONE, 3 );
     }
     // <2''>
     else if( match( NUMBER, QUOTE_SINGLE, QUOTE_SINGLE, ANY ) ) {
       emit( QUOTE_PRIME_DOUBLE, lex2.began(), lex3.ended() );
-      mQ.set( Lexeme.EAT, 2 );
+      mQ.set( Lexeme.NONE, 2 );
     }
     // <2'>
     else if( match( NUMBER, QUOTE_SINGLE, ANY, ANY ) ) {
@@ -173,17 +173,17 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       // Consume both immediately to avoid the false ambiguity <'e>.
       emit( QUOTE_OPENING_SINGLE, lex2 );
       emit( QUOTE_APOSTROPHE, lex3 );
-      mQ.set( Lexeme.EAT, 1 );
-      mQ.set( Lexeme.EAT, 2 );
+      mQ.set( Lexeme.NONE, 1 );
+      mQ.set( Lexeme.NONE, 2 );
     }
-    // <'...>, <'word>, <---'word>
+    // <'...>, <'word>, <---'word>, < 'nation>
     else if( match(
       LEADING_QUOTE_OPENING_SINGLE, QUOTE_SINGLE,
       LAGGING_QUOTE_OPENING_SINGLE, ANY ) ) {
       final var word = lex3.toString( mText );
 
       if( mContractions.beganAmbiguously( word ) ) {
-        emit( lex2 );
+        emit( QUOTE_AMBIGUOUS_LEADING, lex2 );
       }
       else if( mContractions.beganUnambiguously( word ) ) {
         emit( QUOTE_APOSTROPHE, lex2 );
@@ -197,7 +197,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       }
       // Ambiguous
       else {
-        emit( lex2 );
+        emit( QUOTE_AMBIGUOUS_LEADING, lex2 );
       }
     }
     // <word'">, <...'--->, <"' >
@@ -207,7 +207,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       final var word = lex1.toString( mText );
 
       if( mContractions.endedAmbiguously( word ) ) {
-        emit( lex2 );
+        emit( QUOTE_AMBIGUOUS_LAGGING, lex2 );
       }
       else {
         emit( QUOTE_CLOSING_SINGLE, lex2 );
@@ -225,8 +225,8 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     else if( match( ANY, QUOTE_SINGLE, NUMBER, ANY ) ) {
       emit( QUOTE_OPENING_SINGLE, lex2 );
     }
-    // <EMITTED><'---.>
-    else if( match( EAT, QUOTE_SINGLE, ANY, ANY ) ) {
+    // <PRE-PARSED><'---.>
+    else if( match( LexemeType.NONE, QUOTE_SINGLE, ANY, ANY ) ) {
       emit( QUOTE_CLOSING_SINGLE, lex2 );
     }
     // Ambiguous (no match)

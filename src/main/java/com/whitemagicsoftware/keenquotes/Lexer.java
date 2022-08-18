@@ -153,7 +153,7 @@ public final class Lexer {
     }
 
     // Simulate an end of line and end of paragraph before the end of text.
-    // This allows the parser to match against lexemes near at the end of
+    // This allows the parser to match against lexemes at the end of
     // the string to curl (without having to introduce more conditions).
     consumer.accept( new Lexeme( EOL, i.index(), i.index() ) );
     consumer.accept( new Lexeme( EOP, i.index(), i.index() ) );

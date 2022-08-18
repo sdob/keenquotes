@@ -1,0 +1,65 @@
+# ########################################################################
+# Single quotes
+# ########################################################################
+
+# Resolved because the opening single quote in unpaired in the document.
+With 'quotes' in the middle.
+With &lsquo;quotes&rsquo; in the middle.
+
+# TODO: REINSTATE ME
+''Cause I don't like it, 's why,' said Pat.
+&lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
+
+# ########################################################################
+# Possessives
+# ########################################################################
+# TODO: REINSTATE ME
+Sam's Sams' and the Ross's roses' thorns were prickly.
+Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
+
+# ########################################################################
+# Mixed
+# ########################################################################
+# TODO: REINSTATE ME
+"She said, 'That's Sam's'," said the Sams' cat.
+&ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
+
+# TODO: REINSTATE ME
+"Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
+&ldquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
+
+# TODO: REINSTATE ME
+'He's at Sam's'
+&lsquo;He&apos;s at Sam&apos;s&rsquo;
+
+# TODO: REINSTATE ME
+'A', 'B', and 'C' are letters.
+&lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
+
+# TODO: REINSTATE ME
+''Sup, Doc?'
+&lsquo;&apos;Sup, Doc?&rsquo;
+
+# TODO: REINSTATE ME
+'Wouldn't 'a brushed a fly off the top twig,' exclaimed Ashbrook,
+&lsquo;Wouldn&apos;t &apos;a brushed a fly off the top twig,&rsquo; exclaimed Ashbrook,
+
+# TODO: REINSTATE ME
+"But ye've been 'nation quiet all the day though," said the lad...
+&ldquo;But ye&apos;ve been &apos;nation quiet all the day though,&rdquo; said the lad...
+
+# TODO: REINSTATE ME
+"Not much o' fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin' man, used to say, says he, 'If e'er I sow my wheat wi'out brinin', I'm a Dutchman,' says he; an' that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren't goin' to bother mysen about Dutchmen. There's fools enoo, an' rogues enoo, wi'out lookin' i' books for 'em."
+&ldquo;Not much o&apos; fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin&apos; man, used to say, says he, &lsquo;If e&apos;er I sow my wheat wi&apos;out brinin&apos;, I&apos;m a Dutchman,&rsquo; says he; an&apos; that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren&apos;t goin&apos; to bother mysen about Dutchmen. There&apos;s fools enoo, an&apos; rogues enoo, wi&apos;out lookin&apos; i&apos; books for &apos;em.&rdquo;
+
+# ########################################################################
+# Nested
+# ########################################################################
+# TODO: REINSTATE ME
+'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
+&apos;Bout that time I says, &lsquo;Boys! I been thinkin&apos; &apos;bout th&apos; Universe.&rsquo;
+
+# Not ambiguous because <'cause> is nested within a closed quotation.
+# TODO: REINSTATE ME
+"You 'cause---" all fifteen years' worth.
+&ldquo;You &apos;cause---&rdquo; all fifteen years' worth.
