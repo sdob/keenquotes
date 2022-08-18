@@ -79,16 +79,16 @@ class Tree<T extends Token> implements Stem {
    * Closes the current open/close quotation mark pair.
    *
    * @param closing The closing quotation mark that pairs the opening mark.
-   * @return Parent subtree instance, which may be {@code null}.
+   * @return Parent subtree instance, or this instance if at the root,
+   * never {@code null}.
    */
   public Tree<T> closing( final T closing ) {
     assert closing != NONE;
-    assert mOpening != NONE;
     assert mOpening.isBefore( closing );
 
     mClosing = closing;
 
-    return mParent;
+    return mParent == null ? this : mParent;
   }
 
   /**
@@ -129,10 +129,6 @@ class Tree<T extends Token> implements Stem {
           mClosing.isType( QUOTE_CLOSING_SINGLE );
   }
 
-  public boolean isOpeningTokenType( final TokenType tokenType ) {
-    return mOpening.isType( tokenType );
-  }
-
   public Tree<T> parent() {
     return mParent;
   }
@@ -155,9 +151,9 @@ class Tree<T extends Token> implements Stem {
       sb.append( mClosing.toXml() );
     }
 
-    sb.append( '<' );
+    sb.append( "</" );
     sb.append( name );
-    sb.append( "/>" );
+    sb.append( '>' );
 
     return sb.toString();
   }

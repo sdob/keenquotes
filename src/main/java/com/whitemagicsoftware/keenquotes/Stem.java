@@ -2,7 +2,7 @@
 package com.whitemagicsoftware.keenquotes;
 
 /**
- * Responsible for identifying a {@link Tree}'s subcomponent. This marking
+ * Responsible for identifying a {@link Tree}'s subcomponent. This marker
  * interface helps unify a {@link Tree}'s child elements, allowing the elements
  * to be added and maintained in insertion order.
  */

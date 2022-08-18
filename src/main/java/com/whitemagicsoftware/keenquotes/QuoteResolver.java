@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
-import static com.whitemagicsoftware.keenquotes.TokenType.QUOTE_OPENING_DOUBLE;
 
 /**
  * Responsible for resolving ambiguous quotes that could not be resolved during
@@ -44,17 +43,18 @@ public final class QuoteResolver implements Consumer<Token> {
    */
   @Override
   public void accept( final Token token ) {
+    // Create a new subtree when an opening quotation mark is found.
     if( token.isType( QUOTE_OPENING_SINGLE ) ||
       token.isType( QUOTE_OPENING_DOUBLE ) ) {
       mTree = mTree.opening( token );
     }
-    else if(
-      token.isType( QUOTE_CLOSING_SINGLE ) &&
-        mTree.isOpeningTokenType( QUOTE_OPENING_SINGLE ) ||
-        token.isType( QUOTE_CLOSING_DOUBLE ) &&
-          mTree.isOpeningTokenType( QUOTE_OPENING_DOUBLE ) ) {
+    // Close the subtree if it was open, try to close it.
+    else if( token.isType( QUOTE_CLOSING_SINGLE ) ||
+      token.isType( QUOTE_CLOSING_DOUBLE ) ) {
       mTree = mTree.closing( token );
     }
+    // Add any ambiguous tokens to the subtree, which are resolved after
+    // the in-memory AST is built.
     else if( token.isAmbiguous() ) {
       mTree.add( token );
     }
@@ -64,6 +64,12 @@ public final class QuoteResolver implements Consumer<Token> {
    * Traverse the tree and resolve as many ambiguous tokens as possible.
    */
   private void resolve() {
+    Tree<Token> parent;
+
+    while( (parent = mTree.parent()) != null ) {
+      mTree = parent;
+    }
+
     System.out.println( mTree.toXml() );
 
     for( final var token : mTokens ) {
