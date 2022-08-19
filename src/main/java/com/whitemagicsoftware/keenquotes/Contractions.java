@@ -91,7 +91,7 @@ public class Contractions {
 
   /**
    * Answers whether the given word is a contraction that always starts
-   * with an apostrophe. The comparison is case insensitive. This must
+   * with an apostrophe. The comparison is case-insensitive. This must
    * only be called when a straight quote is followed by a word.
    *
    * @param word The word to compare against the list of known unambiguous
@@ -218,6 +218,7 @@ public class Contractions {
     "osses",
     // upon
     "pon",
+    // that's|is
     "s",
     "sblood",
     // excuse

@@ -17,7 +17,7 @@ class QuoteEmitterTest {
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
     final var couplets = readPairs(
-      "unambiguous-1-pass.txt" );
+      "unambiguous-2-pass.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();
@@ -38,7 +38,7 @@ class QuoteEmitterTest {
 
   @Test
   void test_Emit_SingleInput_QuotesEmitted() {
-    final var input = "Computer says, \"'It is mysteries---'\"";
+    final var input = "\"'\"nest\"'\"";
     final var output = new StringBuilder( input );
     final var offset = new AtomicInteger( 0 );
 

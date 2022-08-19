@@ -8,6 +8,9 @@ With &lsquo;quotes&rsquo; in the middle.
 ''Cause I don't like it, 's why,' said Pat.
 &lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
 
+Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. &apos;Cause &apos;twas the season.
+
 She said, 'Cause of death?\n\n'Old age, there's no doubt.'
 She said, &apos;Cause of death?\n\n&lsquo;Old age, there&apos;s no doubt.&rsquo;
 
@@ -29,14 +32,14 @@ Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 "Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
 &ldquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
 
+''Sup, Doc?'
+&lsquo;&apos;Sup, Doc?&rsquo;
+
 'He's at Sam's'
 &lsquo;He&apos;s at Sam&apos;s&rsquo;
 
 'A', 'B', and 'C' are letters.
 &lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
-
-''Sup, Doc?'
-&lsquo;&apos;Sup, Doc?&rsquo;
 
 'Wouldn't 'a brushed a fly off the top twig,' exclaimed Ashbrook,
 &lsquo;Wouldn&apos;t &apos;a brushed a fly off the top twig,&rsquo; exclaimed Ashbrook,

@@ -15,7 +15,7 @@ class AmbiguityResolverTest {
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
     final var couplets = readPairs(
-      "unambiguous-2-pass.txt" );
+      "invalid-grammar.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();

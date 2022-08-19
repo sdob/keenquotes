@@ -248,6 +248,17 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     else if( match( LexemeType.NONE, QUOTE_SINGLE, ANY, ANY ) ) {
       emit( QUOTE_CLOSING_SINGLE, lex2 );
     }
+    // <''Cause >
+    else if( match( QUOTE_SINGLE, QUOTE_SINGLE, WORD, ANY ) ) {
+      final var word = lex3.toString( mText );
+
+      if( mContractions.beganAmbiguously( word ) ) {
+        emit( QUOTE_AMBIGUOUS_LEADING, lex2 );
+      }
+      else {
+        emit( lex2 );
+      }
+    }
     // Ambiguous (no match)
     else if( match( ANY, QUOTE_SINGLE_QUOTE_DOUBLE, ANY, ANY ) ) {
       emit( lex2 );

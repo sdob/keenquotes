@@ -1,8 +1,8 @@
 # ########################################################################
 # Ambiguous (no solution)
 # ########################################################################
-Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
-Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
+Book 'em, Danno. Rock 'n' roll. ''Cause 'twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. &lsquo;'Cause &apos;twas the season.
 
 "Jarvis, sir? Why, him as 'listed some years ago, and fought under
 &ldquo;Jarvis, sir? Why, him as 'listed some years ago, and fought under

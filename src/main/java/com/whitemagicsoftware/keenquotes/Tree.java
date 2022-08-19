@@ -137,7 +137,6 @@ class Tree<T extends Token> implements Stem {
   }
 
   public void replaceAll( final TokenType oldToken, final TokenType newToken ) {
-    System.out.printf( "replace %s with %s%n", oldToken, newToken);
     for( final var stem : mStems ) {
       if( stem instanceof Token token && token.isType( oldToken ) ) {
         token.setTokenType( newToken );
