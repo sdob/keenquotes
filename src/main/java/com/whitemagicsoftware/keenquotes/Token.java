@@ -6,7 +6,7 @@ import java.util.Map;
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
 
 /**
- * Represents a high-level token read from the text.
+ * Represents a high-level token read from a text document.
  */
 final class Token implements Comparable<Token>, Stem {
   /**
@@ -14,7 +14,7 @@ final class Token implements Comparable<Token>, Stem {
    */
   public static final Token NONE = new Token( TokenType.NONE, Lexeme.NONE );
 
-  private final TokenType mTokenType;
+  private TokenType mTokenType;
   private final int mBegan;
   private final int mEnded;
 
@@ -71,6 +71,7 @@ final class Token implements Comparable<Token>, Stem {
    * @return {@code true} iff this {@link Token} sequence starts <em>after</em>
    * the given {@link Token} sequence ends.
    */
+  @SuppressWarnings( "unused" )
   boolean isAfter( final Token token ) {
     assert token != null;
     assert token != NONE;
@@ -102,8 +103,20 @@ final class Token implements Comparable<Token>, Stem {
       mTokenType == QUOTE_AMBIGUOUS_LAGGING;
   }
 
-  public String toString( final Map<TokenType, String> entities ) {
-    return entities.get( getType() );
+  /**
+   * Allows mutating an ambiguous token into a non-ambiguous token while
+   * preserving the indexes into the document. This also prevents having to
+   * create additional tokens when resolving.
+   *
+   * @param tokenType The new state, must not be ambiguous.
+   */
+  void setTokenType( final TokenType tokenType ) {
+    assert isAmbiguous();
+    assert tokenType != null;
+
+    mTokenType = tokenType;
+
+    assert !isAmbiguous();
   }
 
   @Override
@@ -118,6 +131,10 @@ final class Token implements Comparable<Token>, Stem {
       " type='" + getType().name() + "'" +
       " began='" + began() + "'" +
       " ended='" + ended() + "' />";
+  }
+
+  public String toString( final Map<TokenType, String> entities ) {
+    return entities.get( getType() );
   }
 
   @Override

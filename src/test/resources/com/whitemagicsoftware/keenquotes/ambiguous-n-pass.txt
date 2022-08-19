@@ -1,12 +1,6 @@
 # ########################################################################
 # Ambiguous (no solution)
 # ########################################################################
-She said, 'Cause of death?\n\n'Old age, there's no doubt.'
-She said, 'Cause of death?\n\n&lsquo;Old age, there&apos;s no doubt.&rsquo;
-
-She said, 'Cause I said so!\n\n'If we're done, I've a secret.'
-She said, 'Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rsquo;
-
 Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
 Book &apos;em, Danno. Rock &apos;n&apos; roll. 'Cause &apos;twas the season.
 

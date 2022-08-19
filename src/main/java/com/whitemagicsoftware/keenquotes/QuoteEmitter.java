@@ -97,8 +97,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
     // <'n'>, <'N'>
-    else if( match( ANY, QUOTE_SINGLE, WORD, QUOTE_SINGLE ) &&
-      "n".equalsIgnoreCase( lex3.toString( mText ) ) ) {
+    else if(
+      match( ANY, QUOTE_SINGLE, WORD, QUOTE_SINGLE ) &&
+        "n".equalsIgnoreCase( lex3.toString( mText ) )
+    ) {
       emit( QUOTE_APOSTROPHE, lex2 );
       emit( QUOTE_APOSTROPHE, lex4 );
       mQ.set( Lexeme.NONE, 3 );
@@ -117,8 +119,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       emit( QUOTE_PRIME_DOUBLE, lex2 );
     }
     // <thinkin'>
-    else if( match( WORD, QUOTE_SINGLE, ANY, ANY ) &&
-      mContractions.endedUnambiguously( lex1.toString( mText ) ) ) {
+    else if(
+      match( WORD, QUOTE_SINGLE, ANY, ANY ) &&
+        mContractions.endedUnambiguously( lex1.toString( mText ) )
+    ) {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
     // <'02>
@@ -126,8 +130,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
     // <'20s>
-    else if( match( ANY, QUOTE_SINGLE, NUMBER, WORD ) &&
-      "s".equalsIgnoreCase( lex4.toString( mText ) ) ) {
+    else if(
+      match( ANY, QUOTE_SINGLE, NUMBER, WORD ) &&
+        "s".equalsIgnoreCase( lex4.toString( mText ) )
+    ) {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
     // <.'\n>
@@ -152,20 +158,28 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       emit( QUOTE_CLOSING_SINGLE, lex2 );
     }
     // <o’-lantern>, <o' fellow>, <O'-the>
-    else if( match( WORD, QUOTE_SINGLE, SPACE_HYPHEN, WORD ) &&
-      "o".equalsIgnoreCase( lex1.toString( mText ) ) ) {
+    else if(
+      match( WORD, QUOTE_SINGLE, SPACE_HYPHEN, WORD ) &&
+        "o".equalsIgnoreCase( lex1.toString( mText ) )
+    ) {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
     // <"">, <"...>, <"word>, <---"word>
-    else if( match(
-      LEADING_QUOTE_OPENING_DOUBLE, QUOTE_DOUBLE,
-      LAGGING_QUOTE_OPENING_DOUBLE, ANY ) ) {
+    else if(
+      match(
+        LEADING_QUOTE_OPENING_DOUBLE, QUOTE_DOUBLE,
+        LAGGING_QUOTE_OPENING_DOUBLE, ANY
+      )
+    ) {
       emit( QUOTE_OPENING_DOUBLE, lex2 );
     }
     // <..."'>, <word"'>, <?"'>, <word"?>
-    else if( match(
-      LEADING_QUOTE_CLOSING_DOUBLE, QUOTE_DOUBLE,
-      LAGGING_QUOTE_CLOSING_DOUBLE, ANY ) ) {
+    else if(
+      match(
+        LEADING_QUOTE_CLOSING_DOUBLE, QUOTE_DOUBLE,
+        LAGGING_QUOTE_CLOSING_DOUBLE, ANY
+      )
+    ) {
       emit( QUOTE_CLOSING_DOUBLE, lex2 );
     }
     // < ''E>
@@ -177,9 +191,11 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       mQ.set( Lexeme.NONE, 2 );
     }
     // <'...>, <'word>, <---'word>, < 'nation>
-    else if( match(
-      LEADING_QUOTE_OPENING_SINGLE, QUOTE_SINGLE,
-      LAGGING_QUOTE_OPENING_SINGLE, ANY ) ) {
+    else if(
+      match(
+        LEADING_QUOTE_OPENING_SINGLE, QUOTE_SINGLE,
+        LAGGING_QUOTE_OPENING_SINGLE, ANY )
+    ) {
       final var word = lex3.toString( mText );
 
       if( mContractions.beganAmbiguously( word ) ) {
@@ -201,9 +217,12 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       }
     }
     // <word'">, <...'--->, <"' >
-    else if( match(
-      LEADING_QUOTE_CLOSING_SINGLE, QUOTE_SINGLE,
-      LAGGING_QUOTE_CLOSING_SINGLE, ANY ) ) {
+    else if(
+      match(
+        LEADING_QUOTE_CLOSING_SINGLE, QUOTE_SINGLE,
+        LAGGING_QUOTE_CLOSING_SINGLE, ANY
+      )
+    ) {
       final var word = lex1.toString( mText );
 
       if( mContractions.endedAmbiguously( word ) ) {

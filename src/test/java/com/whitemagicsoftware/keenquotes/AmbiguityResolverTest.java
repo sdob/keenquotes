@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.whitemagicsoftware.keenquotes.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class QuoteResolverTest {
+class AmbiguityResolverTest {
   private final Contractions CONTRACTIONS = new Contractions.Builder().build();
 
   @Test
@@ -26,7 +26,7 @@ class QuoteResolverTest {
       System.out.println( "---------------------" );
       System.out.println( input );
 
-      QuoteResolver.analyze(
+      AmbiguityResolver.analyze(
         input,
         CONTRACTIONS,
         System.out::println

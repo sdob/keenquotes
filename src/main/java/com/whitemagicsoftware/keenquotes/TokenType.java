@@ -16,8 +16,8 @@ enum TokenType {
   QUOTE_PRIME_DOUBLE,
   QUOTE_PRIME_TRIPLE,
   QUOTE_PRIME_QUADRUPLE,
-  QUOTE_AMBIGUOUS_LEADING( "opening-ambiguous" ),
-  QUOTE_AMBIGUOUS_LAGGING( "closing-ambiguous" ),
+  QUOTE_AMBIGUOUS_LEADING( "leading-ambiguous" ),
+  QUOTE_AMBIGUOUS_LAGGING( "lagging-ambiguous" ),
   AMBIGUOUS( "ambiguous" ),
   NONE;
 

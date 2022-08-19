@@ -1,9 +1,10 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import static com.whitemagicsoftware.keenquotes.Token.NONE;
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
@@ -11,12 +12,6 @@ import static com.whitemagicsoftware.keenquotes.TokenType.*;
 /**
  * Responsible for helping determine whether ambiguous quotation marks can be
  * disambiguated.
- * <p>
- * Represents a tree-like structure that provides O(1) determinate for whether
- * a branch in the tree contains an ambiguous opening or closing quotation
- * mark. The payload for each branch includes the opening and closing quotation
- * marks as well as a {@link Set} of ambiguous {@link Token} instances.
- * </p>
  *
  * @param <T> The type of items to add to the {@link Tree}.
  */
@@ -28,12 +23,15 @@ class Tree<T extends Token> implements Stem {
   private final Tree<T> mParent;
 
   /**
-   * The insertion-ordered sequence of subtrees and leaves. Must provide
-   * O(1) lookup time.
+   * The insertion-ordered sequence of subtrees and leaves.
    */
   private final Collection<Stem> mStems = new LinkedHashSet<>( 128 );
 
-  private T mOpening = (T) NONE;
+  private final T mOpening;
+
+  /**
+   * Mutated by {@link #closing(Token)}.
+   */
   private T mClosing = (T) NONE;
 
   /**
@@ -41,6 +39,7 @@ class Tree<T extends Token> implements Stem {
    */
   public Tree() {
     mParent = null;
+    mOpening = (T) NONE;
   }
 
   /**
@@ -69,10 +68,7 @@ class Tree<T extends Token> implements Stem {
   public Tree<T> opening( final T opening ) {
     assert opening != null;
 
-    final var tree = new Tree<>( this, opening );
-    mStems.add( tree );
-
-    return tree;
+    return add( new Tree<>( this, opening ) );
   }
 
   /**
@@ -95,23 +91,14 @@ class Tree<T extends Token> implements Stem {
    * Adds any {@link Stem} implementation to the child stems of this structure.
    *
    * @param stem The child to add.
+   * @return The item added to the {@link Tree}.
    */
-  public void add( final Stem stem ) {
+  public <S extends Stem> S add( final S stem ) {
     assert stem != null;
 
     mStems.add( stem );
-  }
 
-  /**
-   * Answers whether the given {@link Stem} is contained within the child
-   * stems of this structure. This can be used to determine whether the
-   * {@link Stem} is found within single/double quotes in O(1) time.
-   *
-   * @param stem The child to compare.
-   * @return {@code true} if the given stem is
-   */
-  public boolean isNested( final Stem stem ) {
-    return mStems.contains( stem );
+    return stem;
   }
 
   /**
@@ -129,8 +116,49 @@ class Tree<T extends Token> implements Stem {
           mClosing.isType( QUOTE_CLOSING_SINGLE );
   }
 
+  public boolean hasOpeningSingleQuote() {
+    return mOpening.isType( QUOTE_OPENING_SINGLE );
+  }
+
+  public boolean hasClosingSingleQuote() {
+    return mClosing.isType( QUOTE_CLOSING_SINGLE );
+  }
+
+  public int count( final TokenType tokenType ) {
+    var count = 0;
+
+    for( final var stem : mStems ) {
+      if( (stem instanceof Token token) && token.isType( tokenType ) ) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  public void replaceAll( final TokenType oldToken, final TokenType newToken ) {
+    System.out.printf( "replace %s with %s%n", oldToken, newToken);
+    for( final var stem : mStems ) {
+      if( stem instanceof Token token && token.isType( oldToken ) ) {
+        token.setTokenType( newToken );
+      }
+    }
+  }
+
   public Tree<T> parent() {
     return mParent;
+  }
+
+  public List<Tree<T>> subtrees() {
+    final var result = new ArrayList<Tree<T>>();
+
+    for( final var stem : mStems ) {
+      if( stem instanceof Tree tree ) {
+        result.add( tree );
+      }
+    }
+
+    return result;
   }
 
   public String toXml() {
