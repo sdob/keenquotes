@@ -21,7 +21,7 @@ She said, 'Cause I said so!\n\n'If we're done, I've a secret.'
 She said, &apos;Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rsquo;
 
 'Twas and 'tis whate'er lay 'twixt dawn and dusk 'n River Styx.
-&apos; and &apos;tis whate&apos;er lay &apos;twixt dawn and dusk &apos;n River Styx.
+&apos;Twas and &apos;tis whate&apos;er lay &apos;twixt dawn and dusk &apos;n River Styx.
 
 # ########################################################################
 # Possessives

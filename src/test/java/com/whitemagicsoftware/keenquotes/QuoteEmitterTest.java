@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.whitemagicsoftware.keenquotes.Curler.ENTITIES;
+import static com.whitemagicsoftware.keenquotes.Curler.swap;
 import static com.whitemagicsoftware.keenquotes.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,7 +28,7 @@ class QuoteEmitterTest {
       QuoteEmitter.analyze(
         input,
         CONTRACTIONS,
-        Curler.swap( output, offset, ENTITIES ),
+        swap( output, offset, ENTITIES ),
         filter -> false
       );
 
