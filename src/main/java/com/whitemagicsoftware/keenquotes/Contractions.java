@@ -231,6 +231,7 @@ public class Contractions {
     "sploit",
     // exploits
     "sploits",
+    // it
     "t",
     "taint",
     "tain",
