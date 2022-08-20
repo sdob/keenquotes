@@ -1,21 +1,25 @@
-/* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+/* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
+package com.whitemagicsoftware.keenquotes.parser;
+
+import com.whitemagicsoftware.keenquotes.lex.FilterType;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 
 /**
- * Responsible for converting curly quotes to HTML entities throughout a
- * text string.
+ * Resolves straight quotes into curly quotes throughout a document.
  */
 @SuppressWarnings( "unused" )
 public class Curler implements Function<String, String> {
+  /**
+   * Provides an entity-based set of {@link Token} replacements.
+   */
   public static final Map<TokenType, String> ENTITIES = ofEntries(
     entry( QUOTE_OPENING_SINGLE, "&lsquo;" ),
     entry( QUOTE_CLOSING_SINGLE, "&rsquo;" ),
@@ -31,7 +35,7 @@ public class Curler implements Function<String, String> {
   );
 
   /**
-   * Used by external applications to initialize the replacement map.
+   * Provides a character-based set of {@link Token} replacements.
    */
   public static final Map<TokenType, String> CHARS = ofEntries(
     entry( QUOTE_OPENING_SINGLE, "‘" ),
@@ -49,32 +53,7 @@ public class Curler implements Function<String, String> {
 
   private final Contractions mContractions;
   private final Map<TokenType, String> mReplacements;
-  private final ParserType mParserType;
-
-  /**
-   * Maps quotes to HTML entities.
-   *
-   * @param unresolved Consumes {@link Lexeme}s that could not be converted
-   *                   into HTML entities.
-   * @param parserType Creates a parser based on document content structure.
-   */
-  public Curler(
-    final Consumer<Lexeme> unresolved, final ParserType parserType ) {
-    this( new Contractions.Builder().build(), parserType );
-  }
-
-  /**
-   * Maps quotes to HTML entities.
-   *
-   * @param parserType Creates a parser based on document content structure.
-   */
-  public Curler(
-    final Map<TokenType, String> replacements,
-    final ParserType parserType ) {
-    this(
-      new Contractions.Builder().build(), replacements, parserType
-    );
-  }
+  private final FilterType mFilterType;
 
   /**
    * Maps quotes to HTML entities.
@@ -84,12 +63,13 @@ public class Curler implements Function<String, String> {
    */
   public Curler(
     final Contractions c,
-    final ParserType parserType ) {
+    final FilterType parserType
+  ) {
     this( c, ENTITIES, parserType );
   }
 
   /**
-   * Maps quotes to curled equivalents.
+   * Maps quotes to curled character equivalents.
    *
    * @param c            Contractions listings.
    * @param replacements Map of recognized quotes to output types (entity or
@@ -98,10 +78,11 @@ public class Curler implements Function<String, String> {
   public Curler(
     final Contractions c,
     final Map<TokenType, String> replacements,
-    final ParserType parserType ) {
+    final FilterType parserType
+  ) {
     mContractions = c;
     mReplacements = replacements;
-    mParserType = parserType;
+    mFilterType = parserType;
   }
 
   /**
@@ -118,17 +99,25 @@ public class Curler implements Function<String, String> {
     final var output = new StringBuilder( text );
     final var offset = new AtomicInteger( 0 );
 
-    AmbiguityResolver.analyze(
+    AmbiguityResolver.resolve(
       text,
       mContractions,
-      swap( output, offset, mReplacements ),
-      mParserType.filter()
+      replace( output, offset, mReplacements ),
+      mFilterType.filter()
     );
 
     return output.toString();
   }
 
-  public static Consumer<Token> swap(
+  /**
+   * Replaces non-ambiguous tokens with their equivalent string representation.
+   *
+   * @param output       Continuously updated result document.
+   * @param offset       Accumulating index where {@link Token} is replaced.
+   * @param replacements Map of {@link TokenType}s to replacement strings.
+   * @return Instructions to replace a {@link Token} in the result document.
+   */
+  public static Consumer<Token> replace(
     final StringBuilder output,
     final AtomicInteger offset,
     final Map<TokenType, String> replacements

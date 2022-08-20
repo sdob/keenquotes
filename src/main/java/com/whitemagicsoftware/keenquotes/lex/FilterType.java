@@ -1,27 +1,27 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
 
 /**
  * Denotes what filtering to apply when scanning for quotation marks.
  */
-public enum ParserType {
+public enum FilterType {
   /**
    * Curls all quotation marks.
    */
-  PARSER_PLAIN( filter -> false ),
+  FILTER_PLAIN( filter -> false ),
 
   /**
    * Suppresses curling quotation marks within certain XML elements.
    */
-  PARSER_XML( new XmlFilter() );
+  FILTER_XML( new XmlFilter() );
 
   private final LexerFilter mFilter;
 
-  ParserType( final LexerFilter filter ) {
+  FilterType( final LexerFilter filter ) {
     mFilter = filter;
   }
 
-  LexerFilter filter() {
+  public LexerFilter filter() {
     return mFilter;
   }
 }

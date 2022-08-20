@@ -1,13 +1,15 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.texts;
+
+import com.whitemagicsoftware.keenquotes.util.Tuple;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Responsible for opening a test resource file.
@@ -75,7 +77,24 @@ public class TestResource {
 
   private BufferedReader openResource( final String filename ) {
     final var is = getClass().getResourceAsStream( filename );
-    assertNotNull( is );
+
+    // If the resource cannot be found, throw a developer-friendly exception.
+    if( is == null ) {
+      Exception ex;
+
+      try {
+        final var resource = getClass().getResource( "." );
+        final var path = resource == null
+          ? filename
+          : Path.of( resource.toURI().getPath(), filename ).toString();
+        ex = new FileNotFoundException( path );
+      } catch( final Exception _ex ) {
+        ex = _ex;
+      }
+
+      // We don't need no steenkin' checked exceptions.
+      throw new RuntimeException( ex );
+    }
 
     return new BufferedReader( new InputStreamReader( is ) );
   }

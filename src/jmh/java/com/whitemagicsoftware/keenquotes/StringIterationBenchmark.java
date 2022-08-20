@@ -1,5 +1,7 @@
+/* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
+import com.whitemagicsoftware.keenquotes.util.FastCharacterIterator;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.text.StringCharacterIterator;

@@ -1,8 +1,0 @@
-"'"nest"'"
-&ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
-
-"""wtf"""
-&ldquo;&ldquo;&ldquo;wtf&rdquo;&rdquo;&rdquo;
-
-'''wtf'''
-&lsquo;&lsquo;&lsquo;wtf&rsquo;&rsquo;&rsquo;

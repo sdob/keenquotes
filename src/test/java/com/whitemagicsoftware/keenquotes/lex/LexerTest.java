@@ -1,5 +1,5 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests lexing words, numbers, punctuation, spaces, newlines, etc.
  */
-final class LexerTest {
+public final class LexerTest {
 
   @Test
   void test_Lexing_Words_LexemeValues() {
@@ -98,10 +98,6 @@ final class LexerTest {
     testType( "\n   \n", EOL, SPACE, EOL );
   }
 
-  static void testType( final String actual, final LexemeType... expected ) {
-    testType( actual, filter -> false, expected );
-  }
-
   static void testType(
     final String actual,
     final LexerFilter filter,
@@ -113,6 +109,10 @@ final class LexerTest {
     final var list = asList( expected );
 
     testType( actual, ( lexeme, text ) -> lexeme.getType(), filter, list );
+  }
+
+  static void testType( final String actual, final LexemeType... expected ) {
+    testType( actual, filter -> false, expected );
   }
 
   static void testText(
@@ -135,8 +135,9 @@ final class LexerTest {
     var counter = new AtomicInteger();
 
     Lexer.lex( text, lexeme -> {
-      // Ignore the SOT and EOT lexemes (avoids duplication).
-      if( !lexeme.isType( SOT, EOT ) ) {
+      // Ignore the SOT and EOT lexemes (avoids duplication). Each test will
+      // include EOL, EOP, and EOT tokens due to the Lexer's algorithm.
+      if( !lexeme.isType( SOT, EOT ) && counter.get() < elements.size() ) {
         final var expected = elements.get( counter.getAndIncrement() );
         final var actual = f.apply( lexeme, text );
 

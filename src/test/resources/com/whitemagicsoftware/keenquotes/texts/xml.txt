@@ -1,0 +1,14 @@
+<em>'twas</em>
+<em>&apos;twas</em>
+
+''<em>Twas</em> happening!'
+&lsquo;&apos;<em>Twas</em> happening!&rsquo;
+
+<strong>'Twas</strong> <kbd>'</kbd> in <tex>Knuth's TeX</tex>
+<strong>&apos;Twas</strong> <kbd>'</kbd> in <tex>Knuth's TeX</tex>
+
+<bold>'twas</bold> redeemed for the <em>cat</em>'s eye
+<bold>&apos;twas</bold> redeemed for the <em>cat</em>&apos;s eye
+
+<a href="https://x.org" title="X's Homepage">X11's bomb</a>
+<a href="https://x.org" title="X's Homepage">X11&apos;s bomb</a>

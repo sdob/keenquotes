@@ -1,9 +1,11 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.parser;
+
+import com.whitemagicsoftware.keenquotes.lex.Lexeme;
 
 import java.util.Map;
 
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 
 /**
  * Represents a high-level token read from a text document.

@@ -1,5 +1,5 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.app;
 
 import picocli.CommandLine;
 

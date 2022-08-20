@@ -1,9 +1,11 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
+
+import com.whitemagicsoftware.keenquotes.util.FastCharacterIterator;
 
 import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
 

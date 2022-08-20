@@ -1,6 +1,6 @@
 plugins {
   id 'application'
-  id 'com.palantir.git-version' version '0.12.3'
+  id 'com.palantir.git-version' version '0.15.0'
   id "me.champeau.jmh" version "0.6.6"
 }
 
@@ -34,7 +34,7 @@ compileJava {
 
 application {
   applicationName = 'keenquotes'
-  mainClassName = "com.whitemagicsoftware.${applicationName}.KeenQuotes"
+  mainClassName = "com.whitemagicsoftware.${applicationName}.app.KeenQuotes"
 }
 
 version = gitVersion()

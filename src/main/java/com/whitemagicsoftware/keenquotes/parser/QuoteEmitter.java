@@ -1,10 +1,16 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.parser;
+
+import com.whitemagicsoftware.keenquotes.lex.Lexeme;
+import com.whitemagicsoftware.keenquotes.lex.LexemeType;
+import com.whitemagicsoftware.keenquotes.lex.Lexer;
+import com.whitemagicsoftware.keenquotes.lex.LexerFilter;
+import com.whitemagicsoftware.keenquotes.util.CircularFifoQueue;
 
 import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.*;
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 
 /**
  * Responsible for emitting quotation marks as logical groups. This is the
@@ -40,6 +46,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
 
   private static final LexemeType[] SPACE_PUNCT = {
     SPACE, PUNCT
+  };
+
+  private static final LexemeType[] SPACE_SOT = {
+    SPACE, SOT
   };
 
   private static final LexemeType[] QUOTE_SINGLE_QUOTE_DOUBLE = {
@@ -259,7 +269,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       emit( QUOTE_CLOSING_DOUBLE, lex2 );
     }
     // < ''E>
-    else if( match( SPACE, QUOTE_SINGLE, QUOTE_SINGLE, WORD ) ) {
+    else if( match( SPACE_SOT, QUOTE_SINGLE, QUOTE_SINGLE, WORD ) ) {
       // Consume both immediately to avoid the false ambiguity <'e>.
       emit( QUOTE_OPENING_SINGLE, lex2 );
       emit( QUOTE_APOSTROPHE, lex3 );

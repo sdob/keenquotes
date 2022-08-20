@@ -1,7 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 
 /**
  * Responsible for tracking the beginning and ending offsets of a lexeme within
@@ -101,16 +101,8 @@ public final class Lexeme implements Comparable<Lexeme> {
     return mEnded;
   }
 
-  LexemeType getType() {
+  public LexemeType getType() {
     return mType;
-  }
-
-  public boolean before( final Lexeme that ) {
-    return compareTo( that ) < 0;
-  }
-
-  public boolean after( final Lexeme that ) {
-    return compareTo( that ) > 0;
   }
 
   /**

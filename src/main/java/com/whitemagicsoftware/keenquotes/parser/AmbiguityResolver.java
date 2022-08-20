@@ -1,11 +1,13 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.parser;
+
+import com.whitemagicsoftware.keenquotes.lex.LexerFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 
 /**
  * Responsible for resolving ambiguous quotes that could not be resolved during
@@ -32,7 +34,7 @@ public final class AmbiguityResolver implements Consumer<Token> {
    * @param contractions Set of known contractions (ambiguous and otherwise).
    * @param consumer     Recipient of quotation marks to curl.
    */
-  public static void analyze(
+  public static void resolve(
     final String text,
     final Contractions contractions,
     final Consumer<Token> consumer,

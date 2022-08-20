@@ -1,5 +1,5 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.util;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -17,7 +17,7 @@ import static java.text.CharacterIterator.DONE;
  * out some efficiency.
  * </p>
  */
-final class FastCharacterIterator {
+public final class FastCharacterIterator {
 
   private final String mS;
   private final int mLen;

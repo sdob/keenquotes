@@ -1,22 +1,24 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.app;
 
+import com.whitemagicsoftware.keenquotes.parser.Contractions;
+import com.whitemagicsoftware.keenquotes.parser.Curler;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static picocli.CommandLine.Help.Ansi.Style.*;
 import static picocli.CommandLine.Help.ColorScheme;
 
 /**
- * Responsible for replacing {@link Token} instances with equivalent smart
- * quotes (or straight quotes). This will inform the caller when ambiguous
- * quotes cannot be reliably resolved.
+ * Responsible for replacing straight quotes with equivalent smart quotes (or
+ * straight quotes). This will inform the caller when ambiguous quotes cannot
+ * be reliably resolved.
  */
 public final class KeenQuotes {
   private final Settings mSettings = new Settings( this );
@@ -41,7 +43,7 @@ public final class KeenQuotes {
     }
     else {
       try {
-        final var c = new Curler( contractions, PARSER_PLAIN );
+        final var c = new Curler( contractions, FILTER_PLAIN );
         out.print( convert( c ) );
       } catch( final Exception ex ) {
         ex.printStackTrace( err );

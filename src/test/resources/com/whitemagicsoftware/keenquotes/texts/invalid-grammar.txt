@@ -1,0 +1,11 @@
+But I must leave the proofs to those who 've seen 'em;\n\nBut this I heard her say, and can't be wrong\n\nAnd all may think which way their judgments lean 'em,\n\n''T is strange---the Hebrew noun which means "I am,"\n\nThe English always use to govern d--n.'
+But I must leave the proofs to those who &apos;ve seen &apos;em;\n\nBut this I heard her say, and can&apos;t be wrong\n\nAnd all may think which way their judgments lean &apos;em,\n\n&lsquo;&apos;T is strange---the Hebrew noun which means &ldquo;I am,&rdquo;\n\nThe English always use to govern d--n.&rsquo;
+
+# "'"nest"'"
+# &ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
+
+# """wtf"""
+# &ldquo;&ldquo;&ldquo;wtf&rdquo;&rdquo;&rdquo;
+
+# '''wtf'''
+# &lsquo;&lsquo;&lsquo;wtf&rsquo;&rsquo;&rsquo;

@@ -1,12 +1,12 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.parser;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.Token.NONE;
-import static com.whitemagicsoftware.keenquotes.TokenType.*;
+import static com.whitemagicsoftware.keenquotes.parser.Token.NONE;
+import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 
 /**
  * Responsible for helping determine whether ambiguous quotation marks can be
