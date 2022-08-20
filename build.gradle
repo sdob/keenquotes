@@ -40,7 +40,7 @@ application {
 version = gitVersion()
 
 def resourceDir = sourceSets.main.resources.srcDirs[0]
-final File propertiesFile = file("${resourceDir}/com/whitemagicsoftware/${applicationName}/app.properties")
+final File propertiesFile = file("${resourceDir}/com/whitemagicsoftware/${applicationName}/app/version.properties")
 propertiesFile.write("application.version=${version}")
 
 jar {

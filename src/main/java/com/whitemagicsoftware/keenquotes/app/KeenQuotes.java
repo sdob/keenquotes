@@ -78,7 +78,7 @@ public final class KeenQuotes {
    */
   private static String getVersion() {
     try {
-      final var properties = loadProperties( "app.properties" );
+      final var properties = loadProperties( "version.properties" );
       return properties.getProperty( "application.version" );
     } catch( final Exception ex ) {
       throw new RuntimeException( ex );
