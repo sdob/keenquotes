@@ -1,9 +1,11 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
+
+import com.whitemagicsoftware.keenquotes.util.FastCharacterIterator;
 
 import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.*;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
 
@@ -25,18 +27,26 @@ public final class Lexer {
   public static void lex(
     final String text,
     final Consumer<Lexeme> emitter,
-    final Consumer<FastCharacterIterator> filter ) {
+    final LexerFilter filter ) {
     lex( new FastCharacterIterator( text ), emitter, filter );
   }
 
+  @SuppressWarnings( "StatementWithEmptyBody" )
   private static void lex(
     final FastCharacterIterator i,
-    final Consumer<Lexeme> emitter,
-    final Consumer<FastCharacterIterator> filter ) {
+    final Consumer<Lexeme> consumer,
+    final LexerFilter filter ) {
+
+    // Ensure at least one lexeme precedes a quotation mark. This is because
+    // the algorithm that determines how to curl a quotation mark relies on
+    // the character to be the second of four lexemes. Four lexemes provides
+    // sufficient context to curl most straight quotes.
+    consumer.accept( Lexeme.SOT );
 
     while( i.hasNext() ) {
-      // Allow filters to skip character sequences (such as XML tags).
-      filter.accept( i );
+      // Allow filters to skip character sequences (such as XML tags). This
+      // must allow back-to-back filtering, hence the loop.
+      while( filter.test( i ) );
 
       final var index = i.index();
       final var curr = i.current();
@@ -140,9 +150,16 @@ public final class Lexer {
       assert index >= 0;
       assert curr != DONE;
 
-      emitter.accept( new Lexeme( token, index, i.index() + 1 ) );
+      consumer.accept( new Lexeme( token, index, i.index() + 1 ) );
       i.next();
     }
+
+    // Simulate an end of line and end of paragraph before the end of text.
+    // This allows the parser to match against lexemes at the end of
+    // the string to curl (without having to introduce more conditions).
+    consumer.accept( new Lexeme( EOL, i.index(), i.index() ) );
+    consumer.accept( new Lexeme( EOP, i.index(), i.index() ) );
+    consumer.accept( Lexeme.EOT );
   }
 
   /**

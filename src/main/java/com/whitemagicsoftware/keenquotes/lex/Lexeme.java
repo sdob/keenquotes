@@ -1,7 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
 
-import static com.whitemagicsoftware.keenquotes.LexemeType.FLAG;
+import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 
 /**
  * Responsible for tracking the beginning and ending offsets of a lexeme within
@@ -19,14 +19,20 @@ public final class Lexeme implements Comparable<Lexeme> {
    * Denotes there are no more lexemes: the end of text (EOT) has been reached.
    * The beginning index differentiates between EOT and SOT.
    */
-  public static final Lexeme EOT = new Lexeme( FLAG, -1, E_INDEX );
+  public static final Lexeme EOT = new Lexeme( LexemeType.EOT, -1, E_INDEX );
 
   /**
    * Denotes parsing at the start of text (SOT). This is useful to avoid
    * branching conditions while iterating. The beginning index differentiates
    * between EOT and SOT.
    */
-  public static final Lexeme SOT = new Lexeme( FLAG, 0, E_INDEX );
+  public static final Lexeme SOT = new Lexeme( LexemeType.SOT, 0, E_INDEX );
+
+  /**
+   * Denotes that a lexeme from the lexer has been obliterated and must not
+   * be considered when parsing tokens.
+   */
+  public static final Lexeme NONE = new Lexeme( LexemeType.NONE, 0, 0 );
 
   private final LexemeType mType;
   private final int mBegan;
@@ -59,7 +65,12 @@ public final class Lexeme implements Comparable<Lexeme> {
    */
   public boolean isType( final LexemeType type ) {
     assert type != null;
-    return mType == type;
+    return (mType != LexemeType.NONE || type == LexemeType.NONE) &&
+      (mType == type || type == ANY ||
+        (type == ENDING &&
+          (mType == EOL || mType == EOP || mType == LexemeType.EOT)
+        )
+      );
   }
 
   /**
@@ -74,7 +85,7 @@ public final class Lexeme implements Comparable<Lexeme> {
     assert types != null;
 
     for( final var type : types ) {
-      if( mType == type ) {
+      if( isType( type ) ) {
         return true;
       }
     }
@@ -90,24 +101,8 @@ public final class Lexeme implements Comparable<Lexeme> {
     return mEnded;
   }
 
-  boolean isSot() {
-    return mBegan == 0;
-  }
-
-  boolean isEot() {
-    return mBegan == -1;
-  }
-
-  LexemeType getType() {
+  public LexemeType getType() {
     return mType;
-  }
-
-  public boolean before( final Lexeme that ) {
-    return compareTo( that ) < 0;
-  }
-
-  public boolean after( final Lexeme that ) {
-    return compareTo( that ) > 0;
   }
 
   /**
@@ -130,7 +125,7 @@ public final class Lexeme implements Comparable<Lexeme> {
    */
   public String toString( final String text ) {
     assert text != null;
-    return text.substring( mBegan, mEnded );
+    return text.substring( mBegan, mEnded ).toLowerCase();
   }
 
   @Override

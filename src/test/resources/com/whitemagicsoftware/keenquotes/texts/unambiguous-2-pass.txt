@@ -1,0 +1,73 @@
+# ########################################################################
+# Single quotes
+# ########################################################################
+
+With 'quotes' in the middle.
+With &lsquo;quotes&rsquo; in the middle.
+
+''Cause I don't like it, 's why,' said Pat.
+&lsquo;&apos;Cause I don&apos;t like it, &apos;s why,&rsquo; said Pat.
+
+Book 'em, Danno. Rock 'n' roll. 'Cause 'twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. &apos;Cause &apos;twas the season.
+
+She's a cat y'all couldn't've known!
+She&apos;s a cat y&apos;all couldn&apos;t&apos;ve known!
+
+She said, 'Cause of death?\n\n'Old age, there's no doubt.'
+She said, &apos;Cause of death?\n\n&lsquo;Old age, there&apos;s no doubt.&rsquo;
+
+She said, 'Cause I said so!\n\n'If we're done, I've a secret.'
+She said, &apos;Cause I said so!\n\n&lsquo;If we&apos;re done, I&apos;ve a secret.&rsquo;
+
+'Twas and 'tis whate'er lay 'twixt dawn and dusk 'n River Styx.
+&apos;Twas and &apos;tis whate&apos;er lay &apos;twixt dawn and dusk &apos;n River Styx.
+
+# ########################################################################
+# Possessives
+# ########################################################################
+Sam's Sams' and the Ross's roses' thorns were prickly.
+Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
+
+# ########################################################################
+# Mixed
+# ########################################################################
+"She said, 'That's Sam's'," said the Sams' cat.
+&ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
+
+"Jane said, ''E'll be spooky, Sam's son with the jack-o'-lantern!'" said the O'Mally twins'---y'know---ghosts in unison.
+&ldquo;Jane said, &lsquo;&apos;E&apos;ll be spooky, Sam&apos;s son with the jack-o&apos;-lantern!&rsquo;&rdquo; said the O&apos;Mally twins&apos;---y&apos;know---ghosts in unison.
+
+''Sup, Doc?'
+&lsquo;&apos;Sup, Doc?&rsquo;
+
+'He's at Sam's'
+&lsquo;He&apos;s at Sam&apos;s&rsquo;
+
+'A', 'B', and 'C' are letters.
+&lsquo;A&rsquo;, &lsquo;B&rsquo;, and &lsquo;C&rsquo; are letters.
+
+'Wouldn't 'a brushed a fly off the top twig,' exclaimed Ashbrook,
+&lsquo;Wouldn&apos;t &apos;a brushed a fly off the top twig,&rsquo; exclaimed Ashbrook,
+
+"But ye've been 'nation quiet all the day though," said the lad...
+&ldquo;But ye&apos;ve been &apos;nation quiet all the day though,&rdquo; said the lad...
+
+"Not much o' fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin' man, used to say, says he, 'If e'er I sow my wheat wi'out brinin', I'm a Dutchman,' says he; an' that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren't goin' to bother mysen about Dutchmen. There's fools enoo, an' rogues enoo, wi'out lookin' i' books for 'em."
+&ldquo;Not much o&apos; fellow-creaturs, I think, Miss; all I know—my old master, as war a knowin&apos; man, used to say, says he, &lsquo;If e&apos;er I sow my wheat wi&apos;out brinin&apos;, I&apos;m a Dutchman,&rsquo; says he; an&apos; that war as much as to say as a Dutchman war a fool, or next door. Nay, nay, I aren&apos;t goin&apos; to bother mysen about Dutchmen. There&apos;s fools enoo, an&apos; rogues enoo, wi&apos;out lookin&apos; i&apos; books for &apos;em.&rdquo;
+
+But I must leave the proofs to those who 've seen 'em;\n\nBut this I heard her say, and can't be wrong\n\nAnd all may think which way their judgments lean 'em,\n\n''T is strange---the Hebrew noun which means "I am,"\n\nThe English always use to govern d--n.'
+But I must leave the proofs to those who &apos;ve seen &apos;em;\n\nBut this I heard her say, and can&apos;t be wrong\n\nAnd all may think which way their judgments lean &apos;em,\n\n&lsquo;&apos;T is strange---the Hebrew noun which means &ldquo;I am,&rdquo;\n\nThe English always use to govern d--n.&rsquo;
+
+# ########################################################################
+# Nested
+# ########################################################################
+"'"nest"'"
+&ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
+
+'Bout that time I says, 'Boys! I been thinkin' 'bout th' Universe.'
+&apos;Bout that time I says, &lsquo;Boys! I been thinkin&apos; &apos;bout th&apos; Universe.&rsquo;
+
+"You 'cause---" all fifteen years' worth.
+&ldquo;You &apos;cause---&rdquo; all fifteen years&apos; worth.
+

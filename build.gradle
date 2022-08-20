@@ -1,6 +1,6 @@
 plugins {
   id 'application'
-  id 'com.palantir.git-version' version '0.12.3'
+  id 'com.palantir.git-version' version '0.15.0'
   id "me.champeau.jmh" version "0.6.6"
 }
 
@@ -29,18 +29,18 @@ sourceSets {
 
 compileJava {
   options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-  options.compilerArgs.addAll(['--release', '11'])
+  options.compilerArgs.addAll(['--release', '17'])
 }
 
 application {
   applicationName = 'keenquotes'
-  mainClassName = "com.whitemagicsoftware.${applicationName}.KeenQuotes"
+  mainClassName = "com.whitemagicsoftware.${applicationName}.app.KeenQuotes"
 }
 
 version = gitVersion()
 
 def resourceDir = sourceSets.main.resources.srcDirs[0]
-final File propertiesFile = file("${resourceDir}/com/whitemagicsoftware/${applicationName}/app.properties")
+final File propertiesFile = file("${resourceDir}/com/whitemagicsoftware/${applicationName}/app/version.properties")
 propertiesFile.write("application.version=${version}")
 
 jar {

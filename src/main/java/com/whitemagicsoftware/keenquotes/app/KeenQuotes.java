@@ -1,22 +1,24 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.app;
 
+import com.whitemagicsoftware.keenquotes.parser.Contractions;
+import com.whitemagicsoftware.keenquotes.parser.Curler;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.whitemagicsoftware.keenquotes.ParserType.PARSER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static picocli.CommandLine.Help.Ansi.Style.*;
 import static picocli.CommandLine.Help.ColorScheme;
 
 /**
- * Responsible for replacing {@link Token} instances with equivalent smart
- * quotes (or straight quotes). This will inform the caller when ambiguous
- * quotes cannot be reliably resolved.
+ * Responsible for replacing straight quotes with equivalent smart quotes (or
+ * straight quotes). This will inform the caller when ambiguous quotes cannot
+ * be reliably resolved.
  */
 public final class KeenQuotes {
   private final Settings mSettings = new Settings( this );
@@ -41,7 +43,7 @@ public final class KeenQuotes {
     }
     else {
       try {
-        final var c = new Converter( err::println, contractions, PARSER_PLAIN );
+        final var c = new Curler( contractions, FILTER_PLAIN );
         out.print( convert( c ) );
       } catch( final Exception ex ) {
         ex.printStackTrace( err );
@@ -58,8 +60,8 @@ public final class KeenQuotes {
       .build();
   }
 
-  private String convert( final Converter converter ) throws IOException {
-    return converter.apply( new String( in.readAllBytes() ) );
+  private String convert( final Curler curler ) throws IOException {
+    return curler.apply( new String( in.readAllBytes() ) );
   }
 
   private Settings getSettings() {
@@ -76,7 +78,7 @@ public final class KeenQuotes {
    */
   private static String getVersion() {
     try {
-      final var properties = loadProperties( "app.properties" );
+      final var properties = loadProperties( "version.properties" );
       return properties.getProperty( "application.version" );
     } catch( final Exception ex ) {
       throw new RuntimeException( ex );

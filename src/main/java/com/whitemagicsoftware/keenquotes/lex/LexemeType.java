@@ -1,5 +1,5 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
-package com.whitemagicsoftware.keenquotes;
+package com.whitemagicsoftware.keenquotes.lex;
 
 /**
  * Represents the type of {@link Lexeme} parsed by the {@link Lexer}.
@@ -14,8 +14,10 @@ public enum LexemeType {
   QUOTE_DOUBLE_CLOSING,
   ESC_SINGLE,
   ESC_DOUBLE,
+  SOT,
   EOL,
   EOP,
+  EOT,
   SPACE,
   WORD,
   NUMBER,
@@ -27,5 +29,7 @@ public enum LexemeType {
   EQUALS,
   PERIOD,
   ELLIPSIS,
-  FLAG
+  ENDING,
+  ANY,
+  NONE
 }
