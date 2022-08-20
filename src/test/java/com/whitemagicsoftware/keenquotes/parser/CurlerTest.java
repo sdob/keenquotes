@@ -14,7 +14,6 @@ import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
 import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_XML;
 import static com.whitemagicsoftware.keenquotes.texts.TestResource.open;
 import static com.whitemagicsoftware.keenquotes.texts.TestResource.readPairs;
-import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -22,19 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * apostrophes.
  */
 public class CurlerTest {
-  private static final Contractions CONTRACTIONS =
-    new Contractions.Builder().build();
-
-  /**
-   * This is a single-use test that is useful for debugging.
-   */
-  @Test
-  public void test_parse_SingleLine_Parsed() {
-    final var converter = createCurler( FILTER_PLAIN );
-    out.println( converter.apply(
-      "\"---retroactively!\""
-    ) );
-  }
+  private static final String SEP = System.lineSeparator();
 
   /**
    * Tests that straight quotes are converted to curly quotes.
@@ -43,7 +30,7 @@ public class CurlerTest {
    */
   @Test
   public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
-    testCurler( createCurler( FILTER_PLAIN ), "unambiguous-2-pass.txt" );
+    testCurler( createCurler( FILTER_PLAIN ), "unambiguous-1-pass.txt" );
   }
 
   @Test
@@ -66,10 +53,9 @@ public class CurlerTest {
 
     try( final var reader = open( filename + ".txt" ) ) {
       String line;
-      final var sep = System.lineSeparator();
 
       while( (line = reader.readLine()) != null ) {
-        sb.append( line ).append( sep );
+        sb.append( line ).append( SEP );
       }
     }
 
@@ -101,6 +87,6 @@ public class CurlerTest {
   }
 
   private Function<String, String> createCurler( final FilterType parserType ) {
-    return new Curler( CONTRACTIONS, parserType );
+    return new Curler( new Contractions.Builder().build(), parserType );
   }
 }

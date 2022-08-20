@@ -13,9 +13,9 @@ import static java.text.CharacterIterator.DONE;
 
 @SuppressWarnings( "unused" )
 public class StringIterationBenchmark {
-  private final static String CHARSET =
+  private static final String CHARSET =
     "ABCDEFGHIJKLM NOPQRSTUVWXYZ abcdefghijklm nopqrstuvxyz 01234 5 6789";
-  public final static int STRLEN = 1024 * 1024;
+  public static final int STRLEN = 1024 * 1024;
 
   private static String generateText() {
     final var sb = new StringBuilder( STRLEN );

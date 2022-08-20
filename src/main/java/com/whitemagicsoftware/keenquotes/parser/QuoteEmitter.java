@@ -346,6 +346,9 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       if( mContractions.beganAmbiguously( word ) ) {
         emit( QUOTE_AMBIGUOUS_LEADING, lex2 );
       }
+      else if( mContractions.beganUnambiguously( word ) ) {
+        emit( QUOTE_APOSTROPHE, lex2 );
+      }
       else {
         emit( lex2 );
       }
