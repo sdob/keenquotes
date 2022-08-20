@@ -4,7 +4,6 @@ package com.whitemagicsoftware.keenquotes;
 import java.util.function.Consumer;
 
 import static com.whitemagicsoftware.keenquotes.LexemeType.*;
-import static com.whitemagicsoftware.keenquotes.Parser.*;
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
 
 /**
@@ -47,6 +46,74 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     QUOTE_SINGLE, QUOTE_DOUBLE
   };
 
+  /**
+   * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LEADING_QUOTE_OPENING_SINGLE =
+    new LexemeType[]{
+      LexemeType.SOT, SPACE, DASH, QUOTE_DOUBLE, OPENING_GROUP, EOL, EOP
+    };
+
+  /**
+   * Single quotes succeeded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LAGGING_QUOTE_OPENING_SINGLE =
+    new LexemeType[]{
+      WORD, ELLIPSIS, QUOTE_SINGLE, QUOTE_DOUBLE
+    };
+
+  /**
+   * Single quotes preceded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LEADING_QUOTE_CLOSING_SINGLE =
+    new LexemeType[]{
+      WORD, NUMBER, PERIOD, PUNCT, ELLIPSIS, QUOTE_DOUBLE
+    };
+
+  /**
+   * Single quotes succeeded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LAGGING_QUOTE_CLOSING_SINGLE =
+    new LexemeType[]{
+      SPACE, HYPHEN, DASH, PUNCT, PERIOD, ELLIPSIS, QUOTE_DOUBLE, CLOSING_GROUP,
+      ENDING
+    };
+
+  /**
+   * Double quotes preceded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
+    new LexemeType[]{
+      LexemeType.SOT, SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP
+    };
+
+  /**
+   * Double quotes succeeded by these {@link LexemeType}s may be opening quotes.
+   */
+  private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
+    new LexemeType[]{
+      WORD, NUMBER, DASH, ELLIPSIS, OPENING_GROUP, QUOTE_SINGLE,
+      QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE
+    };
+
+  /**
+   * Double quotes preceded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LEADING_QUOTE_CLOSING_DOUBLE =
+    new LexemeType[]{
+      WORD, NUMBER, PERIOD, PUNCT, DASH, ELLIPSIS, CLOSING_GROUP, QUOTE_SINGLE,
+      QUOTE_SINGLE_CLOSING, QUOTE_SINGLE_OPENING
+    };
+
+  /**
+   * Double quotes succeeded by these {@link LexemeType}s may be closing quotes.
+   */
+  private static final LexemeType[] LAGGING_QUOTE_CLOSING_DOUBLE =
+    new LexemeType[]{
+      SPACE, PUNCT, PERIOD, EQUALS, HYPHEN, DASH, QUOTE_SINGLE, CLOSING_GROUP,
+      ENDING
+    };
+
   private final CircularFifoQueue<Lexeme> mQ = new CircularFifoQueue<>( 4 );
   private final String mText;
   private final Contractions mContractions;
@@ -65,13 +132,22 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     mConsumer = consumer;
   }
 
+  /**
+   * Scans the given text document for quotation marks and passes them to the
+   * given {@link Token} {@link Consumer}.
+   *
+   * @param text         The prose to lex.
+   * @param contractions List of ambiguous and unambiguous contractions.
+   * @param consumer     Receives
+   */
   public static void analyze(
     final String text,
     final Contractions contractions,
-    final Consumer<Token> consumer
+    final Consumer<Token> consumer,
+    final LexerFilter filter
   ) {
     final var emitter = new QuoteEmitter( text, contractions, consumer );
-    Lexer.lex( text, emitter, filter -> false );
+    Lexer.lex( text, emitter, filter );
   }
 
   /**
@@ -208,6 +284,11 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       else if( match( QUOTE_DOUBLE, QUOTE_SINGLE, QUOTE_DOUBLE, WORD ) ) {
         emit( QUOTE_OPENING_SINGLE, lex2 );
       }
+      // <"'" >
+      else if( match( QUOTE_DOUBLE, QUOTE_SINGLE, QUOTE_DOUBLE, ANY ) ) {
+        emit( lex2 );
+      }
+      // < '" >
       else if( match( ANY, QUOTE_SINGLE, LAGGING_QUOTE_OPENING_SINGLE, ANY ) ) {
         emit( QUOTE_OPENING_SINGLE, lex2 );
       }

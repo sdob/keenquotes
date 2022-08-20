@@ -13,20 +13,26 @@ She stood 5'7".
 Alice's friend is 6'3" tall.
 Alice&apos;s friend is 6&prime;3&Prime; tall.
 
-Bob's table is 5'' × 4''.
-Bob&apos;s table is 5&Prime; × 4&Prime;.
++7.9'' is weird.
++7.9&Prime; is weird.
+
+That's a 35'×10" yacht!
+That&apos;s a 35&prime;×10&Prime; yacht!
 
 Bob's table is 5'×4'.
 Bob&apos;s table is 5&prime;×4&prime;.
 
-What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?
-What&apos;s this &lsquo;-5.5&Prime;,&rsquo; &lsquo;-10.2&Prime; cm,&rsquo; and another &lsquo;-7.25&Prime;&rsquo; thing?
+Bob's table is 5'' × 4''.
+Bob&apos;s table is 5&Prime; × 4&Prime;.
 
 'What's this -5.5'' thing?'
 &lsquo;What&apos;s this -5.5&Prime; thing?&rsquo;
 
-+7.9'' is weird.
-+7.9&Prime; is weird.
+What's this '-5.5'',' '-10.2'' cm,' and another '-7.25''' thing?
+What&apos;s this &lsquo;-5.5&Prime;,&rsquo; &lsquo;-10.2&Prime; cm,&rsquo; and another &lsquo;-7.25&Prime;&rsquo; thing?
+
+Play 12½" records.
+Play 12½&Prime; records.
 
 12" record, 5'10" height
 12&Prime; record, 5&prime;10&Prime; height
@@ -36,9 +42,6 @@ Use 11.5&Prime;×14.25&Prime; virtual paper!
 
 Angular measure 3° 5' 30" means 3 degs, 5 arcmins, & 30 arcsecs.
 Angular measure 3° 5&prime; 30&Prime; means 3 degs, 5 arcmins, & 30 arcsecs.
-
-Play 12½" records.
-Play 12½&Prime; records.
 
 # ########################################################################
 # Double quotes
@@ -85,6 +88,9 @@ Model &ldquo;T2000&rdquo;
 'It was so,' said he.
 &lsquo;It was so,&rsquo; said he.
 
+It's the 80's...
+It&apos;s the 80&apos;s...
+
 '...even better!'
 &lsquo;...even better!&rsquo;
 
@@ -115,6 +121,9 @@ She&apos;d be coming o&apos;er when the horse&apos;d gone to pasture...
 # ########################################################################
 # Outside contractions (leading and trailing, no middle)
 # ########################################################################
+Fish-'n'-chips!
+Fish-&apos;n&apos;-chips!
+
 Salt 'n' vinegar, fish-'n'-chips, sugar 'n spice!
 Salt &apos;n&apos; vinegar, fish-&apos;n&apos;-chips, sugar &apos;n spice!
 
@@ -148,9 +157,6 @@ Took place in &apos;04, yes&apos;m!
 # ########################################################################
 # Nested quotations
 # ########################################################################
-"'"nest"'"
-&ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
-
 "'Here I am,' said Sam"
 &ldquo;&lsquo;Here I am,&rsquo; said Sam&rdquo;
 

@@ -1,21 +1,21 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
-import static java.util.Collections.sort;
-import static java.util.Map.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 /**
  * Responsible for converting curly quotes to HTML entities throughout a
  * text string.
  */
 @SuppressWarnings( "unused" )
-public class Converter implements Function<String, String> {
+public class Curler implements Function<String, String> {
   public static final Map<TokenType, String> ENTITIES = ofEntries(
     entry( QUOTE_OPENING_SINGLE, "&lsquo;" ),
     entry( QUOTE_CLOSING_SINGLE, "&rsquo;" ),
@@ -47,7 +47,6 @@ public class Converter implements Function<String, String> {
     entry( QUOTE_PRIME_QUADRUPLE, "⁗" )
   );
 
-  private final Consumer<Lexeme> mUnresolved;
   private final Contractions mContractions;
   private final Map<TokenType, String> mReplacements;
   private final ParserType mParserType;
@@ -59,57 +58,47 @@ public class Converter implements Function<String, String> {
    *                   into HTML entities.
    * @param parserType Creates a parser based on document content structure.
    */
-  public Converter(
+  public Curler(
     final Consumer<Lexeme> unresolved, final ParserType parserType ) {
-    this( unresolved, new Contractions.Builder().build(), parserType );
+    this( new Contractions.Builder().build(), parserType );
   }
 
   /**
    * Maps quotes to HTML entities.
    *
-   * @param unresolved Consumes {@link Lexeme}s that could not be converted
-   *                   into HTML entities.
    * @param parserType Creates a parser based on document content structure.
    */
-  public Converter(
-    final Consumer<Lexeme> unresolved,
+  public Curler(
     final Map<TokenType, String> replacements,
     final ParserType parserType ) {
     this(
-      unresolved, new Contractions.Builder().build(), replacements, parserType
+      new Contractions.Builder().build(), replacements, parserType
     );
   }
 
   /**
    * Maps quotes to HTML entities.
    *
-   * @param unresolved Consumes {@link Lexeme}s that could not be converted
-   *                   into HTML entities.
    * @param c          Contractions listings.
    * @param parserType Creates a parser based on document content structure.
    */
-  public Converter(
-    final Consumer<Lexeme> unresolved,
+  public Curler(
     final Contractions c,
     final ParserType parserType ) {
-    this( unresolved, c, ENTITIES, parserType );
+    this( c, ENTITIES, parserType );
   }
 
   /**
    * Maps quotes to curled equivalents.
    *
-   * @param unresolved   Consumes {@link Lexeme}s that could not be converted
-   *                     into HTML entities.
    * @param c            Contractions listings.
    * @param replacements Map of recognized quotes to output types (entity or
    *                     Unicode character).
    */
-  public Converter(
-    final Consumer<Lexeme> unresolved,
+  public Curler(
     final Contractions c,
     final Map<TokenType, String> replacements,
     final ParserType parserType ) {
-    mUnresolved = unresolved;
     mContractions = c;
     mReplacements = replacements;
     mParserType = parserType;
@@ -126,27 +115,36 @@ public class Converter implements Function<String, String> {
    */
   @Override
   public String apply( final String text ) {
-    final var parser = new Parser( text, mContractions );
-    final var tokens = new ArrayList<Token>();
+    final var output = new StringBuilder( text );
+    final var offset = new AtomicInteger( 0 );
 
-    // Parse the tokens and consume all unresolved lexemes.
-    parser.parse( tokens::add, mUnresolved, mParserType.filter() );
+    AmbiguityResolver.analyze(
+      text,
+      mContractions,
+      swap( output, offset, mReplacements ),
+      mParserType.filter()
+    );
 
-    // The parser may emit tokens in any order.
-    sort( tokens );
+    return output.toString();
+  }
 
-    final var result = new StringBuilder( text.length() );
-    var position = 0;
+  public static Consumer<Token> swap(
+    final StringBuilder output,
+    final AtomicInteger offset,
+    final Map<TokenType, String> replacements
+  ) {
+    return token -> {
+      if( !token.isAmbiguous() ) {
+        final var entity = token.toString( replacements );
 
-    for( final var token : tokens ) {
-      if( position <= token.began() ) {
-        result.append( text, position, token.began() );
-        result.append( mReplacements.get( token.getType() ) );
+        output.replace(
+          token.began() + offset.get(),
+          token.ended() + offset.get(),
+          entity
+        );
+
+        offset.addAndGet( entity.length() - (token.ended() - token.began()) );
       }
-
-      position = token.ended();
-    }
-
-    return result.append( text.substring( position ) ).toString();
+    };
   }
 }

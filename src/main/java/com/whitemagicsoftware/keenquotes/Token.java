@@ -60,7 +60,7 @@ final class Token implements Comparable<Token>, Stem {
     assert token != null;
     assert token != NONE;
 
-    return mEnded < token.mBegan;
+    return mEnded <= token.mBegan;
   }
 
   /**

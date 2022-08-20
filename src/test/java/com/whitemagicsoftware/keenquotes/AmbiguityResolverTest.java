@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.whitemagicsoftware.keenquotes.Curler.ENTITIES;
+import static com.whitemagicsoftware.keenquotes.Curler.swap;
 import static com.whitemagicsoftware.keenquotes.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +17,7 @@ class AmbiguityResolverTest {
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
     final var couplets = readPairs(
-      "invalid-grammar.txt" );
+      "unambiguous-2-pass.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();
@@ -23,18 +25,15 @@ class AmbiguityResolverTest {
       final var expected = couplet.item2();
       final var offset = new AtomicInteger( 0 );
 
-      System.out.println( "---------------------" );
-      System.out.println( input );
-
       AmbiguityResolver.analyze(
         input,
         CONTRACTIONS,
-        System.out::println
+        swap( output, offset, ENTITIES ),
+        filter -> false
       );
 
-//      final var actual = output.toString();
-
-      //assertEquals( expected, actual );
+      final var actual = output.toString();
+      assertEquals( expected, actual );
     } );
   }
 }

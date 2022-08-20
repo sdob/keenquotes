@@ -5,9 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
-import static com.whitemagicsoftware.keenquotes.Converter.ENTITIES;
+import static com.whitemagicsoftware.keenquotes.Curler.ENTITIES;
 import static com.whitemagicsoftware.keenquotes.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +16,7 @@ class QuoteEmitterTest {
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
     final var couplets = readPairs(
-      "unambiguous-2-pass.txt" );
+      "unambiguous-1-pass.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();
@@ -28,43 +27,12 @@ class QuoteEmitterTest {
       QuoteEmitter.analyze(
         input,
         CONTRACTIONS,
-        tokenConsumer( output, offset )
+        Curler.swap( output, offset, ENTITIES ),
+        filter -> false
       );
 
       final var actual = output.toString();
       assertEquals( expected, actual );
     } );
-  }
-
-  @Test
-  void test_Emit_SingleInput_QuotesEmitted() {
-    final var input = "\"'\"nest\"'\"";
-    final var output = new StringBuilder( input );
-    final var offset = new AtomicInteger( 0 );
-
-    QuoteEmitter.analyze(
-      input,
-      CONTRACTIONS,
-      tokenConsumer( output, offset )
-    );
-  }
-
-  private static Consumer<Token> tokenConsumer(
-    final StringBuilder output,
-    final AtomicInteger offset
-  ) {
-    return token -> {
-      if( !token.isAmbiguous() ) {
-        final var entity = token.toString( ENTITIES );
-
-        output.replace(
-          token.began() + offset.get(),
-          token.ended() + offset.get(),
-          entity
-        );
-
-        offset.addAndGet( entity.length() - (token.ended() - token.began()) );
-      }
-    };
   }
 }

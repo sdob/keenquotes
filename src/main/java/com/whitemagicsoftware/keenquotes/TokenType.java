@@ -2,7 +2,7 @@
 package com.whitemagicsoftware.keenquotes;
 
 /**
- * The {@link Parser} emits these token types.
+ * Identifies the type of quotation mark found while parsing prose.
  */
 enum TokenType {
   QUOTE_OPENING_SINGLE( "opening-single" ),

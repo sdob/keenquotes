@@ -41,7 +41,7 @@ public final class KeenQuotes {
     }
     else {
       try {
-        final var c = new Converter( err::println, contractions, PARSER_PLAIN );
+        final var c = new Curler( contractions, PARSER_PLAIN );
         out.print( convert( c ) );
       } catch( final Exception ex ) {
         ex.printStackTrace( err );
@@ -58,8 +58,8 @@ public final class KeenQuotes {
       .build();
   }
 
-  private String convert( final Converter converter ) throws IOException {
-    return converter.apply( new String( in.readAllBytes() ) );
+  private String convert( final Curler curler ) throws IOException {
+    return curler.apply( new String( in.readAllBytes() ) );
   }
 
   private Settings getSettings() {

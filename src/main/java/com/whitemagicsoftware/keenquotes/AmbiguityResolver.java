@@ -1,21 +1,11 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes;
 
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 import static com.whitemagicsoftware.keenquotes.TokenType.*;
-import static java.lang.String.valueOf;
-import static javax.xml.transform.OutputKeys.INDENT;
-import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 
 /**
  * Responsible for resolving ambiguous quotes that could not be resolved during
@@ -30,18 +20,26 @@ public final class AmbiguityResolver implements Consumer<Token> {
   private final Consumer<Token> mConsumer;
   private Tree<Token> mTree = new Tree<>();
 
-  public AmbiguityResolver( final Consumer<Token> consumer ) {
+  private AmbiguityResolver( final Consumer<Token> consumer ) {
     assert consumer != null;
     mConsumer = consumer;
   }
 
+  /**
+   * Entry point into the straight quote disambiguation algorithm.
+   *
+   * @param text         Document to curl.
+   * @param contractions Set of known contractions (ambiguous and otherwise).
+   * @param consumer     Recipient of quotation marks to curl.
+   */
   public static void analyze(
     final String text,
     final Contractions contractions,
-    final Consumer<Token> consumer ) {
+    final Consumer<Token> consumer,
+    final LexerFilter filter ) {
     final var resolver = new AmbiguityResolver( consumer );
 
-    QuoteEmitter.analyze( text, contractions, resolver );
+    QuoteEmitter.analyze( text, contractions, resolver, filter );
     resolver.resolve();
   }
 
@@ -73,85 +71,60 @@ public final class AmbiguityResolver implements Consumer<Token> {
    * is called after the document's AST is built.
    */
   private void resolve() {
-    Tree<Token> parent;
+    final var tokens = new ArrayList<Token>();
 
-    // Search for the tree's root.
-    while( (parent = mTree.parent()) != null ) {
-      mTree = parent;
-    }
+    // Opening and closing quotes aren't necessarily balanced, meaning the tree
+    // could be dangling anywhere below the root. We need to traverse the whole
+    // structure, every token from the top-down, when visiting breadth-first.
+    mTree = mTree.root();
 
-    visit( mTree );
+    // Replace the tree's tokens in situ with their deduced quotation mark.
+    mTree.visit( this::disambiguate );
 
-    // Show me the money.
-    System.out.println( format( mTree.toXml() ) );
+    // The tokens are not necessarily replaced or constructed in order.
+    mTree.visit( tree -> tree.iterateTokens( tokens::add ) );
+
+    Collections.sort( tokens );
+
+    // Relay the tokens, in order, for updating the parsed document.
+    tokens.forEach( mConsumer );
   }
 
   /**
-   * Performs an iterative, breadth-first visit of every tree and subtree in
-   * the nested hierarchy of quotations.
+   * The workhorse logic, which replaces ambiguous quotation marks with
+   * resolvable equivalents. Any unresolved quotation marks are left in the
+   * data structure, marked as an ambiguous form.
    *
-   * @param tree The {@link Tree}'s root node.
-   */
-  private void visit( final Tree<Token> tree ) {
-    final var queue = new LinkedList<Tree<Token>>();
-    queue.add( tree );
-
-    while( !queue.isEmpty() ) {
-      final var current = queue.poll();
-
-      disambiguate( current );
-
-      queue.addAll( current.subtrees() );
-    }
-  }
-
-  /**
    * @param tree The {@link Tree} that may contain ambiguous tokens to resolve.
    */
   private void disambiguate( final Tree<Token> tree ) {
     final var countLeading = tree.count( QUOTE_AMBIGUOUS_LEADING );
     final var countLagging = tree.count( QUOTE_AMBIGUOUS_LAGGING );
+    final var countUnknown = tree.count( AMBIGUOUS );
 
-    if( countLeading == 0 && countLagging == 1 &&
-      tree.hasOpeningSingleQuote() && !tree.hasClosingSingleQuote() ) {
-      tree.replaceAll( QUOTE_AMBIGUOUS_LAGGING, QUOTE_CLOSING_SINGLE );
+    if( tree.hasOpeningSingleQuote() && !tree.hasClosingSingleQuote() ) {
+      if( countUnknown == 0 && countLeading == 0 && countLagging == 1 ) {
+        tree.replaceAll( QUOTE_AMBIGUOUS_LAGGING, QUOTE_CLOSING_SINGLE );
+      }
+      else if( countUnknown == 1 && countLagging == 0 ) {
+        tree.replaceAll( AMBIGUOUS, QUOTE_CLOSING_SINGLE );
+      }
     }
 
-    if( countLeading == 1 && countLagging == 0 &&
+    if( countUnknown == 0 && countLeading == 1 && countLagging == 0 &&
       !tree.hasOpeningSingleQuote() && tree.hasClosingSingleQuote() ) {
       tree.replaceAll( QUOTE_AMBIGUOUS_LEADING, QUOTE_OPENING_SINGLE );
     }
 
     if( !tree.hasOpeningSingleQuote() && !tree.hasClosingSingleQuote() ||
       tree.isBalanced() ) {
-      if( countLeading > 0 && countLagging == 0 ) {
+      if( countUnknown == 0 && countLeading > 0 && countLagging == 0 ) {
         tree.replaceAll( QUOTE_AMBIGUOUS_LEADING, QUOTE_APOSTROPHE );
       }
 
-      if( countLeading == 0 && countLagging > 0 ) {
+      if( countUnknown == 0 && countLeading == 0 && countLagging > 0 ) {
         tree.replaceAll( QUOTE_AMBIGUOUS_LAGGING, QUOTE_APOSTROPHE );
       }
-    }
-  }
-
-  private static String format( final String xml ) {
-    try {
-      final var dbf = DocumentBuilderFactory.newInstance();
-      final var db = dbf.newDocumentBuilder();
-      final var is = new InputSource( new StringReader( xml ) );
-      final var source = new DOMSource( db.parse( is ) );
-      final var result = new StreamResult( new StringWriter() );
-      final var t = TransformerFactory.newInstance().newTransformer();
-
-      t.setOutputProperty( OMIT_XML_DECLARATION, "yes" );
-      t.setOutputProperty( INDENT, "yes" );
-      t.setOutputProperty( "{http://xml.apache.org/xslt}indent-amount",
-                           valueOf( 2 ) );
-      t.transform( source, result );
-
-      return result.getWriter().toString();
-    } catch( final Exception e ) {
-      return xml;
     }
   }
 }

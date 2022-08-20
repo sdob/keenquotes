@@ -135,6 +135,6 @@ public class KeenQuotesTest {
 
   private Function<String, String> createConverter(
     final Consumer<Lexeme> unresolved, final ParserType parserType ) {
-    return new Converter( unresolved, parserType );
+    return new Curler( unresolved, parserType );
   }
 }
