@@ -1,18 +1,22 @@
 # KeenQuotes
 
-A Java library to convert straight quotes into curly quotes.
+KeenQuotes converts straight quotes into curly quotes.
 
 # Requirements
 
-Download and install OpenJDK 16 or greater.
+Download and install Standard JRE 17:
+
+* [Java 17](https://bell-sw.com/pages/downloads/#/java-17-lts) or newer.
 
 # Download
 
-Download the `.jar` file from this repository.
+Download the application:
+
+* [keenquotes.jar](https://github.com/DaveJarvis/keenquotes/releases/latest/download/keenquotes.jar)
 
 # Run
 
-Run the software as follows:
+Run the software from the command-line as follows:
 
     java -jar keenquotes.jar < src.txt > dst.txt 2> err.txt
 
@@ -28,32 +32,17 @@ For help, run the software as follows:
 
 # Software Design
 
-The code models a lightweight natural language parser that performs a
-one-pass traversal through prose to emit single quotes as curly quotes.
-The algorithm follows:
+The software models a lightweight natural language parser that performs a
+multi-stage traversal through prose:
 
-1. Produce lexemes (e.g., words, numbers, and periods) using lexer.
-1. Add lexemes to a 3-element circular queue, capturing either side of a
-quotation mark.
-1. Tokenize all unambiguous single/double quotes, primes, and apostrophes.
-1. Resolve as many ambiguous quotation marks as possible.
-1. Emit unresolved conversions.
+1. Tokenize lexemes (e.g., words, numbers, and periods).
+1. Emit all quotation mark characters (single, double, primes, etc.).
+1. Build an abstract syntax tree representing nested quotations.
+1. Resolve as many ambiguous straight single quotes as possible.
 
-See the Lexer and Parser classes for details.
+See the source code for details.
 
 # Build
 
-Clone the repository and change to the root directory as usual, then run:
-
-    gradle clean build
-
-## Library
-
-To build a library for use with other software applications, run:
-
-    gradle clean lib
-
-Find the library at:
-
-    build/lib/keenquotes.jar
+See [BUILD.md](BUILD.md) for detailed build instructions.
 
