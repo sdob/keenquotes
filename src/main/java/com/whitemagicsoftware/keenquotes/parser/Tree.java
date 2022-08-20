@@ -249,6 +249,7 @@ class Tree<T extends Token> implements Stem {
    *
    * @return The XMl representation of this object.
    */
+  @Override
   public String toXml() {
     final var sb = new StringBuilder( 128 );
     final var name = parent() == null ? "root" : "tree";

@@ -182,10 +182,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     if( match( WORD_PERIOD_NUMBER, QUOTE_SINGLE, WORD, ANY ) ) {
       emit( QUOTE_APOSTROPHE, lex2 );
     }
-    // <'n'>, <'N'>
+    // <'n'>, <'N'>, <'owlin'>
     else if(
       match( ANY, QUOTE_SINGLE, WORD, QUOTE_SINGLE ) &&
-        "n".equalsIgnoreCase( lex3.toString( mText ) )
+        mContractions.beganEndedUmambiguously(lex3.toString(mText))
     ) {
       emit( QUOTE_APOSTROPHE, lex2 );
       emit( QUOTE_APOSTROPHE, lex4 );

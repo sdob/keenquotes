@@ -46,9 +46,9 @@ public final class AmbiguityResolver implements Consumer<Token> {
   }
 
   /**
-   * Accepts only opening, closing, and ambiguous {@link Token} types.
+   * Accepts opening, closing, ambiguous, and apostrophe {@link Token} types.
    *
-   * @param token the input argument
+   * @param token The {@link Token} to be resolved.
    */
   @Override
   public void accept( final Token token ) {

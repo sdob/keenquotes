@@ -2,7 +2,6 @@
 package com.whitemagicsoftware.keenquotes.parser;
 
 import com.whitemagicsoftware.keenquotes.lex.FilterType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -39,7 +38,7 @@ public class CurlerTest {
   }
 
   /**
-   * Re-enable using <a href="https://www.gutenberg.org/">Project Gutenberg</a>
+   * Re-enable using <a href="https://www.gutenberg.org">Project Gutenberg</a>
    * texts.
    *
    * @param filename A plain text file to convert.
@@ -47,7 +46,7 @@ public class CurlerTest {
    */
   @ParameterizedTest
   @ValueSource( strings = {"habberton"} )
-  @Disabled
+  //@Disabled
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
 

@@ -1,6 +1,3 @@
-# "'"nest"'"
-# &ldquo;&lsquo;&ldquo;nest&rdquo;&rsquo;&rdquo;
-
 # """wtf"""
 # &ldquo;&ldquo;&ldquo;wtf&rdquo;&rdquo;&rdquo;
 

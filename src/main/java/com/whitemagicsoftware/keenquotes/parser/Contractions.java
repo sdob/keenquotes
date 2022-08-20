@@ -28,10 +28,16 @@ public class Contractions {
    */
   @SuppressWarnings( "unused" )
   public static class Builder {
+    private final Set<String> mBeganEndedUnambiguous = new HashSet<>();
     private final Set<String> mBeganUnambiguous = new HashSet<>();
     private final Set<String> mEndedUnambiguous = new HashSet<>();
     private final Set<String> mBeganAmbiguous = new HashSet<>();
     private final Set<String> mEndedAmbiguous = new HashSet<>();
+
+    public Builder withBeganEndedUnambiguous( final List<String> words ) {
+      mBeganEndedUnambiguous.addAll( words );
+      return this;
+    }
 
     public Builder withBeganUnambiguous( final List<String> words ) {
       mBeganUnambiguous.addAll( words );
@@ -60,6 +66,7 @@ public class Contractions {
      * @return {@link Contractions} suitable for use with parsing text.
      */
     public Contractions build() {
+      mBeganEndedUnambiguous.addAll( BEGAN_ENDED_UNAMBIGUOUS );
       mBeganUnambiguous.addAll( BEGAN_UNAMBIGUOUS );
       mEndedUnambiguous.addAll( ENDED_UNAMBIGUOUS );
       mBeganAmbiguous.addAll( BEGAN_AMBIGUOUS );
@@ -87,6 +94,11 @@ public class Contractions {
       assert fallback != null;
       return src.isEmpty() ? fallback : emptySet();
     }
+  }
+
+  public boolean beganEndedUmambiguously( final String word ) {
+    assert word != null;
+    return getBeganEndedUnambiguous().contains( word );
   }
 
   /**
@@ -134,6 +146,10 @@ public class Contractions {
       check.endsWith( "x" ) || (check.length() > 1 && check.endsWith( "n" ));
   }
 
+  private Set<String> getBeganEndedUnambiguous() {
+    return mBuilder.mBeganEndedUnambiguous;
+  }
+
   private Set<String> getBeganUnambiguous() {
     return mBuilder.mBeganUnambiguous;
   }
@@ -149,7 +165,6 @@ public class Contractions {
   private Set<String> getEndedAmbiguous() {
     return mBuilder.mEndedAmbiguous;
   }
-
 
   @Override
   public String toString() {
@@ -172,6 +187,18 @@ public class Contractions {
 
     return sb.toString();
   }
+
+  /**
+   * Words having a straight apostrophe at the beginning and end.
+   */
+  private static final Set<String> BEGAN_ENDED_UNAMBIGUOUS = Set.of(
+    // fish 'n' chips
+    "n",
+    // howling
+    "owlin",
+    // exploding
+    "xplodin"
+  );
 
   /**
    * Words having a straight apostrophe that cannot be mistaken for an
@@ -2330,6 +2357,7 @@ public class Contractions {
     "neutralizin",
     "nibblin",
     "nippin",
+    "noffin",
     "noddin",
     "nominatin",
     "nonconformin",
