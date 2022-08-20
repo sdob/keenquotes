@@ -16,18 +16,17 @@ class AmbiguityResolverTest {
   private final Contractions CONTRACTIONS = new Contractions.Builder().build();
 
   @Test
-  @Disabled
   void test_Resolve_1Pass_QuotesReplaced() throws IOException {
     test( "unambiguous-1-pass.txt" );
   }
 
   @Test
-  @Disabled
   void test_Resolve_2Pass_QuotesReplaced() throws IOException {
     test( "unambiguous-2-pass.txt" );
   }
 
   @Test
+  @Disabled
   void test_Resolve_InvalidGrammar_AmbiguousRemain() throws IOException {
     test( "invalid-grammar.txt" );
   }

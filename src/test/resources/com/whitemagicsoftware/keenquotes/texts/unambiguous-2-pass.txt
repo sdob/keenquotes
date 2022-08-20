@@ -1,7 +1,6 @@
 # ########################################################################
 # Single quotes
 # ########################################################################
-
 With 'quotes' in the middle.
 With &lsquo;quotes&rsquo; in the middle.
 
@@ -32,6 +31,9 @@ Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 # ########################################################################
 # Mixed
 # ########################################################################
+#"Granpa Harry 'spects you, Miss Mayton."
+#&ldquo;Granpa Harry &apos;spects you, Miss Mayton.&rdquo;
+
 "She said, 'That's Sam's'," said the Sams' cat.
 &ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.
 
@@ -70,4 +72,3 @@ But I must leave the proofs to those who &apos;ve seen &apos;em;\n\nBut this I h
 
 "You 'cause---" all fifteen years' worth.
 &ldquo;You &apos;cause---&rdquo; all fifteen years&apos; worth.
-

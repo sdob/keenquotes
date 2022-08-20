@@ -266,18 +266,28 @@ public class Contractions {
     "dillo",
     // them
     "em",
+    // themselves,
+    "emselves",
+    // affectionate
+    "fectionate",
     // afraid
     "fraid",
+    // ???
+    "funder",
     // against
     "gainst",
     // him
     "im",
+    // little
+    "ittle",
     // and
     "n",
     // beneath
     "neath",
     // another
     "nother",
+    // another
+    "nudder",
     // enough
     "nuff",
     // gonna
@@ -287,6 +297,8 @@ public class Contractions {
     "oss",
     // horses
     "osses",
+    // splash
+    "plash",
     // upon
     "pon",
     // that's|is
@@ -294,6 +306,12 @@ public class Contractions {
     "sblood",
     // excuse
     "scuse",
+    // suppose
+    "spose",
+    // suspect|expect
+    "spect",
+    // suspects|expects
+    "spects",
     "sfar",
     "sfoot",
     // considered
@@ -306,9 +324,15 @@ public class Contractions {
     "t",
     "taint",
     "tain",
+    "tay",
     "til",
     "tis",
+    "tish",
     "tisn",
+    // stomach
+    "tomach",
+    // stormed
+    "tormed",
     "tshall",
     "twas",
     "twasn",
@@ -339,16 +363,24 @@ public class Contractions {
     "cause",
     // what you|choo choo train
     "choo",
+    // across|angry
+    "cross",
     // he|e pluribus unum
     "e",
     // here|earlier
     "ere",
     // afro|to and fro
     "fro",
+    // unfounded|founded
+    "founded",
     // whore|ho ho!
     "ho",
+    // will|sick
+    "ill",
     // okay|letter K
     "kay",
+    // molasses|women
+    "lasses",
     // lo|lo and behold
     "lo",
     // leaned|enlisted
@@ -365,6 +397,8 @@ public class Contractions {
     "twill",
     // them|utterance
     "um",
+    // away|direction
+    "way",
     // is that|Iranian village
     "zat"
   );
