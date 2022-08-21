@@ -2,6 +2,7 @@
 package com.whitemagicsoftware.keenquotes.parser;
 
 import com.whitemagicsoftware.keenquotes.lex.FilterType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -45,12 +46,12 @@ public class CurlerTest {
    * @throws IOException Could not find, open, or read from text file.
    */
   @ParameterizedTest
-  @ValueSource( strings = {"habberton"} )
-  //@Disabled
+  @ValueSource( strings = {"autonoma"} )
+  @Disabled
   void test_Parse_Story_Converted( final String filename ) throws IOException {
     final var sb = new StringBuilder( 2 ^ 20 );
 
-    try( final var reader = open( filename + ".txt" ) ) {
+    try( final var reader = open( filename + ".html" ) ) {
       String line;
 
       while( (line = reader.readLine()) != null ) {
@@ -58,8 +59,8 @@ public class CurlerTest {
       }
     }
 
-    final var converter = createCurler( FILTER_PLAIN );
-    System.out.println( converter.apply( sb.toString() ) );
+    final var curler = createCurler( FILTER_XML );
+    System.out.println( curler.apply( sb.toString() ) );
   }
 
   /**

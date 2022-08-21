@@ -393,7 +393,7 @@ public class Contractions {
     "round",
     // what's up|to eat
     "sup",
-    // cannot (tan't)|melanin
+    // cannot (tan't)|colour
     "tan",
     // still|turn soil
     "till",

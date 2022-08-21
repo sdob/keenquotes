@@ -61,10 +61,7 @@ public class Curler implements Function<String, String> {
    * @param c          Contractions listings.
    * @param parserType Creates a parser based on document content structure.
    */
-  public Curler(
-    final Contractions c,
-    final FilterType parserType
-  ) {
+  public Curler( final Contractions c, final FilterType parserType ) {
     this( c, ENTITIES, parserType );
   }
 

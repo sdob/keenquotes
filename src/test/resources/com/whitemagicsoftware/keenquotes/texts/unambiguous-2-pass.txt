@@ -31,8 +31,8 @@ Sam&apos;s Sams&apos; and the Ross&apos;s roses&apos; thorns were prickly.
 # ########################################################################
 # Mixed
 # ########################################################################
-#"Granpa Harry 'spects you, Miss Mayton."
-#&ldquo;Granpa Harry &apos;spects you, Miss Mayton.&rdquo;
+"Granpa Harry 'spects you, Miss Mayton."
+&ldquo;Granpa Harry &apos;spects you, Miss Mayton.&rdquo;
 
 "She said, 'That's Sam's'," said the Sams' cat.
 &ldquo;She said, &lsquo;That&apos;s Sam&apos;s&rsquo;,&rdquo; said the Sams&apos; cat.

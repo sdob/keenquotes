@@ -5,6 +5,7 @@ import com.whitemagicsoftware.keenquotes.lex.LexerFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
@@ -88,8 +89,33 @@ public final class AmbiguityResolver implements Consumer<Token> {
 
     Collections.sort( tokens );
 
+    // All laggards appearing before the first leader are apostrophes.
+    resolve( tokens );
+
+    // Replacing laggards may have made leaders resolvable.
+    mTree.visit( this::disambiguate );
+
     // Relay the tokens, in order, for updating the parsed document.
     tokens.forEach( mConsumer );
+  }
+
+  /**
+   * Converts all laggards into apostrophes up until the first leader is found.
+   *
+   * @param tokens The list of sorted {@link Token}s to convert.
+   */
+  private void resolve( final List<Token> tokens ) {
+    assert tokens != null;
+
+    for( final var token : tokens ) {
+      if( token.isType( QUOTE_AMBIGUOUS_LEADING ) ) {
+        // Once a leader quote is found, any laggard could be a closing quote.
+        break;
+      }
+      else if( token.isType( QUOTE_AMBIGUOUS_LAGGING ) ) {
+        token.setTokenType( QUOTE_APOSTROPHE );
+      }
+    }
   }
 
   /**
