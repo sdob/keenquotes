@@ -393,6 +393,10 @@ public class Contractions {
     "round",
     // what's up|to eat
     "sup",
+    // cannot (tan't)|melanin
+    "tan",
+    // still|turn soil
+    "till",
     // it will|twill fabric
     "twill",
     // them|utterance
