@@ -169,14 +169,18 @@ public class Contractions {
   @Override
   public String toString() {
     return
-      toString( getBeganAmbiguous(), "Ambiguous Began", "'%s" ) +
-        toString( getEndedAmbiguous(), "Ambiguous Ended", "%s'" ) +
+      toString( getBeganEndedUnambiguous(), "Unambiguous Began/Ended", "'%s" ) +
         toString( getBeganUnambiguous(), "Unambiguous Began", "'%s" ) +
-        toString( getEndedUnambiguous(), "Unambiguous Ended", "%s'" );
+        toString( getEndedUnambiguous(), "Unambiguous Ended", "%s'" ) +
+        toString( getBeganAmbiguous(), "Ambiguous Began", "'%s" ) +
+        toString( getEndedAmbiguous(), "Ambiguous Ended", "%s'" );
   }
 
   private String toString(
-    final Set<String> words, final String category, final String fmt ) {
+    final Set<String> words,
+    final String category,
+    final String fmt
+  ) {
     final var sb = new StringBuilder( 16384 );
     final var newline = System.lineSeparator();
     final var list = new ArrayList<>( words );
