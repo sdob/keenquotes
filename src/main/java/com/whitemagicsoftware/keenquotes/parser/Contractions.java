@@ -1,14 +1,11 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes.parser;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.String.format;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.sort;
 
 /**
  * Placeholder for various types of contractions.
@@ -166,38 +163,19 @@ public class Contractions {
     return mBuilder.mEndedAmbiguous;
   }
 
-  @Override
-  public String toString() {
-    return
-      toString( getBeganAmbiguous(), "Ambiguous Began", "'%s" ) +
-        toString( getEndedAmbiguous(), "Ambiguous Ended", "%s'" ) +
-        toString( getBeganUnambiguous(), "Unambiguous Began", "'%s" ) +
-        toString( getEndedUnambiguous(), "Unambiguous Ended", "%s'" );
-  }
-
-  private String toString(
-    final Set<String> words, final String category, final String fmt ) {
-    final var sb = new StringBuilder( 16384 );
-    final var newline = System.lineSeparator();
-    final var list = new ArrayList<>( words );
-
-    sort( list );
-    sb.append( format( "%n%s%n", category ) );
-    list.forEach( ( s ) -> sb.append( format( fmt, s ) ).append( newline ) );
-
-    return sb.toString();
-  }
-
   /**
    * Words having a straight apostrophe at the beginning and end.
    */
   private static final Set<String> BEGAN_ENDED_UNAMBIGUOUS = Set.of(
+    // hacking
     "ackin",
+    // hammering
     "ammerin",
     // hankering
     "ankerin",
     // having
     "avin",
+    // hawking
     "awkin",
     "cepin",
     "ceppin",
@@ -206,38 +184,61 @@ public class Contractions {
     "eadin",
     "eavin",
     "elpin",
+    // hindering
     "inderin",
     "lectioneerin",
+    // amazing
     "mazin",
+    // remembering
     "memberin",
     // fish 'n' chips
     "n",
+    // hobbling
     "obblin",
+    // holding
     "oldin",
+    // hollering
     "ollerin",
+    // hopping
     "oppin",
     "ousekeepin",
+    // howling
     "owlin",
     "sceptin",
     "spectin",
     "splainin",
+    // supposing
     "sposin",
     "sputin",
     "stonishin",
+    // destroying
     "stroyin",
+    // persuading
     "suadin",
     "titivatin",
+    // introducing
     "troducin",
+    // hugging
     "uggin",
+    // hulking
     "ulkin",
+    // humbugging
     "umbuggin",
+    // humiliating
     "umiliatin",
+    // humming
     "ummin",
+    // humping
     "umpin",
+    // hurrying
     "urryin",
+    // hurting
     "urtin",
+    // hustling
     "ustlin",
+    // investigating
     "vestigatin",
+    // inviting
     "vitin",
     "xceptin",
     "xplainin",
