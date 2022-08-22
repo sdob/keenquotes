@@ -374,6 +374,8 @@ public class Contractions {
     "twou",
     "twould",
     "twouldn",
+    // one
+    "un",
     // have
     "ve",
     // exactly

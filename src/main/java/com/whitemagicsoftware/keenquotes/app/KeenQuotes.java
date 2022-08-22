@@ -12,6 +12,7 @@ import java.util.Properties;
 import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
 import static java.lang.String.format;
 import static java.lang.System.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.Help.Ansi.Style.*;
 import static picocli.CommandLine.Help.ColorScheme;
 
@@ -61,7 +62,7 @@ public final class KeenQuotes {
   }
 
   private String convert( final Curler curler ) throws IOException {
-    return curler.apply( new String( in.readAllBytes() ) );
+    return curler.apply( new String( in.readAllBytes(), UTF_8 ) );
   }
 
   private Settings getSettings() {
