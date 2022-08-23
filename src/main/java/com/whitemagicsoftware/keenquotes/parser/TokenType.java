@@ -18,7 +18,8 @@ enum TokenType {
   QUOTE_PRIME_QUADRUPLE,
   QUOTE_AMBIGUOUS_LEADING( "leading-ambiguous" ),
   QUOTE_AMBIGUOUS_LAGGING( "lagging-ambiguous" ),
-  AMBIGUOUS( "ambiguous" ),
+  QUOTE_AMBIGUOUS_DOUBLE( "double-ambiguous" ),
+  QUOTE_AMBIGUOUS_SINGLE( "single-ambiguous" ),
   NONE;
 
   private final String mName;

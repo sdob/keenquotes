@@ -1,6 +1,65 @@
 # ########################################################################
+# Double quotes
+# ########################################################################
+
+""
+&ldquo;&rdquo;
+
+"" ""
+&ldquo;&rdquo; &ldquo;&rdquo;
+
+""""
+&ldquo;&rdquo;&ldquo;&rdquo;
+
+" "
+&ldquo; &rdquo;
+
+" " " "
+&ldquo; &rdquo; &ldquo; &rdquo;
+
+"?"
+&ldquo;?&rdquo;
+
+"!"
+&ldquo;!&rdquo;
+
+"‽"
+&ldquo;‽&rdquo;
+
+"...?!"
+&ldquo;...?!&rdquo;
+
+" ... "
+&ldquo; ... &rdquo;
+
+# ########################################################################
 # Single quotes
 # ########################################################################
+
+' '
+&lsquo; &rsquo;
+
+' ' ' '
+&lsquo; &rsquo; &lsquo; &rsquo;
+
+' ... '
+&lsquo; ... &rsquo;
+
+' ... ' ' ... '
+&lsquo; ... &rsquo; &lsquo; ... &rsquo;
+
+'?'
+&lsquo;?&rsquo;
+
+'!'
+&lsquo;!&rsquo;
+
+'?!'
+&lsquo;?!&rsquo;
+
+'‽'
+&lsquo;‽&rsquo;
+
 With 'quotes' in the middle.
 With &lsquo;quotes&rsquo; in the middle.
 

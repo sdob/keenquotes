@@ -100,7 +100,8 @@ final class Token implements Comparable<Token>, Stem {
   }
 
   boolean isAmbiguous() {
-    return mTokenType == AMBIGUOUS ||
+    return mTokenType == QUOTE_AMBIGUOUS_SINGLE ||
+      mTokenType == QUOTE_AMBIGUOUS_DOUBLE ||
       mTokenType == QUOTE_AMBIGUOUS_LEADING ||
       mTokenType == QUOTE_AMBIGUOUS_LAGGING;
   }

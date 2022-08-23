@@ -52,10 +52,6 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     SPACE, SOT
   };
 
-  private static final LexemeType[] QUOTE_SINGLE_QUOTE_DOUBLE = {
-    QUOTE_SINGLE, QUOTE_DOUBLE
-  };
-
   /**
    * Single quotes preceded by these {@link LexemeType}s may be opening quotes.
    */
@@ -102,7 +98,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
    */
   private static final LexemeType[] LAGGING_QUOTE_OPENING_DOUBLE =
     new LexemeType[]{
-      WORD, NUMBER, DASH, ELLIPSIS, OPENING_GROUP, QUOTE_SINGLE,
+      WORD, PUNCT, NUMBER, DASH, ELLIPSIS, OPENING_GROUP, QUOTE_SINGLE,
       QUOTE_SINGLE_OPENING, QUOTE_SINGLE_CLOSING, QUOTE_DOUBLE
     };
 
@@ -185,7 +181,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     // <'n'>, <'N'>, <'owlin'>
     else if(
       match( ANY, QUOTE_SINGLE, WORD, QUOTE_SINGLE ) &&
-        mContractions.beganEndedUmambiguously(lex3.toString(mText))
+        mContractions.beganEndedUnambiguously( lex3.toString( mText ) )
     ) {
       emit( QUOTE_APOSTROPHE, lex2 );
       emit( QUOTE_APOSTROPHE, lex4 );
@@ -296,7 +292,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
       }
       // <"'" >
       else if( match( QUOTE_DOUBLE, QUOTE_SINGLE, QUOTE_DOUBLE, ANY ) ) {
-        emit( lex2 );
+        emit( QUOTE_AMBIGUOUS_SINGLE, lex2 );
       }
       // < '" >
       else if( match( ANY, QUOTE_SINGLE, LAGGING_QUOTE_OPENING_SINGLE, ANY ) ) {
@@ -350,12 +346,15 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
         emit( QUOTE_APOSTROPHE, lex2 );
       }
       else {
-        emit( lex2 );
+        emit( QUOTE_AMBIGUOUS_SINGLE, lex2 );
       }
     }
+    else if( match( ANY, QUOTE_DOUBLE, ANY, ANY ) ) {
+      emit( QUOTE_AMBIGUOUS_DOUBLE, lex2 );
+    }
     // Ambiguous (no match)
-    else if( match( ANY, QUOTE_SINGLE_QUOTE_DOUBLE, ANY, ANY ) ) {
-      emit( lex2 );
+    else if( match( ANY, QUOTE_SINGLE, ANY, ANY ) ) {
+      emit( QUOTE_AMBIGUOUS_SINGLE, lex2 );
     }
   }
 
@@ -368,15 +367,6 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     final int began,
     final int ended ) {
     mConsumer.accept( new Token( tokenType, began, ended ) );
-  }
-
-  /**
-   * Emits a token that represents an ambiguous quotation mark.
-   *
-   * @param lexeme A quotation mark that could not be curled.
-   */
-  private void emit( final Lexeme lexeme ) {
-    mConsumer.accept( new Token( AMBIGUOUS, lexeme ) );
   }
 
   private boolean match(
@@ -393,17 +383,6 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
   private boolean match(
     final LexemeType[] l1,
     final LexemeType l2,
-    final LexemeType l3,
-    final LexemeType l4 ) {
-    return mQ.get( 0 ).isType( l1 ) &&
-      mQ.get( 1 ).isType( l2 ) &&
-      mQ.get( 2 ).isType( l3 ) &&
-      mQ.get( 3 ).isType( l4 );
-  }
-
-  private boolean match(
-    final LexemeType l1,
-    final LexemeType[] l2,
     final LexemeType l3,
     final LexemeType l4 ) {
     return mQ.get( 0 ).isType( l1 ) &&

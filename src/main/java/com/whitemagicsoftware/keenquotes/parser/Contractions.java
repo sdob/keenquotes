@@ -96,7 +96,7 @@ public class Contractions {
     }
   }
 
-  public boolean beganEndedUmambiguously( final String word ) {
+  public boolean beganEndedUnambiguously( final String word ) {
     assert word != null;
     return getBeganEndedUnambiguous().contains( word );
   }

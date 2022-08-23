@@ -71,7 +71,15 @@ class Tree<T extends Token> implements Stem {
    * quote.
    */
   public boolean hasOpeningSingleQuote() {
-    return mOpening.isType( QUOTE_OPENING_SINGLE );
+    return isOpening( QUOTE_OPENING_SINGLE );
+  }
+
+  public boolean hasOpeningDoubleQuote() {
+    return isOpening( QUOTE_OPENING_DOUBLE );
+  }
+
+  private boolean isOpening( final TokenType tokenType ) {
+    return mOpening.isType( tokenType );
   }
 
   /**

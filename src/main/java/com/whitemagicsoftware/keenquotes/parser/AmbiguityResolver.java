@@ -63,6 +63,17 @@ public final class AmbiguityResolver implements Consumer<Token> {
       token.isType( QUOTE_CLOSING_DOUBLE ) ) {
       mTree = mTree.closing( token );
     }
+    else if( token.isType( QUOTE_AMBIGUOUS_DOUBLE ) ) {
+      // Create subtrees for: <" ... ">, <" ">, <"">, etc.
+      if( mTree.hasOpeningDoubleQuote() ) {
+        token.setTokenType( QUOTE_CLOSING_DOUBLE );
+        mTree = mTree.closing( token );
+      }
+      else {
+        token.setTokenType( QUOTE_OPENING_DOUBLE );
+        mTree = mTree.opening( token );
+      }
+    }
     // Add ambiguous tokens to be resolved; add apostrophes for later emitting.
     else {
       mTree.add( token );
@@ -107,13 +118,26 @@ public final class AmbiguityResolver implements Consumer<Token> {
   private void resolve( final List<Token> tokens ) {
     assert tokens != null;
 
+    boolean leader = false;
+
     for( final var token : tokens ) {
       if( token.isType( QUOTE_AMBIGUOUS_LEADING ) ) {
         // Once a leader quote is found, any laggard could be a closing quote.
-        break;
+        leader = true;
       }
-      else if( token.isType( QUOTE_AMBIGUOUS_LAGGING ) ) {
+      else if( !leader && token.isType( QUOTE_AMBIGUOUS_LAGGING ) ) {
         token.setTokenType( QUOTE_APOSTROPHE );
+      }
+      else if( token.isType( QUOTE_AMBIGUOUS_SINGLE ) ) {
+        // Create subtrees for: <' ... '>, <' '>, <''>, etc.
+        if( mTree.hasOpeningSingleQuote() ) {
+          token.setTokenType( QUOTE_CLOSING_SINGLE );
+          mTree = mTree.closing( token );
+        }
+        else {
+          token.setTokenType( QUOTE_OPENING_SINGLE );
+          mTree = mTree.opening( token );
+        }
       }
     }
   }
@@ -128,29 +152,29 @@ public final class AmbiguityResolver implements Consumer<Token> {
   private void disambiguate( final Tree<Token> tree ) {
     final var countLeading = tree.count( QUOTE_AMBIGUOUS_LEADING );
     final var countLagging = tree.count( QUOTE_AMBIGUOUS_LAGGING );
-    final var countUnknown = tree.count( AMBIGUOUS );
+    final var countSingles = tree.count( QUOTE_AMBIGUOUS_SINGLE );
 
     if( tree.hasOpeningSingleQuote() && !tree.hasClosingSingleQuote() ) {
-      if( countUnknown == 0 && countLeading == 0 && countLagging == 1 ) {
+      if( countSingles == 0 && countLeading == 0 && countLagging == 1 ) {
         tree.replaceAll( QUOTE_AMBIGUOUS_LAGGING, QUOTE_CLOSING_SINGLE );
       }
-      else if( countUnknown == 1 && countLagging == 0 ) {
-        tree.replaceAll( AMBIGUOUS, QUOTE_CLOSING_SINGLE );
+      else if( countSingles == 1 && countLagging == 0 ) {
+        tree.replaceAll( QUOTE_AMBIGUOUS_SINGLE, QUOTE_CLOSING_SINGLE );
       }
     }
 
-    if( countUnknown == 0 && countLeading == 1 && countLagging == 0 &&
+    if( countSingles == 0 && countLeading == 1 && countLagging == 0 &&
       !tree.hasOpeningSingleQuote() && tree.hasClosingSingleQuote() ) {
       tree.replaceAll( QUOTE_AMBIGUOUS_LEADING, QUOTE_OPENING_SINGLE );
     }
 
     if( !tree.hasOpeningSingleQuote() && !tree.hasClosingSingleQuote() ||
       tree.isBalanced() ) {
-      if( countUnknown == 0 && countLeading > 0 && countLagging == 0 ) {
+      if( countSingles == 0 && countLeading > 0 && countLagging == 0 ) {
         tree.replaceAll( QUOTE_AMBIGUOUS_LEADING, QUOTE_APOSTROPHE );
       }
 
-      if( countUnknown == 0 && countLeading == 0 && countLagging > 0 ) {
+      if( countSingles == 0 && countLeading == 0 && countLagging > 0 ) {
         tree.replaceAll( QUOTE_AMBIGUOUS_LAGGING, QUOTE_APOSTROPHE );
       }
     }

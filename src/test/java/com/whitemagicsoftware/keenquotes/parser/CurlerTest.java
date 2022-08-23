@@ -25,16 +25,19 @@ public class CurlerTest {
 
   /**
    * Tests that straight quotes are converted to curly quotes.
-   *
-   * @throws IOException Error opening file full of fun.
    */
   @Test
-  public void test_Parse_StraightQuotes_CurlyQuotes() throws IOException {
+  public void test_Parse_UncurledQuotes1_CurlyQuotes() throws IOException {
     testCurler( createCurler( FILTER_PLAIN ), "unambiguous-1-pass.txt" );
   }
 
   @Test
-  public void test_XmlParse_StraightQuotes_CurlyQuotes() throws IOException {
+  public void test_Parse_UncurledQuotes2_CurlyQuotes() throws IOException {
+    testCurler( createCurler( FILTER_PLAIN ), "unambiguous-2-pass.txt" );
+  }
+
+  @Test
+  public void test_Parse_UncurledQuotesXml_CurlyQuotes() throws IOException {
     testCurler( createCurler( FILTER_XML ), "xml.txt" );
   }
 
