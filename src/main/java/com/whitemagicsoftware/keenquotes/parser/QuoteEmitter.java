@@ -90,7 +90,7 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
    */
   private static final LexemeType[] LEADING_QUOTE_OPENING_DOUBLE =
     new LexemeType[]{
-      LexemeType.SOT, SPACE, DASH, EQUALS, QUOTE_SINGLE, OPENING_GROUP, EOL, EOP
+      LexemeType.SOT, SPACE, DASH, EQUALS, OPENING_GROUP, EOL, EOP
     };
 
   /**
