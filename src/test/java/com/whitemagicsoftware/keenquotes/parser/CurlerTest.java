@@ -37,6 +37,11 @@ public class CurlerTest {
   }
 
   @Test
+  public void test_Parse_AmbiguousQuotes_PartiallyCurled() throws IOException {
+    testCurler( createCurler( FILTER_PLAIN ), "ambiguous-n-pass.txt" );
+  }
+
+  @Test
   public void test_Parse_UncurledQuotesXml_CurlyQuotes() throws IOException {
     testCurler( createCurler( FILTER_XML ), "xml.txt" );
   }

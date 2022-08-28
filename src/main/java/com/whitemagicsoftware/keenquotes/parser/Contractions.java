@@ -294,8 +294,6 @@ public class Contractions {
     "cos",
     // armadillo
     "dillo",
-    // them
-    "em",
     // themselves,
     "emselves",
     // affectionate
@@ -399,6 +397,8 @@ public class Contractions {
     "cross",
     // he|e pluribus unum
     "e",
+    // them|letter m|em-dash|Emily
+    "em",
     // here|earlier
     "ere",
     // afro|to and fro

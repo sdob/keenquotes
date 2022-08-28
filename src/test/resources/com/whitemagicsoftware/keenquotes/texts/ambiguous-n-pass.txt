@@ -2,7 +2,7 @@
 # Ambiguous (no solution)
 # ########################################################################
 Book 'em, Danno. Rock 'n' roll. ''Cause 'twas the season.
-Book &apos;em, Danno. Rock &apos;n&apos; roll. &lsquo;'Cause &apos;twas the season.
+Book &apos;em, Danno. Rock &apos;n&apos; roll. &lsquo;&apos;Cause &apos;twas the season.
 
-"Jarvis, sir? Why, him as 'listed some years ago, and fought under
-&ldquo;Jarvis, sir? Why, him as 'listed some years ago, and fought under
+The ’cause and effect’ consideration applies ’cause the horses’ hoofs are hard.
+The &lsquo;cause and effect&rsquo; consideration applies 'cause the horses' hoofs are hard.
