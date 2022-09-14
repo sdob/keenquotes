@@ -3463,6 +3463,7 @@ public class Contractions {
     "sizzlin",
     "skatin",
     "sketchin",
+    "skeerin",
     "skiin",
     "skimmin",
     "skimpin",

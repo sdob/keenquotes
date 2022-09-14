@@ -1,6 +1,7 @@
 /* Copyright 2021 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes.app;
 
+import com.whitemagicsoftware.keenquotes.lex.XmlFilter;
 import picocli.CommandLine;
 
 import java.util.List;
@@ -74,6 +75,15 @@ public final class Settings implements Callable<Integer> {
   )
   private boolean mDisplayList;
 
+  /**
+   * Enable the {@link XmlFilter}.
+   */
+  @CommandLine.Option(
+    names = {"-x", "--xml", "--html", "--xhtml"},
+    description = "Convert quotation marks within XML or HTML documents"
+  )
+  private boolean mFilterXml;
+
   public Settings( final KeenQuotes main ) {
     assert main != null;
     mMain = main;
@@ -87,6 +97,8 @@ public final class Settings implements Callable<Integer> {
   boolean displayList() {
     return mDisplayList;
   }
+
+  boolean filterXml() { return mFilterXml; }
 
   List<String> getBeganUnambiguous() {
     return nullSafe( mBeganUnambiguous );
