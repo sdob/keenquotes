@@ -1,5 +1,5 @@
-# """wtf"""
-# &ldquo;&ldquo;&ldquo;wtf&rdquo;&rdquo;&rdquo;
+"""insane"""
+&ldquo;&rdquo;&ldquo;insane&rdquo;&ldquo;&rdquo;
 
-# '''wtf'''
-# &lsquo;&lsquo;&lsquo;wtf&rsquo;&rsquo;&rsquo;
+'''wtf'''
+&lsquo;&lsquo;&lsquo;wtf&rsquo;&rsquo;&rsquo;

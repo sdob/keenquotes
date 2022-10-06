@@ -40,24 +40,61 @@ public final class LexemeType {
 
   private LexemeGlyph mGlyph;
 
+  /**
+   * Constructs an instance of {@link LexemeType} using
+   * {@link LexemeGlyph#LEX_OTHER} to indicate that this type of lexeme isn't
+   * a quotation mark glyph.
+   */
   public LexemeType() {
-    this( LEX_NONE );
+    this( LEX_OTHER );
   }
 
+  /**
+   * Constructs an instance of {@link LexemeType} using a particular glyph.
+   *
+   * @param glyph Typically represents an internationalized quotation mark
+   *              character.
+   */
   public LexemeType( final LexemeGlyph glyph ) {
     setGlyph( glyph );
   }
 
+  /**
+   * Changes the type of glyph associated with this type of lexeme. This
+   * is useful for passing along different glyphs represented by the same
+   * lexeme (such as different opening quotation marks).
+   *
+   * @param glyph The new {@link LexemeGlyph} to associate, often an
+   *              internationalized quotation mark.
+   * @return {@code this} to allow chaining.
+   */
   public LexemeType with( final LexemeGlyph glyph ) {
     setGlyph( glyph );
     return this;
   }
 
+  /**
+   * Provides the glyph used to identify international quotation marks.
+   *
+   * @return The glyph set either at construction time or after calling
+   * {@link #with(LexemeGlyph)}.
+   */
   public LexemeGlyph glyph() {
     return mGlyph;
   }
 
   private void setGlyph( final LexemeGlyph glyph ) {
     mGlyph = glyph;
+  }
+
+  /**
+   * Provides useful debugging information.
+   *
+   * @return The class name and encodable glyph.
+   */
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() +
+      '[' + glyph() + ']';
   }
 }

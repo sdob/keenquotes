@@ -97,7 +97,6 @@ public class Curler implements Function<String, String> {
     assert replacements != null;
     assert !replacements.isEmpty();
     assert i18n != null;
-    assert !i18n.isEmpty();
     assert parserType != null;
 
     mContractions = c;

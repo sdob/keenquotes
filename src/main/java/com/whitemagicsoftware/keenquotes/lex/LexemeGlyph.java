@@ -6,7 +6,10 @@ package com.whitemagicsoftware.keenquotes.lex;
  * exporting back to text.
  */
 public enum LexemeGlyph {
-  LEX_NONE( (char) 0 ),
+  /**
+   * Any other character that's not a quotation mark.
+   */
+  LEX_OTHER( (char) 0 ),
 
   LEX_SINGLE_QUOTE( '\'' ),
   LEX_SINGLE_QUOTE_OPENING( '‘' ),
@@ -28,11 +31,13 @@ public enum LexemeGlyph {
     mGlyph = glyph;
   }
 
-  public char glyph() {
-    return mGlyph;
-  }
-
-  public boolean equals( final char ch ) {
-    return glyph() == ch;
+  /**
+   * Answers whether the given character matches the internal glyph.
+   *
+   * @param glyph The character to compare against the internal character.
+   * @return {@code true} iff the characters are equal.
+   */
+  public boolean equals( final char glyph ) {
+    return mGlyph == glyph;
   }
 }

@@ -353,6 +353,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
         emit( QUOTE_AMBIGUOUS_SINGLE, lex2 );
       }
     }
+    // <'"Trouble>
+    else if( match( QUOTE_SINGLE, QUOTE_DOUBLE, WORD, ANY ) ) {
+      emit( QUOTE_OPENING_DOUBLE, lex2 );
+    }
     else if( match( ANY, QUOTE_DOUBLE, ANY, ANY ) ) {
       emit( QUOTE_AMBIGUOUS_DOUBLE, lex2 );
     }

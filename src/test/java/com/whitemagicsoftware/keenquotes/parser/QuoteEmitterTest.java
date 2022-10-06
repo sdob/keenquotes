@@ -15,8 +15,7 @@ class QuoteEmitterTest {
 
   @Test
   void test_Emit_MultipleInputs_QuotesEmitted() throws IOException {
-    final var couplets = readPairs(
-      "unambiguous-1-pass.txt" );
+    final var couplets = readPairs( "unambiguous-1-pass.txt" );
 
     couplets.forEach( couplet -> {
       final var input = couplet.item1();

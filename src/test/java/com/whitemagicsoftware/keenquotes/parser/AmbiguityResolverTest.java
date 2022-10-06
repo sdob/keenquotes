@@ -24,7 +24,6 @@ class AmbiguityResolverTest {
     test( "unambiguous-2-pass.txt" );
   }
 
-  @Test
   @Disabled
   void test_Resolve_InvalidGrammar_AmbiguousRemain() throws IOException {
     test( "invalid-grammar.txt" );
