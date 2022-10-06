@@ -2,12 +2,14 @@
 package com.whitemagicsoftware.keenquotes.parser;
 
 import com.whitemagicsoftware.keenquotes.lex.FilterType;
+import com.whitemagicsoftware.keenquotes.lex.LexemeGlyph;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.whitemagicsoftware.keenquotes.lex.LexemeGlyph.LEX_DOUBLE_QUOTE_OPENING_LOW;
 import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
@@ -51,8 +53,21 @@ public class Curler implements Function<String, String> {
     entry( QUOTE_PRIME_QUADRUPLE, "⁗" )
   );
 
+  /**
+   * Glyphs not found in the table will use the document's glyph.
+   */
+  public static final Map<LexemeGlyph, String> I18N_ENTITIES = ofEntries(
+    entry( LEX_DOUBLE_QUOTE_OPENING_LOW, "&#8222;" )
+  );
+
+  /**
+   * Glyphs not found in the table will use the value from the document.
+   */
+  public static final Map<LexemeGlyph, String> I18N_CHARS = ofEntries();
+
   private final Contractions mContractions;
   private final Map<TokenType, String> mReplacements;
+  private final Map<LexemeGlyph, String> mI18n;
   private final FilterType mFilterType;
 
   /**
@@ -62,7 +77,7 @@ public class Curler implements Function<String, String> {
    * @param parserType Creates a parser based on document content structure.
    */
   public Curler( final Contractions c, final FilterType parserType ) {
-    this( c, ENTITIES, parserType );
+    this( c, ENTITIES, I18N_ENTITIES, parserType );
   }
 
   /**
@@ -75,10 +90,19 @@ public class Curler implements Function<String, String> {
   public Curler(
     final Contractions c,
     final Map<TokenType, String> replacements,
+    final Map<LexemeGlyph, String> i18n,
     final FilterType parserType
   ) {
+    assert c != null;
+    assert replacements != null;
+    assert !replacements.isEmpty();
+    assert i18n != null;
+    assert !i18n.isEmpty();
+    assert parserType != null;
+
     mContractions = c;
     mReplacements = replacements;
+    mI18n = i18n;
     mFilterType = parserType;
   }
 
@@ -99,7 +123,7 @@ public class Curler implements Function<String, String> {
     AmbiguityResolver.resolve(
       text,
       mContractions,
-      replace( output, offset, mReplacements ),
+      replace( output, offset, mReplacements, mI18n ),
       mFilterType.filter()
     );
 
@@ -111,25 +135,27 @@ public class Curler implements Function<String, String> {
    *
    * @param output       Continuously updated result document.
    * @param offset       Accumulating index where {@link Token} is replaced.
-   * @param replacements Map of {@link TokenType}s to replacement strings.
+   * @param replacements Maps {@link TokenType}s to replacement strings.
+   * @param i18n         Maps {@link LexemeGlyph}s to internationalized strings.
    * @return Instructions to replace a {@link Token} in the result document.
    */
   public static Consumer<Token> replace(
     final StringBuilder output,
     final AtomicInteger offset,
-    final Map<TokenType, String> replacements
+    final Map<TokenType, String> replacements,
+    final Map<LexemeGlyph, String> i18n
   ) {
     return token -> {
       if( !token.isAmbiguous() ) {
-        final var entity = token.toString( replacements );
+        final var text = token.toString( replacements, i18n );
 
         output.replace(
           token.began() + offset.get(),
           token.ended() + offset.get(),
-          entity
+          text
         );
 
-        offset.addAndGet( entity.length() - (token.ended() - token.began()) );
+        offset.addAndGet( text.length() - (token.ended() - token.began()) );
       }
     };
   }

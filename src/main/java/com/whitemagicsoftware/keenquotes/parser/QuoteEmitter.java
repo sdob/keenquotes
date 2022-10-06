@@ -189,7 +189,11 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     }
     // <2''>
     else if( match( NUMBER, QUOTE_SINGLE, QUOTE_SINGLE, ANY ) ) {
-      emit( QUOTE_PRIME_DOUBLE, lex2.began(), lex3.ended() );
+      // Force double primes to conform to the same constructor usage. This
+      // simplifies the tokens, reduces some memory usage,
+      final var lex = new Lexeme( PRIME_DOUBLE, lex2.began(), lex3.ended() );
+
+      emit( QUOTE_PRIME_DOUBLE, lex );
       mQ.set( Lexeme.NONE, 2 );
     }
     // <2'>
@@ -352,6 +356,10 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     else if( match( ANY, QUOTE_DOUBLE, ANY, ANY ) ) {
       emit( QUOTE_AMBIGUOUS_DOUBLE, lex2 );
     }
+    // International opening quotation mark.
+    else if( match( ANY, QUOTE_DOUBLE_OPENING, ANY, ANY ) ) {
+      emit( QUOTE_OPENING_DOUBLE, lex2 );
+    }
     // Ambiguous (no match)
     else if( match( ANY, QUOTE_SINGLE, ANY, ANY ) ) {
       emit( QUOTE_AMBIGUOUS_SINGLE, lex2 );
@@ -360,13 +368,6 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
 
   private void emit( final TokenType tokenType, final Lexeme lexeme ) {
     mConsumer.accept( new Token( tokenType, lexeme ) );
-  }
-
-  private void emit(
-    final TokenType tokenType,
-    final int began,
-    final int ended ) {
-    mConsumer.accept( new Token( tokenType, began, ended ) );
   }
 
   private boolean match(

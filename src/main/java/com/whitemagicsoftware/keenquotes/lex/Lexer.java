@@ -5,6 +5,7 @@ import com.whitemagicsoftware.keenquotes.util.FastCharacterIterator;
 
 import java.util.function.Consumer;
 
+import static com.whitemagicsoftware.keenquotes.lex.LexemeGlyph.*;
 import static com.whitemagicsoftware.keenquotes.lex.LexemeType.*;
 import static java.lang.Character.isWhitespace;
 import static java.text.CharacterIterator.DONE;
@@ -46,7 +47,7 @@ public final class Lexer {
     while( i.hasNext() ) {
       // Allow filters to skip character sequences (such as XML tags). This
       // must allow back-to-back filtering, hence the loop.
-      while( filter.test( i ) );
+      while( filter.test( i ) ) ;
 
       final var index = i.index();
       final var curr = i.current();
@@ -142,6 +143,25 @@ public final class Lexer {
       }
       else if( curr == '=' ) {
         token = EQUALS;
+      }
+      else if( curr == ',' && i.peek() == ',' ) {
+        i.skip( next -> next == ',' );
+        token = QUOTE_DOUBLE_OPENING.with( LEX_DOUBLE_QUOTE_OPENING_LOW );
+      }
+      else if( LEX_DOUBLE_QUOTE_OPENING_LOW.equals( curr ) ) {
+        token = QUOTE_DOUBLE_OPENING.with( LEX_DOUBLE_QUOTE_OPENING_LOW );
+      }
+      else if( LEX_SINGLE_CHEVRON_LEFT.equals( curr ) ) {
+        token = QUOTE_SINGLE_OPENING.with( LEX_SINGLE_CHEVRON_LEFT );
+      }
+      else if( LEX_DOUBLE_CHEVRON_LEFT.equals( curr ) ) {
+        token = QUOTE_DOUBLE_OPENING.with( LEX_DOUBLE_CHEVRON_LEFT );
+      }
+      else if( LEX_SINGLE_CHEVRON_RIGHT.equals( curr ) ) {
+        token = QUOTE_SINGLE_CLOSING.with( LEX_SINGLE_CHEVRON_RIGHT );
+      }
+      else if( LEX_DOUBLE_CHEVRON_RIGHT.equals( curr ) ) {
+        token = QUOTE_DOUBLE_CLOSING.with( LEX_DOUBLE_CHEVRON_RIGHT );
       }
       else if( curr == DONE ) {
         continue;

@@ -2,6 +2,7 @@
 package com.whitemagicsoftware.keenquotes.parser;
 
 import com.whitemagicsoftware.keenquotes.lex.Lexeme;
+import com.whitemagicsoftware.keenquotes.lex.LexemeGlyph;
 
 import java.util.Map;
 
@@ -17,37 +18,22 @@ final class Token implements Comparable<Token>, Stem {
   public static final Token NONE = new Token( TokenType.NONE, Lexeme.NONE );
 
   private TokenType mTokenType;
-  private final int mBegan;
-  private final int mEnded;
+  private final Lexeme mLexeme;
 
   /**
    * Convenience constructor to create a token that uses the lexeme's
    * beginning and ending offsets to represent a complete token.
    *
-   * @param type   The type of {@link Token} to create.
-   * @param lexeme Container for beginning and ending text offsets.
-   */
-  Token( final TokenType type, final Lexeme lexeme ) {
-    this( type, lexeme.began(), lexeme.ended() );
-  }
-
-  /**
-   * This constructor can be used to create tokens that span more than a
-   * single character. Almost all tokens represent a single character, only
-   * the double-prime sequence ({@code ''}) is more than one character.
-   *
    * @param tokenType The type of {@link Token} to create.
-   * @param began     Beginning offset into text where token is found.
-   * @param ended     Ending offset into text where token is found.
+   * @param lexeme    Container for text offsets and i18n glyphs.
    */
-  Token( final TokenType tokenType, final int began, final int ended ) {
+  Token( final TokenType tokenType, final Lexeme lexeme ) {
     assert tokenType != null;
-    assert began >= 0;
-    assert ended >= began;
+    assert lexeme.began() >= 0;
+    assert lexeme.ended() >= lexeme.began();
 
     mTokenType = tokenType;
-    mBegan = began;
-    mEnded = ended;
+    mLexeme = lexeme;
   }
 
   /**
@@ -62,7 +48,7 @@ final class Token implements Comparable<Token>, Stem {
     assert token != null;
     assert token != NONE;
 
-    return mEnded <= token.mBegan;
+    return mLexeme.ended() <= token.began();
   }
 
   /**
@@ -78,7 +64,7 @@ final class Token implements Comparable<Token>, Stem {
     assert token != null;
     assert token != NONE;
 
-    return mBegan > token.mEnded;
+    return mLexeme.began() > token.ended();
   }
 
   TokenType getType() {
@@ -92,11 +78,11 @@ final class Token implements Comparable<Token>, Stem {
   }
 
   int began() {
-    return mBegan;
+    return mLexeme.began();
   }
 
   int ended() {
-    return mEnded;
+    return mLexeme.ended();
   }
 
   boolean isAmbiguous() {
@@ -124,7 +110,7 @@ final class Token implements Comparable<Token>, Stem {
 
   @Override
   public int compareTo( final Token that ) {
-    return this.mBegan - that.mBegan;
+    return this.began() - that.began();
   }
 
   @Override
@@ -136,16 +122,21 @@ final class Token implements Comparable<Token>, Stem {
       " ended='" + ended() + "' />";
   }
 
-  public String toString( final Map<TokenType, String> entities ) {
-    return entities.get( getType() );
+  public String toString(
+    final Map<TokenType, String> entities,
+    final Map<LexemeGlyph, String> i18n ) {
+    return i18n.getOrDefault(
+      mLexeme.getType().glyph(),
+      entities.get( getType() )
+    );
   }
 
   @Override
   public String toString() {
     return getClass().getSimpleName() + '[' +
-      "mType=" + mTokenType +
-      ", mBegan=" + mBegan +
-      ", mEnded=" + mEnded +
+      "mType=" + getType() +
+      ", mBegan=" + began() +
+      ", mEnded=" + ended() +
       ']';
   }
 }

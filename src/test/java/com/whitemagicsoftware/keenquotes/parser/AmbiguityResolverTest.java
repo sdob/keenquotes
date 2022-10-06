@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.whitemagicsoftware.keenquotes.parser.Curler.ENTITIES;
-import static com.whitemagicsoftware.keenquotes.parser.Curler.replace;
+import static com.whitemagicsoftware.keenquotes.parser.Curler.*;
 import static com.whitemagicsoftware.keenquotes.texts.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +42,7 @@ class AmbiguityResolverTest {
       AmbiguityResolver.resolve(
         input,
         CONTRACTIONS,
-        replace( output, offset, ENTITIES ),
+        replace( output, offset, ENTITIES, I18N_ENTITIES ),
         filter -> false
       );
 

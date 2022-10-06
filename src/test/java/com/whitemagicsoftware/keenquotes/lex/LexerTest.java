@@ -67,12 +67,21 @@ public final class LexerTest {
 
   @Test
   void test_Lexing_Quotes_EmitQuotes() {
-    testType( "'", QUOTE_SINGLE );
-    testType( "\"", QUOTE_DOUBLE );
     testType( "‘", QUOTE_SINGLE_OPENING );
+    testType( "‹", QUOTE_SINGLE_OPENING );
     testType( "’", QUOTE_SINGLE_CLOSING );
+    testType( "›", QUOTE_SINGLE_CLOSING );
+    testType( "'", QUOTE_SINGLE );
+
     testType( "“", QUOTE_DOUBLE_OPENING );
+    testType( "„", QUOTE_DOUBLE_OPENING );
+    testType( "«", QUOTE_DOUBLE_OPENING );
+    testType( ",,", QUOTE_DOUBLE_OPENING );
+    testType( "\"", QUOTE_DOUBLE );
+
     testType( "”", QUOTE_DOUBLE_CLOSING );
+    testType( "»", QUOTE_DOUBLE_CLOSING );
+
     testType( "3 o'clock", NUMBER, SPACE, WORD, QUOTE_SINGLE, WORD );
   }
 
