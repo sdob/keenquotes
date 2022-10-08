@@ -60,6 +60,17 @@ public final class LexemeType {
   }
 
   /**
+   * Creates a new instance with a copy of {@link LexemeGlyph} to prevent
+   * mutations by calling {@link #with(LexemeGlyph)} from affecting ambiguous
+   * quotes resolution.
+   *
+   * @return A semi-deep copy of this instance.
+   */
+  LexemeType copy() {
+    return new LexemeType( glyph() );
+  }
+
+  /**
    * Changes the type of glyph associated with this type of lexeme. This
    * is useful for passing along different glyphs represented by the same
    * lexeme (such as different opening quotation marks).

@@ -85,6 +85,16 @@ final class Token implements Comparable<Token>, Stem {
   }
 
   /**
+   * Creates a new instance with a copy of {@link Lexeme} to prevent
+   * subsequent mutations from affecting the resolution of ambiguous quotes.
+   *
+   * @return A semi-deep copy of this instance.
+   */
+  Token copy() {
+    return new Token( mTokenType, mLexeme.copy() );
+  }
+
+  /**
    * Answers whether this {@link Token} appears before the given {@link Token}
    * in the document. If they overlap, this will return {@code false}.
    *

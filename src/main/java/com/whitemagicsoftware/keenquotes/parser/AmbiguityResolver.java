@@ -56,27 +56,27 @@ public final class AmbiguityResolver implements Consumer<Token> {
     // Create a new subtree when an opening quotation mark is found.
     if( token.isType( QUOTE_OPENING_SINGLE ) ||
       token.isType( QUOTE_OPENING_DOUBLE ) ) {
-      mTree = mTree.opening( token );
+      mTree = mTree.opening( token.copy() );
     }
     // Close the subtree if it was open, try to close it.
     else if( token.isType( QUOTE_CLOSING_SINGLE ) ||
       token.isType( QUOTE_CLOSING_DOUBLE ) ) {
-      mTree = mTree.closing( token );
+      mTree = mTree.closing( token.copy() );
     }
     else if( token.isType( QUOTE_AMBIGUOUS_DOUBLE ) ) {
       // Create subtrees for: <" ... ">, <" ">, <"">, etc.
       if( mTree.hasOpeningDoubleQuote() ) {
         token.setTokenType( QUOTE_CLOSING_DOUBLE );
-        mTree = mTree.closing( token );
+        mTree = mTree.closing( token.copy() );
       }
       else {
         token.setTokenType( QUOTE_OPENING_DOUBLE );
-        mTree = mTree.opening( token );
+        mTree = mTree.opening( token.copy() );
       }
     }
     // Add ambiguous tokens to be resolved; add apostrophes for later emitting.
     else {
-      mTree.add( token );
+      mTree.add( token.copy() );
     }
   }
 

@@ -56,6 +56,16 @@ public final class Lexeme implements Comparable<Lexeme> {
   }
 
   /**
+   * Creates a new instance with a copy of {@link LexemeType} to prevent
+   * subsequent mutations from affecting the resolution of ambiguous quotes.
+   *
+   * @return A semi-deep copy of this instance.
+   */
+  public Lexeme copy() {
+    return new Lexeme( mType.copy(), mBegan, mEnded );
+  }
+
+  /**
    * Answers whether the given {@link LexemeType} is the same as this
    * instance's internal {@link LexemeType}.
    *
