@@ -53,7 +53,7 @@ final class Token implements Comparable<Token>, Stem {
    * Glyphs not found in the table will use the document's glyph.
    */
   private static final Map<LexemeGlyph, String> I18N_ENTITIES = ofEntries(
-    entry( LEX_DOUBLE_QUOTE_OPENING_LOW, "&#8222;" ),
+    entry( LEX_DOUBLE_QUOTE_OPENING_LOW, "&ldquor;" ),
     entry( LEX_DOUBLE_CHEVRON_LEFT, "&laquo;" ),
     entry( LEX_DOUBLE_CHEVRON_RIGHT, "&raquo;" ),
     entry( LEX_SINGLE_CHEVRON_LEFT, "&lsaquo;" ),

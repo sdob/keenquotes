@@ -2,7 +2,7 @@
 # Mixed
 # ########################################################################
 «What's ‹going› on?» ,,Hey there!"
-&laquo;What&apos;s &lsaquo;going&rsaquo; on?&raquo; &#8222;Hey there!&rdquo;
+&laquo;What&apos;s &lsaquo;going&rsaquo; on?&raquo; &ldquor;Hey there!&rdquo;
 
 # ########################################################################
 # French
@@ -17,10 +17,10 @@ Dit il, &lsaquo;Ce n&apos;est pas la mer à boire?&rsaquo;
 # Dutch
 # ########################################################################
 ,,Dit is een citaat," zei hij.
-&#8222;Dit is een citaat,&rdquo; zei hij.
+&ldquor;Dit is een citaat,&rdquo; zei hij.
 
 ,,Ik heb twee opa's en twee oma's," zei het meisje,„hoeveel heb jij er?"
-&#8222;Ik heb twee opa&apos;s en twee oma&apos;s,&rdquo; zei het meisje,&#8222;hoeveel heb jij er?&rdquo;
+&ldquor;Ik heb twee opa&apos;s en twee oma&apos;s,&rdquo; zei het meisje,&ldquor;hoeveel heb jij er?&rdquo;
 
 "Zeg, wat betekent 'quod non' eigenlijk?", vroeg Nynke.
 &ldquo;Zeg, wat betekent &lsquo;quod non&rsquo; eigenlijk?&rdquo;, vroeg Nynke.
