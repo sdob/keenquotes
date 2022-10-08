@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
-import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_XML;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -45,7 +43,7 @@ public final class KeenQuotes {
     }
     else {
       try {
-        final var filter = settings.filterXml() ? FILTER_XML : FILTER_PLAIN;
+        final var filter = settings.filterXml();
         final var c = new Curler( contractions, filter );
 
         out.print( convert( c ) );

@@ -114,17 +114,17 @@ public final class Lexer {
       else if( curr == ')' || curr == '}' || curr == ']' ) {
         token = CLOSING_GROUP;
       }
-      else if( curr == '“' ) {
-        token = QUOTE_DOUBLE_OPENING;
+      else if( LEX_DOUBLE_QUOTE_OPENING.equals( curr ) ) {
+        token = QUOTE_DOUBLE_OPENING.with( LEX_DOUBLE_QUOTE_OPENING );
       }
-      else if( curr == '”' ) {
-        token = QUOTE_DOUBLE_CLOSING;
+      else if( LEX_DOUBLE_QUOTE_CLOSING.equals( curr ) ) {
+        token = QUOTE_DOUBLE_CLOSING.with( LEX_DOUBLE_QUOTE_CLOSING );
       }
-      else if( curr == '‘' ) {
-        token = QUOTE_SINGLE_OPENING;
+      else if( LEX_SINGLE_QUOTE_OPENING.equals( curr ) ) {
+        token = QUOTE_SINGLE_OPENING.with( LEX_SINGLE_QUOTE_OPENING );
       }
-      else if( curr == '’' ) {
-        token = QUOTE_SINGLE_CLOSING;
+      else if( LEX_SINGLE_QUOTE_CLOSING.equals( curr ) ) {
+        token = QUOTE_SINGLE_CLOSING.with( LEX_SINGLE_QUOTE_CLOSING );
       }
       else if( curr == '\\' ) {
         i.next();

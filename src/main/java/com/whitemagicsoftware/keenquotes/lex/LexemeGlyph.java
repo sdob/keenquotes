@@ -40,4 +40,8 @@ public enum LexemeGlyph {
   public boolean equals( final char glyph ) {
     return mGlyph == glyph;
   }
+
+  public String text() {
+    return Character.toString( mGlyph );
+  }
 }

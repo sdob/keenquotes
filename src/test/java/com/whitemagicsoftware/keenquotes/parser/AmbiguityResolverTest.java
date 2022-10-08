@@ -25,6 +25,7 @@ class AmbiguityResolverTest {
   }
 
   @Disabled
+  @SuppressWarnings( "unused" )
   void test_Resolve_InvalidGrammar_AmbiguousRemain() throws IOException {
     test( "invalid-grammar.txt" );
   }
@@ -41,7 +42,7 @@ class AmbiguityResolverTest {
       AmbiguityResolver.resolve(
         input,
         CONTRACTIONS,
-        replace( output, offset, ENTITIES, I18N_ENTITIES ),
+        replace( output, offset, true ),
         filter -> false
       );
 

@@ -6,12 +6,60 @@ import com.whitemagicsoftware.keenquotes.lex.LexemeGlyph;
 
 import java.util.Map;
 
+import static com.whitemagicsoftware.keenquotes.lex.LexemeGlyph.*;
 import static com.whitemagicsoftware.keenquotes.parser.TokenType.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 /**
  * Represents a high-level token read from a text document.
  */
 final class Token implements Comparable<Token>, Stem {
+  /**
+   * Provides an entity-based set of {@link Token} replacements.
+   */
+  private static final Map<TokenType, String> ENTITIES = ofEntries(
+    entry( QUOTE_OPENING_SINGLE, "&lsquo;" ),
+    entry( QUOTE_CLOSING_SINGLE, "&rsquo;" ),
+    entry( QUOTE_OPENING_DOUBLE, "&ldquo;" ),
+    entry( QUOTE_CLOSING_DOUBLE, "&rdquo;" ),
+    entry( QUOTE_STRAIGHT_SINGLE, "'" ),
+    entry( QUOTE_STRAIGHT_DOUBLE, "\"" ),
+    entry( QUOTE_APOSTROPHE, "&apos;" ),
+    entry( QUOTE_PRIME_SINGLE, "&prime;" ),
+    entry( QUOTE_PRIME_DOUBLE, "&Prime;" ),
+    entry( QUOTE_PRIME_TRIPLE, "&tprime;" ),
+    entry( QUOTE_PRIME_QUADRUPLE, "&qprime;" )
+  );
+
+  /**
+   * Provides a character-based set of {@link Token} replacements.
+   */
+  private static final Map<TokenType, String> CHARS = ofEntries(
+    entry( QUOTE_OPENING_SINGLE, "‘" ),
+    entry( QUOTE_CLOSING_SINGLE, "’" ),
+    entry( QUOTE_OPENING_DOUBLE, "“" ),
+    entry( QUOTE_CLOSING_DOUBLE, "”" ),
+    entry( QUOTE_STRAIGHT_SINGLE, "'" ),
+    entry( QUOTE_STRAIGHT_DOUBLE, "\"" ),
+    entry( QUOTE_APOSTROPHE, "’" ),
+    entry( QUOTE_PRIME_SINGLE, "′" ),
+    entry( QUOTE_PRIME_DOUBLE, "″" ),
+    entry( QUOTE_PRIME_TRIPLE, "‴" ),
+    entry( QUOTE_PRIME_QUADRUPLE, "⁗" )
+  );
+
+  /**
+   * Glyphs not found in the table will use the document's glyph.
+   */
+  private static final Map<LexemeGlyph, String> I18N_ENTITIES = ofEntries(
+    entry( LEX_DOUBLE_QUOTE_OPENING_LOW, "&#8222;" ),
+    entry( LEX_DOUBLE_CHEVRON_LEFT, "&laquo;" ),
+    entry( LEX_DOUBLE_CHEVRON_RIGHT, "&raquo;" ),
+    entry( LEX_SINGLE_CHEVRON_LEFT, "&lsaquo;" ),
+    entry( LEX_SINGLE_CHEVRON_RIGHT, "&rsaquo;" )
+  );
+
   /**
    * Denotes that the token does not represent a value in the parsed document.
    */
@@ -122,13 +170,19 @@ final class Token implements Comparable<Token>, Stem {
       " ended='" + ended() + "' />";
   }
 
-  public String toString(
-    final Map<TokenType, String> entities,
-    final Map<LexemeGlyph, String> i18n ) {
-    return i18n.getOrDefault(
-      mLexeme.getType().glyph(),
-      entities.get( getType() )
-    );
+  /**
+   * Converts this token to its string representation, which will either be
+   * an HTML entity or a character.
+   *
+   * @param entities {@code true} to convert quotation marks to HTML entities.
+   * @return A plain quotation mark character or an HTML entity.
+   */
+  public String toString( final boolean entities ) {
+    final var glyph = mLexeme.getType().glyph();
+
+    return entities
+      ? I18N_ENTITIES.getOrDefault( glyph, ENTITIES.get( getType() ) )
+      : CHARS.getOrDefault( getType(), glyph.text() );
   }
 
   @Override

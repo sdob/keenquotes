@@ -360,9 +360,21 @@ public final class QuoteEmitter implements Consumer<Lexeme> {
     else if( match( ANY, QUOTE_DOUBLE, ANY, ANY ) ) {
       emit( QUOTE_AMBIGUOUS_DOUBLE, lex2 );
     }
-    // International opening quotation mark.
+    // International opening double quotation mark.
     else if( match( ANY, QUOTE_DOUBLE_OPENING, ANY, ANY ) ) {
       emit( QUOTE_OPENING_DOUBLE, lex2 );
+    }
+    // International opening single quotation mark.
+    else if( match( ANY, QUOTE_SINGLE_OPENING, ANY, ANY ) ) {
+      emit( QUOTE_OPENING_SINGLE, lex2 );
+    }
+    // International double closing quotation mark.
+    else if( match( ANY, ANY, ANY, QUOTE_DOUBLE_CLOSING ) ) {
+      emit( QUOTE_CLOSING_DOUBLE, lex4 );
+    }
+    // International single closing quotation mark.
+    else if( match( ANY, ANY, ANY, QUOTE_SINGLE_CLOSING ) ) {
+      emit( QUOTE_CLOSING_SINGLE, lex4 );
     }
     // Ambiguous (no match)
     else if( match( ANY, QUOTE_SINGLE, ANY, ANY ) ) {

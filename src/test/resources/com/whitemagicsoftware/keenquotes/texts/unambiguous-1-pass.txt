@@ -179,7 +179,7 @@ shouldn't drop letters, nor say "ain't" or "hain't."
 shouldn&apos;t drop letters, nor say &ldquo;ain&apos;t&rdquo; or &ldquo;hain&apos;t.&rdquo;
 
 "’Kearney lives on the banks of Killarney—’
-&ldquo;’Kearney lives on the banks of Killarney—’
+&ldquo;’Kearney lives on the banks of Killarney—&rsquo;
 
 # ########################################################################
 # Mixed

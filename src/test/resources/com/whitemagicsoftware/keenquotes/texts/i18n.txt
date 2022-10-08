@@ -1,4 +1,13 @@
 # ########################################################################
+# French
+# ########################################################################
+«Ce n'est pas la mer à boire,» il me dit.
+&laquo;Ce n&apos;est pas la mer à boire,&raquo; il me dit.
+
+Dit il, ‹Ce n'est pas la mer à boire?›
+Dit il, &lsaquo;Ce n&apos;est pas la mer à boire?&rsaquo;
+
+# ########################################################################
 # Dutch
 # ########################################################################
 ,,Dit is een citaat," zei hij.
