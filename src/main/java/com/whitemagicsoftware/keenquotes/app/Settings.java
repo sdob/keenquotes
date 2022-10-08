@@ -76,6 +76,15 @@ public final class Settings implements Callable<Integer> {
   private boolean mDisplayList;
 
   /**
+   * Encode quotation marks using HTML entities.
+   */
+  @CommandLine.Option(
+    names = {"-e", "--entities"},
+    description = "Encode quotation marks using HTML entities"
+  )
+  private boolean mEntities;
+
+  /**
    * Enable the {@link XmlFilter}.
    */
   @CommandLine.Option(
@@ -94,11 +103,21 @@ public final class Settings implements Callable<Integer> {
    *
    * @return {@code true} to list the contractions.
    */
-  boolean displayList() {
-    return mDisplayList;
-  }
+  boolean displayList() { return mDisplayList; }
 
+  /**
+   * Answers whether quotation marks within XML elements are ignored.
+   *
+   * @return {@code true} to honour quotation marks inside XML elements.
+   */
   boolean filterXml() { return mFilterXml; }
+
+  /**
+   * Answers whether entities must be encoded using HTML entities.
+   *
+   * @return {@code true} to encode quotation marks using HTML entities.
+   */
+  boolean entities() { return mEntities; }
 
   List<String> getBeganUnambiguous() {
     return nullSafe( mBeganUnambiguous );

@@ -1,12 +1,12 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes.parser;
 
+import com.whitemagicsoftware.keenquotes.lex.FilterType;
+import com.whitemagicsoftware.keenquotes.lex.LexerFilter;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
-import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_XML;
 
 /**
  * Resolves straight quotes into curly quotes throughout a document.
@@ -15,6 +15,7 @@ import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_XML;
 public class Curler implements Function<String, String> {
 
   private final Contractions mContractions;
+  private final LexerFilter mFilter;
   private final boolean mEntities;
 
   /**
@@ -25,12 +26,14 @@ public class Curler implements Function<String, String> {
    */
   public Curler(
     final Contractions c,
+    final FilterType filterType,
     final boolean entities
   ) {
     assert c != null;
 
     mContractions = c;
     mEntities = entities;
+    mFilter = filterType.filter();
   }
 
   /**
@@ -51,7 +54,7 @@ public class Curler implements Function<String, String> {
       text,
       mContractions,
       replace( output, offset, mEntities ),
-      (mEntities ? FILTER_XML : FILTER_PLAIN).filter()
+      mFilter
     );
 
     return output.toString();

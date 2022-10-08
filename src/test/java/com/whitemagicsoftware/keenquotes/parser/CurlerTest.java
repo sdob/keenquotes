@@ -1,6 +1,7 @@
 /* Copyright 2022 White Magic Software, Ltd. -- All rights reserved. */
 package com.whitemagicsoftware.keenquotes.parser;
 
+import com.whitemagicsoftware.keenquotes.lex.FilterType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +10,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.util.function.Function;
 
+import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_PLAIN;
+import static com.whitemagicsoftware.keenquotes.lex.FilterType.FILTER_XML;
 import static com.whitemagicsoftware.keenquotes.texts.TestResource.open;
 import static com.whitemagicsoftware.keenquotes.texts.TestResource.readPairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,28 +28,28 @@ public class CurlerTest {
    */
   @Test
   public void test_Parse_UncurledQuotes1_CurlyQuotes() throws IOException {
-    testCurler( createCurler( true ), "unambiguous-1-pass.txt" );
+    testCurler( createCurler( FILTER_PLAIN, true ), "unambiguous-1-pass.txt" );
   }
 
   @Test
   public void test_Parse_UncurledQuotes2_CurlyQuotes() throws IOException {
-    testCurler( createCurler( true ), "unambiguous-2-pass.txt" );
+    testCurler( createCurler( FILTER_PLAIN, true ), "unambiguous-2-pass.txt" );
   }
 
   @Disabled
   @SuppressWarnings( {"unused", "JUnit3StyleTestMethodInJUnit4Class"} )
   public void test_Parse_AmbiguousQuotes_PartiallyCurled() throws IOException {
-    testCurler( createCurler( false ), "ambiguous-n-pass.txt" );
+    testCurler( createCurler( FILTER_PLAIN, false ), "ambiguous-n-pass.txt" );
   }
 
   @Test
   public void test_Parse_UncurledQuotesXml_CurlyQuotes() throws IOException {
-    testCurler( createCurler( true ), "xml.txt" );
+    testCurler( createCurler( FILTER_XML, true ), "xml.txt" );
   }
 
   @Test
   public void test_Parse_UncurledQuotesI11l_CurlyQuotes() throws IOException {
-    testCurler( createCurler( true ), "i18n.txt" );
+    testCurler( createCurler( FILTER_PLAIN, true ), "i18n.txt" );
   }
 
   /**
@@ -70,7 +73,7 @@ public class CurlerTest {
       }
     }
 
-    final var curler = createCurler( true );
+    final var curler = createCurler( FILTER_XML, true );
     System.out.println( curler.apply( sb.toString() ) );
   }
 
@@ -97,8 +100,10 @@ public class CurlerTest {
     } );
   }
 
-  private Function<String, String> createCurler( final boolean entities ) {
-    return new Curler( createContractions(), entities );
+  private Function<String, String> createCurler(
+    final FilterType filterType,
+    final boolean entities ) {
+    return new Curler( createContractions(), filterType, entities );
   }
 
   private Contractions createContractions() {
