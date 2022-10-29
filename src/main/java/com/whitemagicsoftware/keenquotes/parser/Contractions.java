@@ -206,15 +206,23 @@ public class Contractions {
     "avin",
     // hawking
     "awkin",
+    // excepting
     "cepin",
+    // excepting
     "ceppin",
+    // excepting
     "ceptin",
+    // according
     "cordin",
+    // heading
     "eadin",
+    // leaving
     "eavin",
+    // helping
     "elpin",
     // hindering
     "inderin",
+    // electioneering
     "lectioneerin",
     // amazing
     "mazin",
@@ -230,15 +238,20 @@ public class Contractions {
     "ollerin",
     // hopping
     "oppin",
+    // housekeeping
     "ousekeepin",
     // howling
     "owlin",
+    // excepting
     "sceptin",
+    // expecting
     "spectin",
+    // explaining
     "splainin",
     // supposing
     "sposin",
     "sputin",
+    // astonishing
     "stonishin",
     // destroying
     "stroyin",
@@ -269,8 +282,11 @@ public class Contractions {
     "vestigatin",
     // inviting
     "vitin",
+    // excepting
     "xceptin",
+    // explaining
     "xplainin",
+    // exploding
     "xplodin"
   );
 
@@ -298,6 +314,8 @@ public class Contractions {
     "emselves",
     // affectionate
     "fectionate",
+    // before
+    "fore",
     // afraid
     "fraid",
     // ???
@@ -356,6 +374,7 @@ public class Contractions {
     "til",
     "tis",
     "tish",
+    // it isn't
     "tisn",
     // stomach
     "tomach",
