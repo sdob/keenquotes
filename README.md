@@ -1,3 +1,5 @@
+![Total Downloads](https://img.shields.io/github/downloads/DaveJarvis/keenquotes/total?color=blue&label=Total%20Downloads&style=flat) ![Release Downloads](https://img.shields.io/github/downloads/DaveJarvis/keenquotes/latest/total?color=purple&label=Release%20Downloads&style=flat) ![Release Date](https://img.shields.io/github/release-date/DaveJarvis/keenquotes?color=red&style=flat&label=Release%20Date) ![Release Version](https://img.shields.io/github/v/release/DaveJarvis/keenquotes?style=flat&label=Release)
+
 # KeenQuotes
 
 KeenQuotes converts straight quotes into curly quotes.
