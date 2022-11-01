@@ -13,103 +13,146 @@ import static java.text.CharacterIterator.DONE;
 
 @SuppressWarnings( "unused" )
 public class StringIterationBenchmark {
+  private static final int STRLEN = 1024 * 1024;
   private static final String CHARSET =
     "ABCDEFGHIJKLM NOPQRSTUVWXYZ abcdefghijklm nopqrstuvxyz 01234 5 6789";
-  public static final int STRLEN = 1024 * 1024;
 
-  private static String generateText() {
-    final var sb = new StringBuilder( STRLEN );
+  private static final String sText;
+
+  static {
     final var len = CHARSET.length();
+    final var buffer = new StringBuilder( STRLEN );
 
     for( var i = 0; i < STRLEN; i++ ) {
-      sb.append( CHARSET.charAt( (int) (len * random()) ) );
+      buffer.append( CHARSET.charAt( (int) (len * random()) ) );
     }
 
-    return sb.toString();
+    sText = buffer.toString();
   }
 
-  @Benchmark
-  public void test_CharAtIterator() {
-    final var s = generateText();
-    final var length = s.length();
-    var index = 0;
-
-    while( index < length ) {
-      final var ch = s.charAt( index );
-      index++;
-    }
-
-    assert index == length;
+  private static String getText() {
+    return sText;
   }
 
   @Benchmark
   public void test_FastCharacterIterator() {
-    final var s = generateText();
+    final var s = getText();
     final var i = new FastCharacterIterator( s );
+    var spaces = 0;
 
-    char c = ' ';
+    char ch = ' ';
 
-    while( c != DONE ) {
-      i.next();
-      c = i.current();
+    while( (ch = i.advance()) != DONE ) {
+      if( ch == ' ' ) {
+        spaces++;
+      }
     }
 
-    assert i.index() == STRLEN;
+    fail( i.index(), s.length() );
   }
 
-  @Benchmark
+  //@Benchmark
+  public void test_CharAtIterator() {
+    final var s = getText();
+    final var length = s.length();
+    var index = 0;
+    var spaces = 0;
+
+    while( index < length ) {
+      final var ch = s.charAt( index );
+
+      if( ch == ' ' ) {
+        spaces++;
+      }
+
+      index++;
+    }
+
+    fail( index, length );
+  }
+
+  //@Benchmark
   public void test_StringCharacterIterator() {
-    final var s = generateText();
+    final var s = getText();
     final var i = new StringCharacterIterator( s );
     var index = 0;
+    var spaces = 0;
 
-    char c = ' ';
+    char ch = ' ';
 
-    while( c != DONE ) {
-      c = i.next();
+    while( ch != DONE ) {
+      ch = i.next();
+
+      if( ch == ' ' ) {
+        spaces++;
+      }
+
       index++;
     }
 
-    assert index == STRLEN;
+    fail( index, s.length() );
   }
 
-  @Benchmark
+  //@Benchmark
   public void test_CharArrayIterator() {
-    final var s = generateText();
+    final var s = getText();
     final var i = s.toCharArray();
     var index = 0;
+    var spaces = 0;
 
     for( final var ch : i ) {
+      if( ch == ' ' ) {
+        spaces++;
+      }
+
       index++;
     }
 
-    assert index == STRLEN;
+    fail( index, s.length() );
   }
 
-  @Benchmark
+  //@Benchmark
   public void test_StringTokenizer() {
-    final var s = generateText();
+    final var s = getText();
     final var i = new StringTokenizer( s, " ", true );
     var index = 0;
+    var spaces = 0;
 
     while( i.hasMoreTokens() ) {
       final var token = i.nextToken();
+
+      if( token.isBlank() ) {
+        spaces++;
+      }
+
       index += token.length();
     }
 
-    assert index == STRLEN;
+    fail( index, s.length() );
   }
 
-  @Benchmark
+  //@Benchmark
   public void test_StreamIterator() {
-    final var s = generateText();
+    final var s = getText();
     final var index = new AtomicInteger();
+    final var spaces = new AtomicInteger();
 
     s.chars().forEach( codepoint -> {
       final var ch = Character.valueOf( (char) codepoint );
+
+      if( ch == ' ' ) {
+        spaces.incrementAndGet();
+      }
+
       index.incrementAndGet();
     } );
 
-    assert index.get() == STRLEN;
+    fail( index.get(), s.length() );
+  }
+
+  private static void fail( final int index, final int length ) {
+    if( index != length ) {
+      throw new RuntimeException( "Fail" );
+    }
   }
 }

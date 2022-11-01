@@ -127,8 +127,7 @@ public final class Lexer {
         token = QUOTE_SINGLE_CLOSING.with( LEX_SINGLE_QUOTE_CLOSING );
       }
       else if( curr == '\\' ) {
-        i.next();
-        final var next = i.current();
+        final var next = i.advance();
 
         if( next == '\'' ) {
           token = ESC_SINGLE;
@@ -197,7 +196,7 @@ public final class Lexer {
 
   private static boolean isDigit( final char curr ) {
     return Character.isDigit( curr ) ||
-      "¼½¾⅐⅑⅒⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞".indexOf( curr ) > -1;
+      "¼½¾⅐⅑⅒⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞".indexOf( curr ) >= 0;
   }
 
   /**
@@ -222,8 +221,7 @@ public final class Lexer {
    * a number (e.g., -2,000.2^2 is considered a single number).
    */
   private static boolean isNumeric( final char curr ) {
-    return
-      curr == '.' || curr == ',' || curr == '-' || curr == '+' ||
-        curr == '^' || curr == '⅟' || curr == '⁄';
+    return curr == '.' || curr == ',' || curr == '-' || curr == '+' ||
+      curr == '^' || curr == '⅟' || curr == '⁄';
   }
 }

@@ -9,9 +9,7 @@ import static java.text.CharacterIterator.DONE;
 
 /**
  * Iterates over a string, much like {@link CharacterIterator}, but faster.
- * This class gets 53 ops/s vs. 49 ops/s for {@link StringCharacterIterator}.
- * In comparison, using unconstrained {@link String#charAt(int)} calls yields
- * 57 ops/s.
+ * Achieves 1128.230 ops/s vs. 49 ops/s for {@link StringCharacterIterator}.
  * <p>
  * <strong>Caution:</strong> This class offers minimal bounds checking to eke
  * out some efficiency.
@@ -34,6 +32,8 @@ public final class FastCharacterIterator {
    * @param s The string to iterate.
    */
   public FastCharacterIterator( final String s ) {
+    assert s != null;
+
     mS = s;
     mLen = s.length();
   }
@@ -50,13 +50,45 @@ public final class FastCharacterIterator {
 
   /**
    * Returns the character at the currently iterated position in the string.
-   * This method performs bounds checking.
+   * This method performs bounds checking by catching an exception because
+   * usually parsing is complete when there are no more characters to iterate,
+   * meaning that 99.99% of the time, explicit bounds checking is superfluous.
    *
    * @return {@link CharacterIterator#DONE} if there are no more characters.
    */
   public char current() {
-    final var pos = mPos;
-    return pos < mLen ? mS.charAt( pos ) : DONE;
+    try {
+      return mS.charAt( mPos );
+    } catch( final Exception ex ) {
+      return DONE;
+    }
+  }
+
+  /**
+   * Returns the next character in the string and consumes it.
+   *
+   * @return {@link CharacterIterator#DONE} if there are no more characters.
+   */
+  public char advance() {
+    try {
+      return mS.charAt( ++mPos );
+    } catch( final Exception ex ) {
+      return DONE;
+    }
+  }
+
+  /**
+   * Returns the next character in the string without consuming it. Multiple
+   * consecutive calls to this method will return the same value.
+   *
+   * @return {@link CharacterIterator#DONE} if there are no more characters.
+   */
+  public char peek() {
+    try {
+      return mS.charAt( mPos + 1 );
+    } catch( final Exception ex ) {
+      return DONE;
+    }
   }
 
   /**
@@ -70,19 +102,7 @@ public final class FastCharacterIterator {
    * Advances to the previous character in the string, without bounds checking.
    */
   public void prev() {
-    --mPos;
-  }
-
-  /**
-   * Returns the next character in the string without consuming it. Multiple
-   * consecutive calls to this method will return the same value. This method
-   * performs bounds checking.
-   *
-   * @return {@link CharacterIterator#DONE} if there are no more characters.
-   */
-  public char peek() {
-    final var pos = mPos;
-    return pos + 1 < mLen ? mS.charAt( pos + 1 ) : DONE;
+    mPos--;
   }
 
   /**
@@ -99,13 +119,11 @@ public final class FastCharacterIterator {
    *
    * @param f The function that determines when skipping stops.
    */
+  @SuppressWarnings( "StatementWithEmptyBody" )
   public void skip( final Function<Character, Boolean> f ) {
     assert f != null;
 
-    do {
-      next();
-    }
-    while( f.apply( current() ) );
+    while( f.apply( advance() ) ) ;
 
     // The loop always overshoots by one character.
     prev();
