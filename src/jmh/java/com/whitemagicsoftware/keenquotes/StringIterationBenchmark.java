@@ -51,7 +51,7 @@ public class StringIterationBenchmark {
     fail( i.index(), s.length() );
   }
 
-  //@Benchmark
+  @Benchmark
   public void test_CharAtIterator() {
     final var s = getText();
     final var length = s.length();
@@ -71,7 +71,7 @@ public class StringIterationBenchmark {
     fail( index, length );
   }
 
-  //@Benchmark
+  @Benchmark
   public void test_StringCharacterIterator() {
     final var s = getText();
     final var i = new StringCharacterIterator( s );
@@ -93,7 +93,7 @@ public class StringIterationBenchmark {
     fail( index, s.length() );
   }
 
-  //@Benchmark
+  @Benchmark
   public void test_CharArrayIterator() {
     final var s = getText();
     final var i = s.toCharArray();
@@ -111,7 +111,7 @@ public class StringIterationBenchmark {
     fail( index, s.length() );
   }
 
-  //@Benchmark
+  @Benchmark
   public void test_StringTokenizer() {
     final var s = getText();
     final var i = new StringTokenizer( s, " ", true );
@@ -131,7 +131,7 @@ public class StringIterationBenchmark {
     fail( index, s.length() );
   }
 
-  //@Benchmark
+  @Benchmark
   public void test_StreamIterator() {
     final var s = getText();
     final var index = new AtomicInteger();
