@@ -2,14 +2,12 @@
 package com.whitemagicsoftware.keenquotes.util;
 
 import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.function.Function;
 
 import static java.text.CharacterIterator.DONE;
 
 /**
  * Iterates over a string, much like {@link CharacterIterator}, but faster.
- * Achieves 1128.230 ops/s vs. 49 ops/s for {@link StringCharacterIterator}.
  * <p>
  * <strong>Caution:</strong> This class offers minimal bounds checking to eke
  * out some efficiency.

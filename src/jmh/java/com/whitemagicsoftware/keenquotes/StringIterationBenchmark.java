@@ -11,6 +11,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.Math.random;
 import static java.text.CharacterIterator.DONE;
 
+/**
+ * Higher scores mean faster code:
+ *
+ * <pre>
+ * Benchmark                     Mode   Cnt    Score    Error  Units
+ * test_CharArrayIterator        thrpt   25  753.960 ±  0.972  ops/s
+ * test_CharAtIterator           thrpt   25  878.016 ±  0.884  ops/s
+ * test_FastCharacterIterator    thrpt   25  803.041 ± 48.422  ops/s
+ * test_StreamIterator           thrpt   25  101.416 ±  0.053  ops/s
+ * test_StringCharacterIterator  thrpt   25  580.341 ±  0.432  ops/s
+ * test_StringTokenizer          thrpt   25  174.121 ±  8.282  ops/s
+ * </pre>
+ */
 @SuppressWarnings( "unused" )
 public class StringIterationBenchmark {
   private static final int STRLEN = 1024 * 1024;
