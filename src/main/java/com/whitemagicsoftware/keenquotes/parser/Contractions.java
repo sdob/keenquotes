@@ -352,20 +352,22 @@ public class Contractions {
     "sblood",
     // excuse
     "scuse",
-    // suppose
-    "spose",
-    // suspect|expect
-    "spect",
-    // suspects|expects
-    "spects",
     "sfar",
     "sfoot",
     // considered
     "sidered",
+    // suspect|expect
+    "spect",
+    // suspects|expects
+    "spects",
     // exploit
     "sploit",
     // exploits
     "sploits",
+    // suppose
+    "spose",
+    // instead
+    "stead",
     // it
     "t",
     "taint",
