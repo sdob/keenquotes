@@ -3,8 +3,9 @@ package com.whitemagicsoftware.keenquotes.lex;
 
 import com.whitemagicsoftware.keenquotes.util.FastCharacterIterator;
 
-import java.text.CharacterIterator;
 import java.util.Set;
+
+import static java.text.CharacterIterator.DONE;
 
 /**
  * Responsible for lexing text while ignoring XML elements. The document must
@@ -30,7 +31,7 @@ public final class XmlFilter implements LexerFilter {
     "blockcode"
   );
 
-  public XmlFilter() {}
+  public XmlFilter() { }
 
   /**
    * Skip XML tags found within the prose, which hides the elements.
@@ -40,15 +41,21 @@ public final class XmlFilter implements LexerFilter {
     final var match = i.current() == '<';
 
     if( match ) {
-      final var openingTag = nextTag( i );
+      try {
+        final var openingTag = nextTag( i );
 
-      if( UNTOUCHABLE.contains( openingTag.toLowerCase() ) ) {
-        String closingTag;
+        if( UNTOUCHABLE.contains( openingTag.toLowerCase() ) ) {
+          String closingTag;
 
-        do {
-          closingTag = nextTag( i );
+          do {
+            closingTag = nextTag( i );
+          }
+          while( !closingTag.endsWith( openingTag ) );
         }
-        while( !closingTag.endsWith( openingTag ) );
+      } catch( final IndexOutOfBoundsException ex ) {
+        // The document ran out of characters; XML is not well-formed; stop
+        // parsing additional text.
+        return false;
       }
     }
 
@@ -58,14 +65,15 @@ public final class XmlFilter implements LexerFilter {
   /**
    * Skips to the next greater than or less than symbol.
    *
-   * @param i The {@link CharacterIterator} used to scan through the text, one
-   *          character at a time.
+   * @param i Scans through the text, one character at a time.
    * @return An opening/closing tag name, or the content within the element.
+   * @throws IndexOutOfBoundsException The tag was not closed before the
+   *                                   document ended.
    */
   private String nextTag( final FastCharacterIterator i ) {
     final var begin = i.index();
 
-    i.skip( next -> next != '>' && next != '<' );
+    i.skip( next -> next != '>' && next != '<' && next != DONE );
 
     // Swallow the trailing greater than symbol.
     i.next();

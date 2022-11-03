@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public final class LexerTest {
 
   @Test
-  void test_Lexing_Words_LexemeValues() {
+  void test_Lexing_Words_EmitMixedValues() {
     testText( "abc 123", "abc", " ", "123" );
     testText( "-123 abc", "-123", " ", "abc" );
   }
@@ -145,7 +145,7 @@ public final class LexerTest {
 
     Lexer.lex( text, lexeme -> {
       // Ignore the SOT and EOT lexemes (avoids duplication). Each test will
-      // include EOL, EOP, and EOT tokens due to the Lexer's algorithm.
+      // include EOL, EOP, and EOT tokens due to the lexer's algorithm.
       if( !lexeme.isType( SOT, EOT ) && counter.get() < elements.size() ) {
         final var expected = elements.get( counter.getAndIncrement() );
         final var actual = f.apply( lexeme, text );
